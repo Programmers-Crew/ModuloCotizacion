@@ -1,6 +1,12 @@
 create database GrupoAlcon;
 use GrupoAlcon;
 
+create table tipoCliente(
+	tipoClienteId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+    tipoClienteDesc varchar(50) unique not null,
+    tipoClienteDescuento double not null
+);
+
 create table Clientes(
 	clienteId	int(5)  UNSIGNED ZEROFILL primary key auto_increment,
 	clienteNit	varchar(19) unique not null,
@@ -124,7 +130,88 @@ create table Facturas(
 
 
 -- MODULO COTIZACION
+create table factorVenta(
+	factorVentaId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+    factorVentaDesc varchar(50) unique not null,
+    factorVentaDescuento double not null
+);
 
+create table tipoDocumeto(
+	tipoDocumentoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+    tipoDocumentoDesc varchar(50) unique not null
+);
+
+create table camposEspeciales(
+	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+	campoPintura double not null,
+    campoPasta double not null,
+    campoOtros double not null
+);
+
+create table OrdenDeVenta(
+
+	ordenId int(10) UNSIGNED ZEROFILL primary key auto_increment,
+    ordenCliente int(5) UNSIGNED ZEROFILL not null ,
+    ordenMensajero int(5) UNSIGNED ZEROFILL not null,
+    ordenImg varchar(100) not null,
+    ordenTipoDoc int(5) UNSIGNED ZEROFILL not null,
+    ordenFecha date not null,
+    ordenCantida double  not null,
+    ordenModeloRef varchar(100) not null,
+    ordenProducto varchar(7) not null ,
+    ordenTipoPrecio varchar(50) not null,
+	ordenAlto double not null,
+    ordenAncho double not null,
+    ordenLargo double not null,
+    ordenFacVenta int(5) UNSIGNED ZEROFILL not null,
+    ordenDesc varchar(100) not null,
+    ordenDescuento double not null,
+    ordenPrecioU double not null,
+    ordentTotal double not null,
+    ordenCamposEspeciales int(5) UNSIGNED ZEROFILL,
+	CONSTRAINT FK_ordenCliente FOREIGN KEY (ordenCliente) REFERENCES Clientes(clienteId),
+    CONSTRAINT FK_ordenVendedor FOREIGN KEY (ordenMensajero) REFERENCES Usuarios(usuarioId),
+    CONSTRAINT FK_ordenTipoDocumento FOREIGN KEY (ordenTipoDoc) REFERENCES tipoDocumeto(tipoDocumentoId),
+	CONSTRAINT FK_ordenProducto FOREIGN KEY (ordenProducto) REFERENCES InventarioProductos(productoId),
+	CONSTRAINT FK_ordenFacVenta FOREIGN KEY (ordenFacVenta) REFERENCES factorVenta(factorVentaId),
+	CONSTRAINT FK_ordenCampoEspeciales FOREIGN KEY (ordenCamposEspeciales) REFERENCES camposEspeciales(campoId)
+);
+
+create table modoPago(
+	modoPagoId int(5) UNSIGNED ZEROFILL not null,
+    modoPagoDesc varchar(20) not null
+);
 
 
 -- MODULO DE PRODUCCION
+create table estadoProduccion(
+	estadoProduccionId int(5) UNSIGNED ZEROFILL not null,
+    estadoProduccionDesc varchar(20) not null
+);
+
+create table Produccion(
+	produccionId int(5) UNSIGNED ZEROFILL not null,
+    produccionCotizacion int(5) UNSIGNED ZEROFILL not null,
+    produccionEstado int(5) UNSIGNED ZEROFILL not null,
+    produccionOperador int(5) UNSIGNED ZEROFILL not null,
+    produccionFechaEntrada date not null,
+    produccionFechaSalida date not null,
+    produccionDiasRestantes int not null,
+    
+	CONSTRAINT FK_produccionOrden FOREIGN KEY (produccionCotizacion) REFERENCES OrdenDeVenta(ordenId),
+	CONSTRAINT FK_produccionEstado FOREIGN KEY (produccionEstado) REFERENCES estadoProduccion(estadoProduccionId),
+	CONSTRAINT FK_produccionOperador FOREIGN KEY (produccionOperador) REFERENCES Usuarios(usuarioId)
+
+);
+
+
+create table pendienteFacturar(
+	pendienteId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+	ordenId int(10) UNSIGNED ZEROFILL not null,
+    modoPagoId int(5) UNSIGNED ZEROFILL not null,
+    montoAbonado double,
+    montoPendiente double,
+    
+	CONSTRAINT FK_pendienteOrden FOREIGN KEY (ordenId) REFERENCES OrdenDeVenta(ordenId),
+    CONSTRAINT FK_pendientePago FOREIGN KEY (modoPagoId) REFERENCES modoPago(modoPagoId)
+);
