@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CardexProd" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="276c967c-1abf-4867-8336-88fc8c064c99">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="65"/>
+	<parameter name="prodId" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="finalFecha" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[call SpGenerarCardexFechaProd($P!{prodId},$P!{inicio},$P!{finalFecha});]]>
+	</queryString>
+	<field name="fechaCardex" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="noFacCardex" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="idTipoDesc" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="saldoCardex" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totalCardex" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="productoDesc" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band height="555" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center">
+				<reportElement x="0" y="405" width="751" height="150" uuid="88a81015-ac8c-4785-b4ec-755bedd06a86"/>
+				<imageExpression><![CDATA["C:\\git\\ModuloFacturacionFL\\ModuloFacturacion\\src\\org\\moduloFacturacion\\report\\fondo.png"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="240" y="0" width="266" height="79" uuid="d83fc649-a719-410a-87d8-52f126845bd5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bell MT" size="30" isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[MOVIMIENTO INVENTARIO]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<line>
+				<reportElement x="606" y="0" width="16" height="20" uuid="41b5a69f-2806-4f8d-ab5d-b0f257426680"/>
+			</line>
+			<textField>
+				<reportElement x="363" y="0" width="111" height="20" uuid="53883baf-fdb4-4e1e-983d-083577d7025a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{productoDesc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="51" height="20" uuid="e8fc01de-f348-435c-9787-d8ffc0003639"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA:   ]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="51" y="0" width="100" height="20" uuid="3ad38470-ab80-4905-8338-75a9cb1a9a6e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="506" y="0" width="100" height="20" uuid="28bd4818-22ac-4d30-a550-bc1609f494d0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="622" y="0" width="100" height="20" uuid="057799f6-7175-44a4-9bd7-35d86cd0325f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="276" y="0" width="87" height="20" uuid="907b7be2-78a7-4f94-ae0a-4d713cb64cea"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRODUCTO:   ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="44" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="-1" y="13" width="752" height="24" forecolor="#1E88E5" backcolor="#42A5F5" uuid="f0927690-b5ac-4519-9588-8cb17bcb65b8"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="604" y="13" width="120" height="27" uuid="25db0a3a-d1f2-48d0-a638-35b1e7cddf08"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="13" width="120" height="24" uuid="9ee1c782-c9dd-4d3a-ae5e-11b5e0301782"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="13" width="120" height="24" uuid="87dfb79b-7187-489d-ac64-46c1942fb950"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="174" y="10" width="120" height="27" uuid="8e6d9499-5c75-450f-b7f3-e0e6644c0d94"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="10" width="120" height="27" uuid="840e0b43-a15b-4bd0-8dd2-34771c7f3648"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOVIMIENTO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="171" y="0" width="123" height="20" uuid="cd4df059-1e31-4512-aa48-7db260ebe8d7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{noFacCardex}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="0" width="120" height="20" uuid="756c3098-afed-4412-841a-58fe53bd0031"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{idTipoDesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="443" y="2" width="120" height="20" uuid="7ab2a586-8dd7-4f59-93d5-a381722da63d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldoCardex}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="588" y="2" width="120" height="20" uuid="02a5474b-99db-4ceb-8ffa-789191867d3c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalCardex}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="34" y="0" width="120" height="20" uuid="7b1633a9-04f8-47c5-bb8c-eaec33ed1a47"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaCardex}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
