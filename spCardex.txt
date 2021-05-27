@@ -1,0 +1,21 @@
+DELIMITER $$
+create procedure SpListarCardex(nombreProducto varchar(50))
+	begin 
+		select 	f.facturaFecha,f.facturaId, f.facturaSerie,
+				p.productoDesc as Salida, fd.cantidad as Total, (fd.cantidad-i.inventarioProductoCant) as SaldoSalida,
+				c.creaditoFechaInicio ,c.noFactura,
+				p.productoDesc as Entrada, cd.cantidadDetalle Total, (cd.cantidadDetalle + i.inventarioProductoCant) as SaldoEntrada
+        From 
+			facturas as f, creditos as c
+				inner join facturadetalle  as fd
+                on f.facturaDetalleId = fd.facturaDetalleId
+			inner join creditodetalle as cd
+				on c.creditoDetalle = cd.idCreditoDetalle
+			inner join productos as p
+				on fd.productoId = p.productoId or cd.productoId = p.productoId
+			inner join inventarioproductos as i
+				on p.productoId = i.inventarioProductoId
+			where p.productoDesc = nombreProducto
+        ;
+    end $$
+DELIMITER ;
