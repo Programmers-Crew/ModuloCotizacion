@@ -151,7 +151,7 @@ create table OrdenDeVenta(
 
 	ordenId int(10) UNSIGNED ZEROFILL primary key auto_increment,
     ordenCliente int(5) UNSIGNED ZEROFILL not null ,
-    ordenMensajero int(5) UNSIGNED ZEROFILL not null,
+    ordenVendedor int(5) UNSIGNED ZEROFILL not null,
     ordenImg varchar(100) not null,
     ordenTipoDoc int(5) UNSIGNED ZEROFILL not null,
     ordenFecha date not null,
@@ -169,7 +169,7 @@ create table OrdenDeVenta(
     ordentTotal double not null,
     ordenCamposEspeciales int(5) UNSIGNED ZEROFILL,
 	CONSTRAINT FK_ordenCliente FOREIGN KEY (ordenCliente) REFERENCES Clientes(clienteId),
-    CONSTRAINT FK_ordenVendedor FOREIGN KEY (ordenMensajero) REFERENCES Usuarios(usuarioId),
+    CONSTRAINT FK_ordenVendedor FOREIGN KEY (ordenVendedor) REFERENCES Usuarios(usuarioId),
     CONSTRAINT FK_ordenTipoDocumento FOREIGN KEY (ordenTipoDoc) REFERENCES tipoDocumeto(tipoDocumentoId),
 	CONSTRAINT FK_ordenProducto FOREIGN KEY (ordenProducto) REFERENCES InventarioProductos(productoId),
 	CONSTRAINT FK_ordenFacVenta FOREIGN KEY (ordenFacVenta) REFERENCES factorVenta(factorVentaId),
