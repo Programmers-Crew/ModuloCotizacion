@@ -143,9 +143,8 @@ create table tipoDocumeto(
 
 create table camposEspeciales(
 	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
-	campoPintura double not null,
-    campoPasta double not null,
-    campoOtros double not null
+	campoNombre varchar(150),
+    precio double
 );
 
 create table OrdenDeVenta(
