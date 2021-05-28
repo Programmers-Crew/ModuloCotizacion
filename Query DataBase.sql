@@ -134,7 +134,7 @@ create table FactorVenta(
 create table CamposEspeciales(
 	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
 	campoNombre varchar(150),
-    precio double
+    campoPrecio double
 );
 
 create table TipoCliente(
@@ -201,11 +201,11 @@ create table Produccion(
 
 create table PendienteFacturar(
 	pendienteId int(5) UNSIGNED ZEROFILL primary key auto_increment,
-	cotizacionId int(10) UNSIGNED ZEROFILL not null,
+	produccionId int(10) UNSIGNED ZEROFILL not null,
     modoPagoId int(5) UNSIGNED ZEROFILL not null,
     montoAbonado double,
     montoPendiente double,
     
-	CONSTRAINT FK_pendienteOrden FOREIGN KEY (cotizacionId) REFERENCES Cotizacion(cotizacionId),
+	CONSTRAINT FK_pendienteOrden FOREIGN KEY (produccionId) REFERENCES Produccion(produccionId),
     CONSTRAINT FK_pendientePago FOREIGN KEY (modoPagoId) REFERENCES modoPago(modoPagoId)
 );
