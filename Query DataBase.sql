@@ -29,12 +29,6 @@ create table CategoriaProductos(
 );
 
 
-create table TipoProducto(
-	tipoProdId int auto_increment primary key,
-    tipoProdDesc varchar(20) not null unique
-);
-
-
 create table InventarioProductos(
 	productoId	varchar(7) primary key,
     productoDesc varchar(50) not null,
@@ -43,13 +37,11 @@ create table InventarioProductos(
     productoCostoAntiguo decimal(10,2),
 	prductoCosto decimal(10,2) not null,
     productoPrecio decimal(10,2) not null,
-    tipoProductoId int not null,
     inventarioProductoCant double  not null,
     estadoProductoId tinyint(1) not null,    
 	CONSTRAINT FK_EstadoProductoInventario FOREIGN KEY (estadoProductoId) REFERENCES EstadoProductos(estadoProductoId),
 	CONSTRAINT FK_ProveedorProductos FOREIGN KEY (proveedorId) REFERENCES Proveedores(proveedorId),
-    CONSTRAINT FK_CategoriaProductos FOREIGN KEY (categoriaId) REFERENCES CategoriaProductos(categoriaId),
-    CONSTRAINT FK_TipoProductos FOREIGN KEY (tipoProductoId) REFERENCES tipoProducto(tipoProdId)
+    CONSTRAINT FK_CategoriaProductos FOREIGN KEY (categoriaId) REFERENCES CategoriaProductos(categoriaId)
 );
 
 
@@ -185,7 +177,7 @@ create table EstadoProduccion(
 );
 
 create table Produccion(
-	produccionId int(5) UNSIGNED ZEROFILL not null,
+	produccionId int(5) UNSIGNED ZEROFILL not null primary key,
     produccionCotizacion int(5) UNSIGNED ZEROFILL not null,
     produccionEstado int(5) UNSIGNED ZEROFILL not null,
     produccionOperador int(5) UNSIGNED ZEROFILL not null,
