@@ -31,8 +31,8 @@ public class ActivationViewController implements Initializable {
     private JFXButton btnRegistrar;
     @FXML
     private JFXTextField txtClave;
-    Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+    Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     public Preferences prefsValidacion = Preferences.userRoot().node(this.getClass().getName());;
     
     @FXML
@@ -68,10 +68,10 @@ public class ActivationViewController implements Initializable {
 
 
                     Stage primaryStage = new Stage();
-                    Parent  root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/LoginView.fxml"));
+                    Parent  root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/LoginView.fxml"));
                     Scene scene = new Scene(root);
                     primaryStage.setTitle("LOGIN PROGRAMMERS BILLING");
-                    primaryStage.getIcons().add(new Image(getClass().getResource("/org/moduloFacturacion/img/LogoGrande.png").toExternalForm()));
+                    primaryStage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/LogoGrande.png").toExternalForm()));
                     primaryStage.setWidth(668);
                     primaryStage.setHeight(520);
                     primaryStage.setScene(scene);     

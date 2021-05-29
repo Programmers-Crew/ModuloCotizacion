@@ -1052,6 +1052,9 @@ DELIMITER $$
 DELIMITER ;
 
 
+-- insert obligatorios 
+insert into tipousuario values(0,"Administrador"),(1,"Empleado");
+insert into usuarios values(0,"admin", "admin", 1);
 
 
 

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ModuloCotizacion.bean;
 
 import java.awt.Font;
@@ -17,10 +12,7 @@ import java.time.LocalDate;
 import javafx.collections.ObservableList;
 import org.ModuloCotizacion.controller.MenuPrincipalContoller;
 
-/**
- *
- * @author davis
- */
+
 public class ImprimirOrdenRespaldo implements Printable{
      PrinterJob printerJob;
     ObservableList<ProductoBuscado> mensaje;   

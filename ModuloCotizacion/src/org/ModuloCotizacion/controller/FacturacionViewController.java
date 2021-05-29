@@ -80,9 +80,9 @@ import org.ModuloCotizacion.report.GenerarReporte;
 public class FacturacionViewController implements Initializable {
     CambioScene cambioScene = new CambioScene();    
      LoginViewController login = new LoginViewController();
-     Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
-    Image imgWarning = new Image("org/moduloFacturacion/img/warning.png");
+     Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
+    Image imgWarning = new Image("org/ModuloCotizacion/img/warning.png");
     @FXML
      JFXTextField txtFacturaId;
     @FXML
@@ -354,7 +354,7 @@ public class FacturacionViewController implements Initializable {
     @FXML
     private void vistaProducto(MouseEvent event) throws IOException {
         menu.prefsRegresarProductos.put("regresarProducto", "facturacion");
-          String menu1 = "org/moduloFacturacion/view/ProductosView.fxml";
+          String menu1 = "org/ModuloCotizacion/view/ProductosView.fxml";
         cambioScene.Cambio(menu1,(Stage) anchor.getScene().getWindow());
     }
 
@@ -545,7 +545,7 @@ public class FacturacionViewController implements Initializable {
         }
         
         
-         String menu = "org/moduloFacturacion/view/menuPrincipal.fxml";
+         String menu = "org/ModuloCotizacion/view/menuPrincipal.fxml";
         cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
     
@@ -2484,7 +2484,7 @@ public class FacturacionViewController implements Initializable {
     private void eliminarFactura(MouseEvent event) throws IOException {
         
         Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/eliminarFactura.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/eliminarFactura.fxml"));
         Scene scene = new Scene(root);
          
         

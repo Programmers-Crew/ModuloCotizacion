@@ -48,8 +48,6 @@ import org.controlsfx.control.Notifications;
 import org.ModuloCotizacion.bean.Animations;
 import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
-import org.ModuloCotizacion.bean.Cardex;
-import org.ModuloCotizacion.bean.Creditos;
 import org.ModuloCotizacion.bean.EstadoProductos;
 import org.ModuloCotizacion.bean.GenerarExcel;
 import org.ModuloCotizacion.bean.InventarioProductos;
@@ -60,8 +58,8 @@ import org.ModuloCotizacion.db.Conexion;
 public class InventarioViewController implements Initializable {
     
     CambioScene cambioScene = new CambioScene();
-    Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+    Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     @FXML
     private Pane btnProveedores;
     @FXML
@@ -945,18 +943,13 @@ public class InventarioViewController implements Initializable {
         LocalDate date2 = fechaInicio.getValue();
             
         if(result.get() == buttonTypeOk){
-            Creditos nuevoCredito = new Creditos();
-            nuevoCredito.setCreaditoFechaInicio(java.sql.Date.valueOf( fechaInicio.getValue()));
-            nuevoCredito.setCreditoFechaFinal(java.sql.Date.valueOf( fechaFinal.getValue()));
-            nuevoCredito.setCreditoDesc(desc.getText());
+           
             double cantidad = Double.parseDouble(txtCantidadInventario.getText());
-            nuevoCredito.setCreditoMonto(costoProducto*cantidad);
-            nuevoCredito.setNoFactura(noFactura.getText());
+
             Double costoFinal = Double.parseDouble(txtCantidadInventario.getText())*Double.parseDouble(txtCostoNuevo.getText());
             
             String sqlDetalle = "{call SpAgregarCreditoDetalleBackUp('"+cmbCodigoProductoInventario.getValue()+"','"+txtCantidadInventario.getText()+"','"+costoFinal+"')}";
             String sqlTransferirBackup = "{call SpAgregarCreditoDetalle()}";
-            String sql = "{call SpAgregarCredito('"+nuevoCredito.getCreaditoFechaInicio()+"','"+nuevoCredito.getCreditoFechaFinal()+"','"+nuevoCredito.getCreditoDesc()+"','"+nuevoCredito.getCreditoMonto()+"','"+codigoEstado1+"','"+nuevoCredito.getNoFactura()+"')}";
             String sqlEliminarBackup = "{call SpEliminarBackupCredito()}";
             System.out.println(sqlDetalle);
             Integer documento = 3;
@@ -964,7 +957,6 @@ public class InventarioViewController implements Initializable {
             String sqlCardex = "{call SpAgregarCardexCreditos('"+date2+"','"+txtProductoInventario.getText()+"','"+idFac+"','"+tipo+"','"+txtCantidadInventario.getText()+"','"+documento+"')}";  
             System.out.println(sqlCardex);
             try {
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
                 PreparedStatement psDetalle = Conexion.getIntance().getConexion().prepareCall(sqlDetalle);
                 PreparedStatement psTranferirBackup = Conexion.getIntance().getConexion().prepareCall(sqlTransferirBackup);
                 PreparedStatement psEliminarBackup = Conexion.getIntance().getConexion().prepareCall(sqlEliminarBackup);                
@@ -973,7 +965,6 @@ public class InventarioViewController implements Initializable {
                 psCardex.execute();
                 psDetalle.execute();
                 psTranferirBackup.execute();
-                ps.execute();
                 
                 Notifications noti = Notifications.create();
                 noti.graphic(new ImageView(imgCorrecto));
@@ -1881,7 +1872,7 @@ public class InventarioViewController implements Initializable {
 
     @FXML
     private void regresar(MouseEvent event) throws IOException {
-         String menu = "org/moduloFacturacion/view/menuPrincipal.fxml";
+         String menu = "org/ModuloCotizacion/view/menuPrincipal.fxml";
         cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
     
@@ -1891,14 +1882,14 @@ public class InventarioViewController implements Initializable {
     @FXML
     private void btnProveedores(MouseEvent event) throws IOException {
         menu.prefsRegresar.put("regresar", "inventario");
-        String menu1 = "org/moduloFacturacion/view/ProveedoresView.fxml";
+        String menu1 = "org/ModuloCotizacion/view/ProveedoresView.fxml";
         cambioScene.Cambio(menu1,(Stage) anchor.getScene().getWindow());
     }
     
     @FXML
     private void btnProductos(MouseEvent event) throws IOException {
         menu.prefsRegresarProductos.put("regresarProducto", "inventario");
-          String menu = "org/moduloFacturacion/view/ProductosView.fxml";
+          String menu = "org/ModuloCotizacion/view/ProductosView.fxml";
         cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
     
