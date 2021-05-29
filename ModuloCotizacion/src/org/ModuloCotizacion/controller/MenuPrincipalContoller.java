@@ -92,9 +92,9 @@ public class MenuPrincipalContoller implements Initializable {
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO};
     public Operacion tipoOperacion= Operacion.NINGUNO;
     public Operacion cancelar = Operacion.NINGUNO;
-    Image imgError= new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
-    Image warning= new Image("org/moduloFacturacion/img/warning.png");
+    Image imgError= new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
+    Image warning= new Image("org/ModuloCotizacion/img/warning.png");
     private ObservableList<Usuario>listaUsuario;
     private ObservableList<String>listaCombo;
     private ObservableList<String>listaComboCodigo;
@@ -260,7 +260,7 @@ public class MenuPrincipalContoller implements Initializable {
             cmbCodigoUsuario.setItems(listaComboCodigo);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            Image imgError = new Image("org/moduloFacturacion/img/error.png");
+            Image imgError = new Image("org/ModuloCotizacion/img/error.png");
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgError));
             noti.title("ERROR AL CARGAR DATOS");
@@ -791,29 +791,6 @@ public class MenuPrincipalContoller implements Initializable {
        ttFacturas.play();
     }
     
-
-    /* CHEQUE*/
-    @FXML
-    private void chequesView() throws IOException {
-        String chequesUrl = "org/moduloFacturacion/view/chequesView.fxml";
-        cambioScene.Cambio(chequesUrl,(Stage) anchor.getScene().getWindow());
-    }
-    
-    private void chequeAtajo(ActionEvent event) throws IOException {
-        chequesView();
-    }
-    
-    /* CREDITOS*/
-    @FXML
-    private void credito() throws IOException {
-        String chequesUrl = "org/moduloFacturacion/view/creditosView.fxml";
-        cambioScene.Cambio(chequesUrl,(Stage) anchor.getScene().getWindow());
-    }
-    
-    private void creditoView(ActionEvent event) throws IOException {
-        credito();
-    }
-    
     
     /* INVENTARIO*/
         @FXML
@@ -822,7 +799,7 @@ public class MenuPrincipalContoller implements Initializable {
     }
     
     public void inventario() throws IOException{
-        String inventarioUrl = "org/moduloFacturacion/view/InventarioView.fxml";
+        String inventarioUrl = "org/ModuloCotizacion/view/InventarioView.fxml";
         cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
     }
     
@@ -834,7 +811,7 @@ public class MenuPrincipalContoller implements Initializable {
    
     /*FACTURA */
     public void factura() throws IOException{
-        String facturaUrl = "org/moduloFacturacion/view/FacturacionView.fxml";
+        String facturaUrl = "org/ModuloCotizacion/view/FacturacionView.fxml";
         cambioScene.Cambio(facturaUrl,(Stage) anchor.getScene().getWindow());
     }
     
@@ -850,7 +827,7 @@ public class MenuPrincipalContoller implements Initializable {
     
     /* CLIENTES*/
     public void clientes() throws IOException{
-        String clienteUrl = "org/moduloFacturacion/view/ClienteView.fxml";
+        String clienteUrl = "org/ModuloCotizacion/view/ClienteView.fxml";
         cambioScene.Cambio(clienteUrl,(Stage) anchor.getScene().getWindow());
     }
     
@@ -862,23 +839,11 @@ public class MenuPrincipalContoller implements Initializable {
     private void ClientesAtajo(MouseEvent event) throws IOException {
         clientes();
     }
-    
-    
-    /* PRODUCTOS*/
-    public void productos() throws IOException{
-        String inventarioUrl = "org/moduloFacturacion/view/ProductosView.fxml";
-        cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
-    }
-    
-    @FXML
-    private void productosView(ActionEvent event) throws IOException {
-        productos();
-    }
 
     
     /* PROVEEDOR*/
     public void proveedores() throws IOException{
-        String inventarioUrl = "org/moduloFacturacion/view/ProveedoresView.fxml";
+        String inventarioUrl = "org/ModuloCotizacion/view/ProveedoresView.fxml";
         cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
     }
     
@@ -887,7 +852,6 @@ public class MenuPrincipalContoller implements Initializable {
         proveedores();
     }
     
-   
 
     
      //atajos de menu de bienvenida
@@ -913,7 +877,7 @@ public class MenuPrincipalContoller implements Initializable {
            factura();
        }else{
            if(event.getCode() == KeyCode.F2){
-               productos();
+               
            }else{
                if(event.getCode() == KeyCode.F3){
                    inventario();
@@ -925,13 +889,13 @@ public class MenuPrincipalContoller implements Initializable {
                            proveedores();
                        }else{
                            if(event.getCode() == KeyCode.F6){
-                               chequesView();
+                               
                            }else{
                                if(event.getCode() == KeyCode.F7){
-                                   credito();
+                                   
                                }else{
                                    if(event.getCode() == KeyCode.F8){
-                                      promedioProveedores();
+                                      
                                    }
                                }
                            }
@@ -1320,11 +1284,12 @@ public class MenuPrincipalContoller implements Initializable {
         prefs.put("dark", "claro");
         validar.validarMenu(prefs.get("dark", "root"), anchor);
     }
-        @FXML
+    
+    @FXML
     private void consultaPrecios(MouseEvent event) throws IOException {
         
         Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/ConsultaPrecios.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/ConsultaPrecios.fxml"));
         Scene scene = new Scene(root);
          
         
@@ -1350,44 +1315,7 @@ public class MenuPrincipalContoller implements Initializable {
         stage.show();
     }
     
-    
-            @FXML
-    private void promedioProveedores() throws IOException {
-        
-        Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/promedioProveedores.fxml"));
-        Scene scene = new Scene(root);
-         
-        
-       root.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                xOffset = event.getSceneX();
-                yOffset = event.getSceneY();
-            }
-        });
-        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                stage.setX(event.getScreenX() - xOffset);
-                stage.setY(event.getScreenY() - yOffset);
-            }
-        });
-        stage.setWidth(611);
-        stage.setHeight(639);
-        stage.initStyle(StageStyle.UNDECORATED);
-        stage.setTitle("CONSULTA DE PRECIOS");
-        stage.setScene(scene);
-        stage.show();
-    }
-    // tab de informacion donde irá el manual de usuario
-    
-    
-    
    
-
-  
-    
     int numImg;
     private ArrayList<ArchivosVO> ListaComponente;
     MiVisorPDF pn = new MiVisorPDF();

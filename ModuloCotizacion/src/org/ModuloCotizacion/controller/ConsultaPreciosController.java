@@ -44,8 +44,8 @@ public class ConsultaPreciosController implements Initializable {
     private JFXTextField txtNombreProducto;
     @FXML
     private JFXTextField txtPrecioProducto;
-    Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+    Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     
     MenuPrincipalContoller menu = new MenuPrincipalContoller();
     ValidarStyle validar = new ValidarStyle();

@@ -42,8 +42,8 @@ import org.ModuloCotizacion.db.Conexion;
 
 public class ClienteViewController implements Initializable {
     CambioScene cambioScene = new CambioScene();
-    Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+    Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     @FXML
     private AnchorPane anchor2;
     @FXML
@@ -182,7 +182,7 @@ public class ClienteViewController implements Initializable {
 
     @FXML
     private void regresar(MouseEvent event) throws IOException {
-         String menu = "org/moduloFacturacion/view/menuPrincipal.fxml";
+         String menu = "org/ModuloCotizacion/view/menuPrincipal.fxml";
         cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
 

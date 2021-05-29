@@ -29,10 +29,10 @@ public class MainApp extends Application {
         }else{
             System.out.println("CONEXION INCORRECTA");
             Stage st = new Stage();
-            Parent root1 = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/ERRORCONEXION.fxml"));
+            Parent root1 = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/ERRORCONEXION.fxml"));
             Scene scene1 = new Scene(root1);
             st.setTitle("PROGRAMMERS BILLING");
-            st.getIcons().add(new Image(getClass().getResource("/org/moduloFacturacion/img/LogoGrande.png").toExternalForm()));
+            st.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/grupoAlcon.png").toExternalForm()));
             st.setWidth(500);
             st.setHeight(300);
             st.setScene(scene1);
@@ -44,10 +44,10 @@ public class MainApp extends Application {
        if(pc.prefsValidacion.get("program", "root").equals("true")){
            if(menu.prefsUsuario1.get("validar", "root").equals("recordar")){    
             
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/menuPrincipal.fxml"));
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/menuPrincipal.fxml"));
             Scene scene = new Scene(root);
             stage.setTitle("PROGRAMMERS BILLING");
-            stage.getIcons().add(new Image(getClass().getResource("/org/moduloFacturacion/img/LogoGrande.png").toExternalForm()));
+            stage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/grupoAlcon.jpeg").toExternalForm()));
             int primaryMon=0;
             Screen primary = Screen.getPrimary();
             for(int i = 0; i < Screen.getScreens().size(); i++){
@@ -66,10 +66,10 @@ public class MainApp extends Application {
             
           
         }else{
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/LoginView.fxml"));
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/LoginView.fxml"));
             Scene scene = new Scene(root);
             stage.setTitle("LOGIN PROGRAMMERS BILLING");
-            stage.getIcons().add(new Image(getClass().getResource("/org/moduloFacturacion/img/LogoGrande.png").toExternalForm()));
+            stage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/grupoAlcon.jpeg").toExternalForm()));
             stage.setWidth(668);
             stage.setHeight(520);
             stage.setScene(scene);     
@@ -77,10 +77,10 @@ public class MainApp extends Application {
             stage.show();
         }
        }else{
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/ActivationView.fxml"));
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/ActivationView.fxml"));
             Scene scene = new Scene(root);
             stage.setTitle("ACTIVACIÓN PROGRAMMERS BILLING");
-            stage.getIcons().add(new Image(getClass().getResource("/org/moduloFacturacion/img/LogoGrande.png").toExternalForm()));
+            stage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/grupoAlcon.jpeg").toExternalForm()));
             stage.setWidth(600);
             stage.setHeight(420);
             stage.setScene(scene);     

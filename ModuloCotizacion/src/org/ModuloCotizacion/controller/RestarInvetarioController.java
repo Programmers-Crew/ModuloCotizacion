@@ -46,8 +46,8 @@ public class RestarInvetarioController implements Initializable {
 
     
     ObservableList<String> listapProd;
-    Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+    Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {

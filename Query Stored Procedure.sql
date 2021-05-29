@@ -329,16 +329,732 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+-- Inventario
+
+#----------------- Entidad Inventario de productos
+
+DELIMITER $$	
+	create procedure Sp_AddInventario(id varchar(7), descripcion varchar(30), proveedor varchar(7), categoria varchar(7), costo double, precio double,cantidad double, estado int)
+		BEGIN
+			insert into InventarioProductos(productoId ,productoDesc ,proveedorId ,categoriaId,prductoCosto ,productoPrecio ,inventarioProductoCant ,estadoProductoId)
+				values(id, descripcion, proveedor, categoria, costo, precio, cantidad, estado);
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_UpdateInventarioProducto(idBuscado varchar(7), descripcion varchar(30), costo double, precio double,cantidad double, estado int)
+		BEGIN
+			update InventarioProductos
+				set  productoDesc = descripcion,
+					 prductoCosto = costo,
+					 productoPrecio = precio,
+                     inventarioProductoCant = cantidad,
+                     estadoProductoId = estado
+					where productoId = idBuscado;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_DeleteInventarioProducto(idBuscado varchar(7))
+		BEGIN
+			delete from InventarioProductos
+				where productoId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_ListInventarioProducto()
+		BEGIN
+			select
+				p.productoId,
+                ip.inventarioProductoCant,
+                pr.proveedorNombre,
+                p.productoDesc,
+                ep.estadoProductoDesc,
+                p.productoPrecio,
+                p.precioCosto,
+                c.categoriaNombre
+		from
+			InventarioProductos as ip
+		inner join EstadoProductos as ep
+			on ip.estadoProductoId = ep.estadoProductoId
+		inner join Proveedores as pr
+			on p.proveedorId = pr.proveedorId
+		inner join categoriaproductos as c
+			on ip.categoriaId = c.categoriaId
+        group by 
+         p.productoId
+		order by         
+			p.productoId ASC;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_FindInventarioProducto()
+		BEGIN
+			select
+				p.productoId,
+                ip.inventarioProductoCant,
+                pr.proveedorNombre,
+                p.productoDesc,
+                ep.estadoProductoDesc,
+                p.productoPrecio,
+                p.precioCosto,
+                c.categoriaNombre
+		from
+			InventarioProductos as ip
+		inner join EstadoProductos as ep
+			on ip.estadoProductoId = ep.estadoProductoId
+		inner join Proveedores as pr
+			on p.proveedorId = pr.proveedorId
+		inner join categoriaproductos as c
+			on ip.categoriaId = c.categoriaId
+        group by 
+         p.productoId
+		order by         
+			p.productoId ASC;
+        END $$
+DELIMITER ;
+
+
+-- CATEGORIA
+DELIMITER $$
+	create procedure Sp_ListCategoriaProducto()
+		BEGIN
+			select categoriaId, categoriaNombre
+				from CategoriaProductos
+					order by categoriaId asc;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure SpAddCategoriaProducto(id varchar(7), nombre varchar(50))
+		BEGIN
+			insert into CategoriaProductos(categoriaId, categoriaNombre)
+				values(id, nombre);
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_UpdateCategoriaProducto(idBuscado varchar(7),idNuevo varchar(7), nuevoNombre varchar(50))
+		BEGIN
+			update CategoriaProductos
+				set categoriaId =idNuevo , categoriaNombre = nuevoNombre
+					where categoriaId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindCategoriaProducto(idBuscado varchar(7))
+		BEGIN
+			select categoriaNombre, categoriaId
+            from categoriaproductos
+				where categoriaId = idBuscado
+					order by categoriaId asc;
+		END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindCategoriaProductosNombre(nombre varchar(50))
+		BEGIN
+			select categoriaNombre, categoriaId
+            from categoriaproductos
+				where categoriaNombre = nombre
+					order by categoriaId asc;
+		END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_DeleteCategoriaProducto(idBuscado varchar(7))
+		BEGIN
+			delete from CategoriaProductos
+				where categoriaId = idBuscado;
+        END $$
+DELIMITER ;
+
+-- Estado producto
+
+DELIMITER $$
+	create procedure Sp_ListEstadoProducto()
+		BEGIN
+			select estadoProductoId, estadoProductoDesc
+				from EstadoProductos
+					order by estadoProductoId asc;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_AddEstadoProducto(descripcion varchar(1000))
+		BEGIN
+			insert into EstadoProductos(estadoProductoDesc)
+				values(descripcion);
+		END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_UpdateEstadoProducto(idBuscado tinyint(1), nuevaDesc varchar(100))
+		BEGIN
+			update EstadoProductos
+				set estadoProductoDesc = nuevaDesc
+					where estadoProductoId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindEstadoProducto(idBuscado tinyint(1))
+		BEGIN
+			select estadoProductoId, estadoProductoDesc
+				from EstadoProductos
+					where estadoProductoId = idBuscado
+						order by estadoProductoId asc;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindEstadoNombre(nombre varchar(100))
+		BEGIN
+			select estadoProductoId, estadoProductoDesc
+				from EstadoProductos
+					where estadoProductoDesc = nombre
+						order by estadoProductoId asc;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_EliminarEstadoProducto(idBuscado tinyint(1))
+		BEGIN
+			delete from EstadoProductos
+				where estadoProductoId = idBuscado;
+        END $$
+DELIMITER ;
+
+-- Proveedores 
+
+DELIMITER $$
+	create procedure Sp_ListProveedor()
+		BEGIN
+			select proveedorId, proveedorNombre, proveedorTelefono, proveedorNit
+				from Proveedores
+					order by proveedorId asc;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_AddProveedor(proveedores varchar(7),nombre varchar(50), telefono varchar(8), nit varchar(50))
+		BEGIN
+			insert into Proveedores(proveedorId,proveedorNombre, proveedorTelefono, proveedorNit)
+				values (proveedores , nombre , telefono, nit);
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_UpdateProveedor(idBuscado varchar(7), nuevoCodigo varchar(7),nuevoNombre varchar(50), nuevoTelefono varchar(8),  nit varchar(20))
+		BEGIN
+			update Proveedores
+				set proveedorId = nuevoCodigo ,proveedorNombre = nuevoNombre, proveedorTelefono = nuevoTelefono, proveedorNit = nit
+					where proveedorId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindProveedor(idBuscado varchar(7))
+		BEGIN
+			select proveedorId, proveedorNombre, proveedorTelefono, proveedorNit
+				from Proveedores 
+					where proveedorId = idBuscado
+						order by proveedorId asc;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_FindBuscarProveedoresNombre(nombre varchar(100))
+		BEGIN
+			select proveedorId, proveedorNombre, proveedorTelefono,proveedorNit
+				from Proveedores 
+					where proveedorNombre = nombre
+						order by proveedorId asc;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_FindProveedoresPorNombre(nombre varchar(50))
+		BEGIN
+			select proveedorId, proveedorNombre, proveedorTelefono,proveedorNit
+				from Proveedores 
+					where proveedorNombre = nombre
+						order by proveedorId asc;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_FindProveedoresPorNit(nit varchar(20))
+		BEGIN
+			select proveedorId, proveedorNombre, proveedorTelefono,proveedorNit
+				from Proveedores 
+					where proveedorNit = nit
+						order by proveedorId asc;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_DeleteProveedor(idBuscado varchar(7))
+		BEGIN
+			delete from Proveedores
+				where proveedorId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+-- Clientes
+
+DELIMITER $$
+create procedure Sp_ListCliente()
+	BEGIN
+		select clienteId, clienteNit, clienteNombre, clienteDireccion
+			from clientes
+				order by clienteId asc;
+    END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_AddCliente(nit varchar(19), nombre varchar(50), direccion varchar(100))
+		BEGIN
+			insert into Clientes(clienteNit, clienteNombre, clienteDireccion)
+				value(nit, nombre, direccion);
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE Sp_AddClienteSinDireccion(nit varchar(19), nombre varchar(25))
+		BEGIN
+			insert into Clientes(clienteNit, clienteNombre)
+				value(nit, nombre);
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_UpdateCliente(idBuscado int(100), nuevoNit varchar(19), nombre varchar(50), direccion varchar(100))
+		BEGIN
+			update Clientes
+				set clienteNit = nuevoNit, clienteNombre = nombre, clienteDireccion = direccion
+					where clienteId = idBuscado;
+        END $$
+DELIMITER ;
 
 
 
+DELIMITER $$
+	create procedure Sp_DeleteClientes(idBuscado int(100))
+		BEGIN
+			delete from Clientes
+				where clienteId = idBuscado;
+        END $$
+DELIMITER ;
 
 
 
+DELIMITER $$
+	create procedure Sp_FindClientes(idBuscado int(100))
+		BEGIN
+			select clienteId, clienteNit, clienteNombre, clienteDireccion
+				from Clientes
+					where clienteId = idBuscado
+						order by clienteId asc;
+		END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_FindClientesNIt(nit varchar(19))
+		BEGIN
+			select clienteId, clienteNit, clienteNombre, clienteDireccion
+				from Clientes
+					where clienteNit = nit
+						order by clienteId asc;
+		END $$
+DELIMITER ;
+
+-- Tipo Usuarios
+DELIMITER $$
+	CREATE PROCEDURE spListarTipoUsuario()
+		BEGIN
+			SELECT * FROM tipoUsuario
+				order by tipoUsuarioId ASC;
+        END $$
+DELIMITER ;
+
+
+-- Usuarios
+DELIMITER $$
+	create procedure Sp_ListUsuario()
+		BEGIN 
+			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
+				from Usuarios, tipousuario 
+					where Usuarios.tipoUsuarioId = tipousuario.tipoUsuarioId 
+						order by usuarioId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_AddUsuario(nombre varchar(30), pass varchar(40), tipoUsuario tinyint(1))
+		BEGIN
+			insert into Usuarios(usuarioNombre, usuarioPassword,tipoUsuarioId)
+				values(nombre, pass,tipousuario);
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_UpdateUsuario(idBuscado int(100), nombre varchar(30), pass varchar(30),tipoUsuario tinyint(1))
+		BEGIN
+			update Usuarios
+				set usuarioNombre = nombre, usuarioPassword = pass, tipoUsuarioId = tipoUsuario
+					where usuarioId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindUsuario(idBuscado int(100))
+		BEGIN
+			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
+				from Usuarios,tipousuario
+					where usuarioId = idBuscado
+						and tipousuario.tipoUsuarioId = usuarios.tipoUsuarioId
+							order by usuarioId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindUsuarioId(usuarioNombre varchar(30))
+		BEGIN
+			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
+				from Usuarios,tipousuario
+					where usuarioNombre= Usuarios.usuarioNombre 
+						and tipousuario.tipoUsuarioId = usuarios.tipoUsuarioId
+							order by usuarioId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_DeleteUsuarios(idBuscado int(100))
+		BEGIN
+			delete from Usuarios
+				where usuarioId = idBuscado;
+        END $$
+DELIMITER ;
+
+
+-- Login
+DELIMITER $$
+	CREATE PROCEDURE  SpLogin(usuarioNom varchar(30), pass varchar(40))
+		BEGIN
+			select u.usuarioNombre, u.usuarioPassword
+				from usuarios as u
+					where u.usuarioNombre = usuarioNom and u.usuarioPassword = pass;
+		END $$
+DELIMITER ;
+
+DELIMITER $$
+	CREATE PROCEDURE  SpLoginAdmin(usuarioNom varchar(100), pass varchar(100))
+		BEGIN
+			select u.usuarioNombre, u.usuarioPassword
+				from usuarios as u
+					where (u.usuarioNombre = usuarioNom and u.usuarioPassword = pass) and tipoUsuarioId = 1;
+		END $$
+DELIMITER ;
+
+
+DELIMITER $$
+ CREATE PROCEDURE  SpLoginValidar(usuarioNom varchar(30))
+	BEGIN
+		select u.tipoUsuarioId
+		from usuarios as u
+		where u.usuarioNombre = usuarioNom;
+	END $$
+DELIMITER ;
+
+
+-- QUERYS CAMBIO DAVIS
+-- procreso de actualizar inventario desde factura - 8/04/2021
+DELIMITER $$
+	create procedure SpActualizarInventarioProductosFacturacion(idBuscado varchar(7), cant double, estado tinyint(1))
+		BEGIN
+			update InventarioProductos
+				set  estadoProductoId = estado, inventarioproductos.inventarioProductoCant = cant
+					where productoId = idBuscado;
+        END $$
+DELIMITER ;
 
 
 
+DELIMITER $$ 
+	CREATE PROCEDURE SpListarCredit()
+		BEGIN
+			SELECT *
+            FROM creditos
+            WHERE creditoEstado = 1 group by noFactura;
+        END $$
+DELIMITER ;
 
+
+DELIMITER $$
+	create procedure SpMarcarPagadocFac(idBuscado int)
+		begin
+			update Creditos as c
+				set creditoEstado = 2 
+					where c.noFactura = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarProductosFac(idBuscado varchar(7))
+		BEGIN
+			select 
+				pr.productoId,
+                pr.productoDesc,
+                p.proveedorNombre,
+                p.proveedorId,
+                cp.categoriaNombre,
+                pr.precioCosto,
+                pr.productoPrecio,
+                tp.tipoProdDesc,
+                ip.inventarioProductoCant
+			from 
+				Productos as pr
+			inner join
+				Proveedores as p
+			on 
+				pr.proveedorId = p.proveedorId
+			inner join 
+				CategoriaProductos as cp
+			on
+				pr.categoriaId = cp.categoriaId 
+			inner join 
+				tipoProducto as tp
+			on 
+				pr.tipoProductoId = tp.tipoProdId
+			inner join
+				inventarioproductos as ip
+			on pr.productoId = ip.productoId
+            
+			where pr.productoId = idBuscado and ip.estadoProductoId = 1 
+			order by pr.productoId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure SpListarProductosFac()
+		BEGIN
+			select 
+				pr.productoId,
+                pr.productoDesc,
+                p.proveedorNombre,
+                cp.categoriaNombre,
+                pr.precioCosto,
+                pr.productoPrecio,
+                tp.tipoProdDesc,
+                ip.inventarioProductoCant
+			from 
+				Productos as pr
+			inner join
+				Proveedores as p
+			on 
+				pr.proveedorId = p.proveedorId
+			inner join 
+				CategoriaProductos as cp
+			on
+				pr.categoriaId = cp.categoriaId 
+			inner join 
+				tipoProducto as tp
+			on 
+				pr.tipoProductoId = tp.tipoProdId
+			inner join
+				inventarioproductos as ip
+			on pr.productoId = ip.productoId
+            where ip.inventarioProductoCant > 0
+			order by
+				pr.productoId ASC;
+        END $$
+DELIMITER ;
+
+
+-- CAMBIOS QUE SE HICIERON
+
+DROP PROCEDURE IF EXISTS SpListarBackup;
+
+DELIMITER $$
+	create procedure SpListarBackup(userName varchar(30))
+		BEGIN
+			select fdb.facturaDetalleIdBackup, p.productoId,p.productoDesc, fdb.cantidadBackup , p.productoPrecio ,fdb.totalParcialBackup
+				from facturadetallebackup as fdb
+							inner join Productos as p
+								on fdb.productoIdBackup = p.productoId;
+        END $$
+DELIMITER ;
+
+
+-- QUERYS CAMBIO
+alter table Facturas change facturaId facturaId int(5) UNSIGNED ZEROFILL unique not null;
+
+
+
+DELIMITER $$
+	create procedure SpvalidarFactura(serie varchar(5),idFactura int(10))
+		begin
+			select * from Facturas
+				where (facturaSerie = serie) and (facturaId = idFactura);
+        end $$ 
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpUpdateClientes(nit varchar(9) ,nombre varchar(25), direccion varchar(100))
+		begin
+			update clientes
+				set 
+                    clienteNombre = nombre,
+                    clienteDireccion = direccion
+			where 
+				clienteNit = nit;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarCliente(nit varchar(9))
+		begin
+			select * from clientes
+			where
+             (clienteNit = nit);
+		end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarCF(nit varchar(9))
+		begin
+			select * from clientes
+			where
+             (clienteNit = nit);
+		end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpUpdateCF(nit varchar(9))
+		begin
+			update clientes
+				set 
+                    clienteNombre = "C/F",
+                    clienteDireccion = "Ciudad de Guatemala"
+			where 
+				clienteNit = nit;
+        end $$
+DELIMITER ;
+
+
+
+## Cambios 30-03-2021
+
+DELIMITER $$
+	create procedure SpValidarProducto(idbuscado varchar(8))
+		begin 
+			select * from productos
+				where  productoId= idBuscado;
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure SpValidarProveedor(idbuscado varchar(8))
+		begin 
+			select * from proveedores
+				where  proveedorId= idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarProductoProv(nombre varchar(50))
+		BEGIN
+			select 
+				p.proveedorId,
+                p.proveedorNombre, 
+                pr.productoDesc
+			from 
+				Proveedores as p
+			inner join
+				productos as pr
+			on pr.proveedorId = p.proveedorId
+			where proveedorNombre = nombre
+			order by proveedorId asc;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarPrecioProd(nombre varchar(40))
+		begin
+			select 
+				productoPrecio
+			from 
+				productos
+			where productoDesc = nombre;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBucarCreditosVencidos()
+		begin 
+			select idCredito
+				from creditos
+					where creditoDiasRestantes < 0;
+        end $$
+DELIMITER ;
+
+
+-- 04 - 04
+DELIMITER $$
+	create procedure SpListarInventarioProveedores(proveedor varchar(50))
+		BEGIN
+			select
+				p.productoId,
+                ip.inventarioProductoCant,
+                pr.proveedorNombre,
+                p.productoDesc,
+                ep.estadoProductoDesc,
+                p.precioCosto,
+                tp.tipoProdDesc
+		from
+			InventarioProductos as ip
+		inner join Productos as p
+			on ip.productoId = p.productoId
+		inner join EstadoProductos as ep
+			on ip.estadoProductoId = ep.estadoProductoId
+		inner join Proveedores as pr
+			on p.proveedorId = pr.proveedorId
+		inner join tipoproducto as tp
+			on p.tipoProductoId = tp.tipoProdId
+		where pr.proveedorNombre = proveedor
+		order by 
+			p.productoId ASC;
+        END $$
+DELIMITER ;
+
+
+-- insert obligatorios 
+insert into tipousuario values(0,"Administrador"),(1,"Empleado");
+insert into usuarios values(0,"admin", "admin", 1);
 
 
 

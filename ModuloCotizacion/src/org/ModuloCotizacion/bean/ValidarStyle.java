@@ -3,11 +3,11 @@ package org.ModuloCotizacion.bean;
 import javafx.scene.layout.AnchorPane;
 
 public class ValidarStyle {
-    String urlMenuDark = "org/moduloFacturacion/resource/MenuPrincipalStyleOscuro.css";
-    String urlMenu = "org/moduloFacturacion/resource/MenuPrincipalStyle.css";
+    String urlMenuDark = "org/ModuloCotizacion/resource/MenuPrincipalStyleOscuro.css";
+    String urlMenu = "org/ModuloCotizacion/resource/MenuPrincipalStyle.css";
     
-    String urlViewDark = "org/moduloFacturacion/resource/moduloStyleOscuro.css";
-    String urlView = "org/moduloFacturacion/resource/moduloStyle.css";
+    String urlViewDark = "org/ModuloCotizacion/resource/moduloStyleOscuro.css";
+    String urlView = "org/ModuloCotizacion/resource/moduloStyle.css";
     
     public void validarMenu(String valor, AnchorPane anchor){
         

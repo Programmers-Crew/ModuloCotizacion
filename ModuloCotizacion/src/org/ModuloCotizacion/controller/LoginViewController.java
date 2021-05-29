@@ -129,8 +129,8 @@ public class LoginViewController implements Initializable {
     }
     
     public void login() throws IOException{
-       Image imgError= new Image("org/moduloFacturacion/img/error.png");
-       Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+       Image imgError= new Image("org/ModuloCotizacion/img/error.png");
+       Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
        if(txtUsuario.getText().equals("") && txtContraseña.getText().equals("")){
            Notifications noti = Notifications.create();
            noti.graphic(new ImageView(imgError));
@@ -153,7 +153,7 @@ public class LoginViewController implements Initializable {
                     validarLogin();
                     Stage stage1 = (Stage)anchor.getScene().getWindow();
                     Stage primaryStage= new Stage();
-                    Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/moduloFacturacion/view/menuPrincipal.fxml"));
+                    Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/menuPrincipal.fxml"));
                     Scene scene = new Scene(root);
                        int primaryMon=0;
                     Screen primary = Screen.getPrimary();
@@ -170,7 +170,7 @@ public class LoginViewController implements Initializable {
                     primaryStage.setMinHeight(800);
                     primaryStage.setScene(scene);
                     primaryStage.setTitle("PROGRAMMERS BILLING");
-                    primaryStage.getIcons().add(new Image(getClass().getResource("/org/moduloFacturacion/img/LogoGrande.png").toExternalForm()));
+                    primaryStage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/LogoGrande.png").toExternalForm()));
                     primaryStage.show();
                     Notifications noti = Notifications.create();
                     noti.graphic(new ImageView(imgCorrecto));

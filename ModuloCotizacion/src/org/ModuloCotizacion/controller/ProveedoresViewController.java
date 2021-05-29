@@ -45,8 +45,8 @@ public class ProveedoresViewController implements Initializable {
     CambioScene cambioScene = new CambioScene();
     ObservableList<Proveedores> listaProveedores;
     ObservableList<String> listaCodigoProveedores;
-    Image imgError = new Image("org/moduloFacturacion/img/error.png");
-    Image imgCorrecto= new Image("org/moduloFacturacion/img/correcto.png");
+    Image imgError = new Image("org/ModuloCotizacion/img/error.png");
+    Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     String codigo;
 
     
@@ -143,7 +143,7 @@ public class ProveedoresViewController implements Initializable {
         public ObservableList<Proveedores> getProveedores(){
         ArrayList<Proveedores> lista = new ArrayList();
         ArrayList<String> listaCodigo = new ArrayList();
-        String sql= "{call SpListarProveedores()}";
+        String sql= "{call Sp_ListProveedor()}";
             int x =0;
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
@@ -522,7 +522,7 @@ public class ProveedoresViewController implements Initializable {
                             noti.show();
                             tipoOperacionProveedores = Operacion.GUARDAR;
                         }else{
-                            String sql = "{call SpAgregarProveedores('"+nuevoProveedor.getProveedorId()+"','"+nuevoProveedor.getProveedorNombre()+"','"+nuevoProveedor.getProveedorTelefono()+"','"+nuevoProveedor.getProveedorNit()+"')}";
+                            String sql = "{call Sp_AddProveedor('"+nuevoProveedor.getProveedorId()+"','"+nuevoProveedor.getProveedorNombre()+"','"+nuevoProveedor.getProveedorTelefono()+"','"+nuevoProveedor.getProveedorNit()+"')}";
                             accionProveedores(sql);
                         }
                 }
@@ -584,7 +584,7 @@ public class ProveedoresViewController implements Initializable {
                                 tipoOperacionProveedores = Operacion.GUARDAR;
                             }else{
                                 tipoOperacionProveedores = Operacion.ACTUALIZAR;
-                                String sql = "{call SpActualizarProveedor('"+codigo+"','"+nuevoProveedor.getProveedorId()+"','"+nuevoProveedor.getProveedorNombre()+"','"+nuevoProveedor.getProveedorTelefono()+"','"+nuevoProveedor.getProveedorNit()+"')}";
+                                String sql = "{call Sp_UpdateProveedor('"+codigo+"','"+nuevoProveedor.getProveedorId()+"','"+nuevoProveedor.getProveedorNombre()+"','"+nuevoProveedor.getProveedorTelefono()+"','"+nuevoProveedor.getProveedorNit()+"')}";
                                 accionProveedores(sql);
                             }
                     }else{
@@ -607,7 +607,7 @@ public class ProveedoresViewController implements Initializable {
             tipoOperacionProveedores = Operacion.CANCELAR;
             accionProveedores();
         }else{
-            String sql = "{call SpEliminarProveedor('"+codigo+"')}";
+            String sql = "{call Sp_DeleteProveedor('"+codigo+"')}";
             tipoOperacionProveedores = Operacion.ELIMINAR;
             accionProveedores(sql);
         }
@@ -629,7 +629,7 @@ public class ProveedoresViewController implements Initializable {
     private void comboFiltro(ActionEvent event) {
         btnBuscar.setDisable(false);
         ArrayList<String> lista = new ArrayList();
-        String sql ="{call SpListarProveedores()}";
+        String sql ="{call Sp_ListProveedor()}";
         int x=0;
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
@@ -668,15 +668,15 @@ public class ProveedoresViewController implements Initializable {
         }else{
             if(cmbFiltroProveedores.getValue().equals("CÓDIGO")){
                 tipoOperacionProveedores = Operacion.BUSCAR;
-                    String sql = "{ call SpBuscarProveedores('"+cmbBuscar.getValue()+"')}";
+                    String sql = "{ call Sp_FindProveedor('"+cmbBuscar.getValue()+"')}";
                     accionProveedores(sql);
             }else if(cmbFiltroProveedores.getValue().equals("NOMBRE")){
                     tipoOperacionProveedores = Operacion.BUSCAR;
-                    String sql = "{ call SpBuscarProveedoresPorNombre('"+cmbBuscar.getValue()+"')}";
+                    String sql = "{ call Sp_FindProveedoresPorNombre('"+cmbBuscar.getValue()+"')}";
                     accionProveedores(sql);
             }else if(cmbFiltroProveedores.getValue().equals("NIT")){
                     tipoOperacionProveedores = Operacion.BUSCAR;
-                    String sql = "{ call SpBuscarProveedoresPorNit('"+cmbBuscar.getValue()+"')}";
+                    String sql = "{ call Sp_FindProveedoresPorNit('"+cmbBuscar.getValue()+"')}";
                     accionProveedores(sql);
             }
         }
@@ -734,81 +734,19 @@ public class ProveedoresViewController implements Initializable {
     private void regresar(MouseEvent event) throws IOException {
          String menu1 = "";
         if(menu.prefsRegresar.get("regresar", "root").equals("menu")){
-            menu1 = "org/moduloFacturacion/view/menuPrincipal.fxml";
+            menu1 = "org/ModuloCotizacion/view/menuPrincipal.fxml";
         }else{
             if(menu.prefsRegresar.get("regresar","root").equals("productos")){
-             menu1 = "org/moduloFacturacion/view/ProductosView.fxml";
+             menu1 = "org/ModuloCotizacion/view/ProductosView.fxml";
             }else{
                 if(menu.prefsRegresar.get("regresar","root").equals("inventario")){
-                    menu1 = "org/moduloFacturacion/view/InventarioView.fxml";
+                    menu1 = "org/ModuloCotizacion/view/InventarioView.fxml";
                 }
             }
         }
         
         cambioScene.Cambio(menu1,(Stage) anchor.getScene().getWindow());
     }
-    
-    
-    
-//    @FXML
-//        private void validarCodigo(KeyEvent event) {
-//            if(tipoOperacionProveedores == Operacion.GUARDAR){
-//
-//                    if(txtTelefonoProveedores.getText().length() <8){
-//                        btnAgregar.setDisable(true);
-//                        Notifications noti = Notifications.create();
-//                        noti.graphic(new ImageView(imgError));
-//                        noti.title("ERROR");
-//                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MENOR A 8 DÍGITOS");
-//                        noti.position(Pos.BOTTOM_RIGHT);
-//                        noti.hideAfter(Duration.seconds(4));
-//                        noti.darkStyle();   
-//                        noti.show();
-//                    }else {
-//                        if(txtTelefonoProveedores.getText().length() >8){
-//                        btnAgregar.setDisable(true);
-//                        Notifications noti = Notifications.create();
-//                        noti.graphic(new ImageView(imgError));
-//                        noti.title("ERROR");
-//                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MAYOR A 8 DÍGITOS");
-//                        noti.position(Pos.BOTTOM_RIGHT);
-//                        noti.hideAfter(Duration.seconds(4));
-//                        noti.darkStyle();   
-//                        noti.show();
-//                        }
-//                        else{
-//                            btnAgregar.setDisable(false);
-//                        }
-//                    }
-//            }else{
-//                    if(txtTelefonoProveedores.getText().length() <8){
-//                        btnAgregar.setDisable(true);
-//                        Notifications noti = Notifications.create();
-//                        noti.graphic(new ImageView(imgError));
-//                        noti.title("ERROR");
-//                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MENOR A 8 DÍGITOS");
-//                        noti.position(Pos.BOTTOM_RIGHT);
-//                        noti.hideAfter(Duration.seconds(4));
-//                        noti.darkStyle();   
-//                        noti.show();
-//                    }else {
-//                        if(txtTelefonoProveedores.getText().length() >8){
-//                        btnAgregar.setDisable(true);
-//                        Notifications noti = Notifications.create();
-//                        noti.graphic(new ImageView(imgError));
-//                        noti.title("ERROR");
-//                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MAYOR A 8 DÍGITOS");
-//                        noti.position(Pos.BOTTOM_RIGHT);
-//                        noti.hideAfter(Duration.seconds(4));
-//                        noti.darkStyle();   
-//                        noti.show();
-//                        }
-//                        else{
-//                            btnAgregar.setDisable(false);
-//                        }
-//                    }
-//            }
-//        }
     
 
     @FXML
