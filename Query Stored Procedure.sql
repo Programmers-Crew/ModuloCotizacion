@@ -33,6 +33,7 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
 -- Campos Especiales
 DELIMITER $$
 	create procedure  Sp_AddCamposEspeciales(nombre varchar(150), precio double)
@@ -97,7 +98,7 @@ DELIMITER $$
 	create procedure Sp_ListTipoCliente()
 		begin 
 			select tc.tipoClienteId  , tc.tipoClienteDesc  , tc.tipoClienteDescuento 
-				from TipoClientea as tc;
+				from TipoCliente as tc;
         end $$
 DELIMITER ;
 

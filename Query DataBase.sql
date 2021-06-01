@@ -158,7 +158,7 @@ create table Cotizacion(
 	CONSTRAINT FK_cotizacionCliente FOREIGN KEY (cotizacionCliente) REFERENCES Clientes(clienteId),
     cotizacionCamposEspeciales int(5) UNSIGNED ZEROFILL,
 
-	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId)
+	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId),
 	CONSTRAINT FK_cotizacionProducto FOREIGN KEY (cotizacionProducto) REFERENCES InventarioProductos(productoId),
 	CONSTRAINT FK_cotizacionCampoEspeciales FOREIGN KEY (cotizacionCamposEspeciales) REFERENCES camposEspeciales(campoId),
 	CONSTRAINT FK_cotizacionFacVenta FOREIGN KEY (cotizacionFacVenta) REFERENCES factorVenta(factorVentaId),
