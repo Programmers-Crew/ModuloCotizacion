@@ -87,6 +87,11 @@ public class MenuPrincipalContoller implements Initializable {
     @FXML
     private JFXButton btnSiguiente;
 
+    @FXML
+    private void promedioProveedores(ActionEvent event) {
+    }
+
+  
     
 
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO};
@@ -868,6 +873,13 @@ public class MenuPrincipalContoller implements Initializable {
                 }
         }
     }
+    
+      @FXML
+    private void parametrosView(ActionEvent event) throws IOException {
+         String inventarioUrl = "org/ModuloCotizacion/view/parametrosView.fxml";
+        cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
+    }
+
 
     //atajos de vista en general
     @FXML
