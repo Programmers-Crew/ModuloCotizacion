@@ -6,40 +6,23 @@ public class InventarioProductos {
     private String proveedorNombre;
     private String productoDesc;
     private String estadoProductoDesc;
-    private Double precioCosto;
-    private String tipoProdDesc;
+    private double productoPrecio;
+    private String categoriaNombre;
     
     public InventarioProductos() {
     }
 
-    public InventarioProductos(String productoId, double inventarioProductoCant, String proveedorNombre, String productoDesc, String estadoProductoDesc, Double precioCosto, String tipoProdDesc) {
+    public InventarioProductos(String productoId, double inventarioProductoCant, String proveedorNombre, String productoDesc, String estadoProductoDesc, double productoPrecio, String categoriaNombre) {
         this.productoId = productoId;
         this.inventarioProductoCant = inventarioProductoCant;
         this.proveedorNombre = proveedorNombre;
         this.productoDesc = productoDesc;
         this.estadoProductoDesc = estadoProductoDesc;
-        this.precioCosto = precioCosto;
-        this.tipoProdDesc = tipoProdDesc;
+        this.productoPrecio = productoPrecio;
+        this.categoriaNombre = categoriaNombre;
     }
 
-
-
-    public Double getPrecioCosto() {
-        return precioCosto;
-    }
-
-    public void setPrecioCosto(Double precioCosto) {
-        this.precioCosto = precioCosto;
-    }
-
-    public Double getProductoPrecio() {
-        return precioCosto;
-    }
-
-    public void setProductoPrecio(Double productoPrecio) {
-        this.precioCosto = productoPrecio;
-    }
-
+    
     public String getProductoId() {
         return productoId;
     }
@@ -54,6 +37,14 @@ public class InventarioProductos {
 
     public void setInventarioProductoCant(double inventarioProductoCant) {
         this.inventarioProductoCant = inventarioProductoCant;
+    }
+
+    public String getProveedorNombre() {
+        return proveedorNombre;
+    }
+
+    public void setProveedorNombre(String proveedorNombre) {
+        this.proveedorNombre = proveedorNombre;
     }
 
     public String getProductoDesc() {
@@ -72,19 +63,22 @@ public class InventarioProductos {
         this.estadoProductoDesc = estadoProductoDesc;
     }
 
-    public String getProveedorNombre() {
-        return proveedorNombre;
+    public double getProductoPrecio() {
+        return productoPrecio;
     }
 
-    public void setProveedorNombre(String proveedorNombre) {
-        this.proveedorNombre = proveedorNombre;
+    public void setProductoPrecio(double productoPrecio) {
+        this.productoPrecio = productoPrecio;
     }
 
-    public String getTipoProdDesc() {
-        return tipoProdDesc;
+    public String getCategoriaNombre() {
+        return categoriaNombre;
     }
 
-    public void setTipoProdDesc(String tipoProdDesc) {
-        this.tipoProdDesc = tipoProdDesc;
+    public void setCategoriaNombre(String categoriaNombre) {
+        this.categoriaNombre = categoriaNombre;
     }
+
+    
+    
 }
