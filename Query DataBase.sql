@@ -34,8 +34,6 @@ create table InventarioProductos(
     productoDesc varchar(50) not null,
 	proveedorId varchar(7) not null,
     categoriaId varchar(7) not null,
-    productoCostoAntiguo decimal(10,2),
-	prductoCosto decimal(10,2) not null,
     productoPrecio decimal(10,2) not null,
     inventarioProductoCant double  not null,
     estadoProductoId tinyint(1) not null,    

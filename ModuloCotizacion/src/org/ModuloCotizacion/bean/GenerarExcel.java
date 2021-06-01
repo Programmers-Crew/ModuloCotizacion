@@ -93,13 +93,13 @@ public class GenerarExcel {
                         celda.setCellValue(listaInventarioProductos.get(x).getEstadoProductoDesc());
                         break;
                     case 5:
-                        celda.setCellValue(listaInventarioProductos.get(x).getPrecioCosto());
+                        celda.setCellValue(listaInventarioProductos.get(x).getProductoPrecio());
                         break;
                     case 6:
-                        celda.setCellValue(listaInventarioProductos.get(x).getTipoProdDesc());
+                        celda.setCellValue(listaInventarioProductos.get(x).getCategoriaNombre());
                         break;
                     case 7:
-                        celda.setCellValue(listaInventarioProductos.get(x).getInventarioProductoCant()*listaInventarioProductos.get(x).getPrecioCosto());
+                        celda.setCellValue(listaInventarioProductos.get(x).getInventarioProductoCant()*listaInventarioProductos.get(x).getProductoPrecio());
                         break;
                 }
                 

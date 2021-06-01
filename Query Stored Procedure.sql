@@ -295,6 +295,7 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
 DELIMITER $$
 	create procedure Sp_UpdatePendienteFac(idBuscado int(5),abonado double, pendiente double)
 		begin
@@ -335,22 +336,20 @@ DELIMITER ;
 #----------------- Entidad Inventario de productos
 
 DELIMITER $$	
-	create procedure Sp_AddInventario(id varchar(7), descripcion varchar(30), proveedor varchar(7), categoria varchar(7), costo double, precio double,cantidad double, estado int)
+	create procedure Sp_AddInventario(id varchar(7), descripcion varchar(30), proveedor varchar(7), categoria varchar(7), precio double,cantidad double, estado int)
 		BEGIN
-			insert into InventarioProductos(productoId ,productoDesc ,proveedorId ,categoriaId,prductoCosto ,productoPrecio ,inventarioProductoCant ,estadoProductoId)
-				values(id, descripcion, proveedor, categoria, costo, precio, cantidad, estado);
+			insert into InventarioProductos(productoId ,productoDesc ,proveedorId ,categoriaId ,productoPrecio ,inventarioProductoCant ,estadoProductoId)
+				values(id, descripcion, proveedor, categoria, precio, cantidad, estado);
         END $$
 DELIMITER ;
 
 
 DELIMITER $$
-	create procedure Sp_UpdateInventarioProducto(idBuscado varchar(7), descripcion varchar(30), costo double, precio double,cantidad double, estado int)
+	create procedure Sp_UpdateInventarioProducto(idBuscado varchar(7), descripcion varchar(30), precio double, estado int)
 		BEGIN
 			update InventarioProductos
 				set  productoDesc = descripcion,
-					 prductoCosto = costo,
 					 productoPrecio = precio,
-                     inventarioProductoCant = cantidad,
                      estadoProductoId = estado
 					where productoId = idBuscado;
         END $$
@@ -366,61 +365,172 @@ DELIMITER ;
 
 
 DELIMITER $$
+	create procedure Sp_SumarInventar(idBuscado varchar(7), cantidadSumar double)
+		begin 
+			update InventarioProductos 
+				set inventarioProductoCant = inventarioProductoCant + cantidadSumar
+			where productoId = idBuscado;
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_RestarInventar(idBuscado varchar(7), cantidadSumar double)
+		begin 
+			update InventarioProductos 
+				set inventarioProductoCant = inventarioProductoCant - cantidadSumar
+			where productoId = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpDesactivarProd()
+		begin
+			update inventarioproductos as ip
+				set estadoProductoId = 2
+					where inventarioProductoCant < 1;
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
 	create procedure Sp_ListInventarioProducto()
 		BEGIN
 			select
-				p.productoId,
+				ip.productoId,
                 ip.inventarioProductoCant,
                 pr.proveedorNombre,
-                p.productoDesc,
+                ip.productoDesc,
                 ep.estadoProductoDesc,
-                p.productoPrecio,
-                p.precioCosto,
+                ip.productoPrecio,
                 c.categoriaNombre
 		from
 			InventarioProductos as ip
 		inner join EstadoProductos as ep
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
-			on p.proveedorId = pr.proveedorId
+			on ip.proveedorId = pr.proveedorId
 		inner join categoriaproductos as c
 			on ip.categoriaId = c.categoriaId
         group by 
-         p.productoId
+         ip.productoId
 		order by         
-			p.productoId ASC;
+			ip.productoId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindInventarioProducto(idBuscado varchar(7))
+		BEGIN
+			select
+				ip.productoId,
+                ip.inventarioProductoCant,
+                pr.proveedorId,
+                pr.proveedorNombre,
+                ip.productoDesc,
+                ep.estadoProductoDesc,
+                ip.productoPrecio,
+                c.categoriaNombre
+		from
+			InventarioProductos as ip
+		inner join EstadoProductos as ep
+			on ip.estadoProductoId = ep.estadoProductoId
+		inner join Proveedores as pr
+			on ip.proveedorId = pr.proveedorId
+		inner join categoriaproductos as c
+			on ip.categoriaId = c.categoriaId
+		where ip.productoId = idBuscado
+        group by 
+         ip.productoId
+		order by         
+			ip.productoId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_FindInventarioProductoNombre(idBuscado varchar(50))
+		BEGIN
+			select
+				ip.productoId,
+                ip.inventarioProductoCant,
+                pr.proveedorId,
+                pr.proveedorNombre,
+                ip.productoDesc,
+                ep.estadoProductoDesc,
+                ip.productoPrecio,
+                c.categoriaNombre
+		from
+			InventarioProductos as ip
+		inner join EstadoProductos as ep
+			on ip.estadoProductoId = ep.estadoProductoId
+		inner join Proveedores as pr
+			on ip.proveedorId = pr.proveedorId
+		inner join categoriaproductos as c
+			on ip.categoriaId = c.categoriaId
+		where ip.productoDesc = idBuscado
+        group by 
+         ip.productoId
+		order by         
+			ip.productoId ASC;
         END $$
 DELIMITER ;
 
 DELIMITER $$
-	create procedure Sp_FindInventarioProducto()
+	create procedure Sp_FindInventarioProveedor(idBuscado varchar(50))
 		BEGIN
 			select
-				p.productoId,
+				ip.productoId,
                 ip.inventarioProductoCant,
                 pr.proveedorNombre,
-                p.productoDesc,
+                ip.productoDesc,
                 ep.estadoProductoDesc,
-                p.productoPrecio,
-                p.precioCosto,
+                ip.productoPrecio,
                 c.categoriaNombre
 		from
 			InventarioProductos as ip
 		inner join EstadoProductos as ep
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
-			on p.proveedorId = pr.proveedorId
+			on ip.proveedorId = pr.proveedorId
+		inner join categoriaproductos as c
+			on ip.categoriaId = c.categoriaId
+		where pr.proveedorNombre = idBuscado
+        group by 
+         ip.productoId
+		order by         
+			ip.productoId ASC;
+        END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListInventarioProv()
+		BEGIN
+			select
+				ip.productoId,
+                ip.inventarioProductoCant,
+                pr.proveedorNombre,
+                ip.productoDesc,
+                ep.estadoProductoDesc,
+                ip.productoPrecio,
+                c.categoriaNombre
+		from
+			InventarioProductos as ip
+		inner join EstadoProductos as ep
+			on ip.estadoProductoId = ep.estadoProductoId
+		inner join Proveedores as pr
+			on ip.proveedorId = pr.proveedorId
 		inner join categoriaproductos as c
 			on ip.categoriaId = c.categoriaId
         group by 
-         p.productoId
+			pr.proveedorNombre
 		order by         
 			p.productoId ASC;
         END $$
 DELIMITER ;
-
-
 -- CATEGORIA
+
 DELIMITER $$
 	create procedure Sp_ListCategoriaProducto()
 		BEGIN
@@ -463,7 +573,7 @@ DELIMITER ;
 DELIMITER $$
 	create procedure Sp_FindCategoriaProductosNombre(nombre varchar(50))
 		BEGIN
-			select categoriaNombre, categoriaId
+			select categoriaId, categoriaNombre
             from categoriaproductos
 				where categoriaNombre = nombre
 					order by categoriaId asc;
@@ -1054,11 +1164,13 @@ DELIMITER ;
 
 
 -- insert obligatorios 
+/*
 insert into tipousuario values(0,"Administrador"),(1,"Empleado");
 insert into usuarios values(0,"admin", "admin", 1);
 
 
-
+insert into estadoproductos values(1,'AGOTADO'),(2,'EXISTENCIA') 
+*/
 
 
 
