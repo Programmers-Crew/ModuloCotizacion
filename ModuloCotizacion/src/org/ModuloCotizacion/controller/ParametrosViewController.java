@@ -37,6 +37,7 @@ import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
 import org.ModuloCotizacion.bean.CamposEspeciales;
 import org.ModuloCotizacion.bean.FactorVenta;
+import org.ModuloCotizacion.bean.ModosPago;
 import org.ModuloCotizacion.bean.TipoCliente;
 import org.ModuloCotizacion.bean.ValidarStyle;
 import org.ModuloCotizacion.db.Conexion;
@@ -94,10 +95,24 @@ public class ParametrosViewController implements Initializable {
     ObservableList<FactorVenta>listaFactor;
     ObservableList<String>listaCombo;
     ObservableList<String>listaFiltro;
-   
+
+    @FXML
+    private void validarNumeroProveedores(KeyEvent event) {
+    }
+
+    @FXML
+    private void validarTelefono(KeyEvent event) {
+    }
+
+    @FXML
+    private void codigoBuscadoProveedores(MouseEvent event) {
+    }
+
+    @FXML
+    private void atajosProveedores(KeyEvent event) {
+    }
 
   
-    
     
     public enum OperacionFactor{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO};
     public OperacionFactor tipoOperacionFactor= OperacionFactor.NINGUNO;
@@ -632,83 +647,8 @@ public class ParametrosViewController implements Initializable {
     
     
     
-    @FXML
-    private ComboBox<?> cmbBuscar;
-    @FXML
-    private JFXTextField txtCodigoProveedores;
-    @FXML
-    private JFXButton btnAgregar;
-    @FXML
-    private JFXButton btnEliminar;
-    @FXML
-    private JFXButton btnEditar;
-    @FXML
-    private JFXTextField txtNitProveedores1;
-    @FXML
-    private TableView<?> tblProveedores;
-    @FXML
-    private TableColumn<?, ?> colCodigoProveedores;
-    @FXML
-    private TableColumn<?, ?> colNombreProveedores;
-    @FXML
-    private JFXButton btnBuscar;
-    @FXML
-    private ComboBox<?> cmbFiltroProveedores;
 
-    
- 
-
-    @FXML
-    private void comboFiltro(ActionEvent event) {
-        
-    }
-
-    
-
-    @FXML
-    private void atajosProveedores(KeyEvent event) {
-    }
-
-
-    @FXML
-    private void validarTelefono(KeyEvent event) {
-    }
-
-    @FXML
-    private void btnAgregar(MouseEvent event) {
-    }
-
-    @FXML
-    private void btnEliminar(MouseEvent event) {
-    }
-
-    @FXML
-    private void btnEditar(MouseEvent event) {
-    }
-
-
-    @FXML
-    private void cmbBuscar(ActionEvent event) {
-    }
-
-    @FXML
-    private void validarNumeroProveedores(KeyEvent event) {
-    }
-
-    @FXML
-    private void btnBuscar(MouseEvent event) {
-    }
-    
-    @FXML
-    private void codigoBuscadoProveedores(MouseEvent event) {
-    }
-
-    @FXML
-    private void seleccionarElementos(MouseEvent event) {
-    }
-    
-    
-    
+   
     
     
     
@@ -1401,7 +1341,7 @@ public class ParametrosViewController implements Initializable {
     
     
     public void cargarDatosTipoCliente(){
-        tblTipoCliente.setItems(getCamposEspeciales());
+        tblTipoCliente.setItems(getTipoCliente());
         colCodigoTipoCliente.setCellValueFactory(new PropertyValueFactory("tipoClienteId"));
         colDescripcionTipoCliente.setCellValueFactory(new PropertyValueFactory("tipoClienteDesc"));
         colDescuentoTipoCliente.setCellValueFactory(new PropertyValueFactory("tipoClienteDescuento"));
@@ -1597,7 +1537,7 @@ public class ParametrosViewController implements Initializable {
                                 break;
                             }
                         }
-                        activateButtonsCamposEspeciales();
+                        activateButtonsTipoCliente();
                         noti.graphic(new ImageView(imgCorrecto));
                         noti.title("OPERACIÓN EXITOSA");
                         noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
@@ -1706,11 +1646,11 @@ public class ParametrosViewController implements Initializable {
                noti.darkStyle();   
                noti.show();
        }else{
-           if(txtDescripciónTipoCliente.getText().length() > 25 || txtDescuentoTipoCliente.getText().length() > 9){
+           if(txtDescripciónTipoCliente.getText().length() > 150){
                Notifications noti = Notifications.create();
                noti.graphic(new ImageView(imgError));
                noti.title("ERROR");
-               noti.text("CAMPOS FUERA DE RANGO, NOMBRE NO DEBE PASAR LOS 25 CARACTERES Y EL NIT NO DEBE PASAR LOS 9 CARACTERES");
+               noti.text("CAMPOS FUERA DE RANGO, DESCRIPCIÓN NO PUEDE PASAR LOS 150 CARACTERES");
                noti.position(Pos.BOTTOM_RIGHT);
                noti.hideAfter(Duration.seconds(4));
                noti.darkStyle();   
@@ -1719,7 +1659,7 @@ public class ParametrosViewController implements Initializable {
                TipoCliente tipoCliente = new TipoCliente();
                 tipoCliente.setTipoClienteDesc(txtDescripciónTipoCliente.getText());
                 tipoCliente.setTipoClienteDescuento(Double.parseDouble(txtDescuentoTipoCliente.getText()));
-               String sql = "{call Sp_UpdateTipoCliente('"+codigoEspecial+"','"+tipoCliente.getTipoClienteDesc()+"','"+tipoCliente.getTipoClienteDescuento()+"')}";
+               String sql = "{call Sp_UpdateTipoCliente('"+codigoTipoCliente+"','"+tipoCliente.getTipoClienteDesc()+"','"+tipoCliente.getTipoClienteDescuento()+"')}";
                tipoOperacionTipoCliente = OperacionTipoCliente.ACTUALIZAR;
                accionTipoCliente(sql);
            }
@@ -1730,7 +1670,7 @@ public class ParametrosViewController implements Initializable {
     private void btnBuscarTipoCliente(MouseEvent event) {
          String sql = "";
         tipoOperacionTipoCliente = OperacionTipoCliente.BUSCAR;
-        if(cmbFiltroEspecial.getValue().equals("")){
+        if(cmbFiltroTipoCliente.getValue().equals("")){
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgError));
             noti.title("ERROR");
@@ -1742,11 +1682,11 @@ public class ParametrosViewController implements Initializable {
         }else{
             if(cmbFiltroTipoCliente.getValue().equals("CÓDIGO")){
                 
-                sql = "{call Sp_SearchCamposEspeciales('"+cmbBuscarTipoCliente.getValue()+"')}";
+                sql = "{call Sp_SearchTipoCliente('"+cmbBuscarTipoCliente.getValue()+"')}";
                 
             }else{
                 
-                sql = "{call Sp_SearchNameCamposEspeciales('"+cmbBuscarTipoCliente.getValue()+"')}";
+                sql = "{call Sp_SearchTipoClienteName('"+cmbBuscarTipoCliente.getValue()+"')}";
             }
             
             accionTipoCliente(sql);
@@ -1814,11 +1754,11 @@ public class ParametrosViewController implements Initializable {
         }else{
             if(cmbFiltroTipoCliente.getValue().equals("CÓDIGO")){
                 
-                sql = "{call Sp_SearchCamposEspeciales('"+cmbBuscarEspecial.getValue()+"')}";
+                sql = "{call Sp_SearchTipoCliente('"+cmbBuscarTipoCliente.getValue()+"')}";
                 
             }else{
                 
-                sql = "{call Sp_SearchNameCamposEspeciales('"+cmbBuscarEspecial.getValue()+"')}";
+                sql = "{call Sp_SearchTipoClienteName('"+cmbBuscarTipoCliente.getValue()+"')}";
             }
             
             accionTipoCliente(sql);
@@ -1827,6 +1767,581 @@ public class ParametrosViewController implements Initializable {
 
     @FXML
     private void tipoClienteInitialize(Event event) {
+        cargarDatosTipoCliente();
+        ArrayList<String> lista = new ArrayList();
+        cmbFiltroTipoCliente.setValue("");
+        lista.add(0,"CÓDIGO");
+        lista.add(1,"DESCRIPCIÓN");
+        disableTipoCliente();
+        listaFiltroTipoCliente = FXCollections.observableList(lista);
+        cmbFiltroTipoCliente.setItems(listaFiltroTipoCliente);
+        animacion.animacion(anchor1, anchor2);
+    }
+    
+    
+    @FXML
+    private void seleccionarElementosTipoCliente(MouseEvent event) {
+        int index = tblTipoCliente.getSelectionModel().getSelectedIndex();
+        try{
+            txtCodigoTipoCliente.setText(String.valueOf(colCodigoTipoCliente.getCellData(index)));
+            txtDescripciónTipoCliente.setText(colDescripcionTipoCliente.getCellData(index));
+            txtDescuentoTipoCliente.setText(String.valueOf(colDescuentoTipoCliente.getCellData(index)));
+            codigoTipoCliente = colCodigoTipoCliente.getCellData(index);
+            activateButtonsTipoCliente();
+            activarTextTipoCliente();
+        }catch(Exception e){
+        
+        }
+    }
+   
+    
+    
+    
+    
+    // ================================================= MODOS DE PAGO =================================================================
+    
+     @FXML
+    private JFXTextField txtCodigoModosPagos;
+    @FXML
+    private JFXButton btnAgregarModosPago;
+    @FXML
+    private JFXButton btnEliminarModosPago;
+    @FXML
+    private JFXButton btnEditarModosPago;
+    @FXML
+    private JFXTextField txtDescModosPago;
+    @FXML
+    private JFXButton btnBuscarModosPago;
+    @FXML
+    private ComboBox<String> cmbFiltroModosPagos;
+    @FXML
+    private TableView<ModosPago> tblModosPago;
+    @FXML
+    private TableColumn<ModosPago, Integer> colCodigoModosPago;
+    @FXML
+    private TableColumn<ModosPago, String> colDescModoPago;
+    @FXML
+    private ComboBox<String> cmbBuscarModosPago;
+    
+    
+     int codigoModoPago=0;
+    
+    ObservableList<ModosPago>listaModosPago;
+    ObservableList<String>listaComboModosPago;
+    ObservableList<String>listaFiltroModosPago;
+    
+    public enum OperacionModoPago{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO};
+    public OperacionModoPago tipoOperacionModoPago = OperacionModoPago.NINGUNO;
+    
+    
+    public void disableModoPago(){
+        txtCodigoModosPagos.setDisable(true);
+        txtDescModosPago.setDisable(true);
+    }
+    
+    public void limpiarModoPago(){
+        txtCodigoModosPagos.setText("");
+        txtDescModosPago.setText("");
+    }
+    
+    public void disableButtonsModoPago(){
+        btnAgregarModosPago.setDisable(true);
+        btnEliminarModosPago.setDisable(true);
+        btnEditarModosPago.setDisable(true);
+    }
+    
+    public void activateButtonsModoPago(){
+        btnAgregarModosPago.setDisable(false);
+        btnEliminarModosPago.setDisable(false);
+        btnEditarModosPago.setDisable(false);
+    }
+     
+    public void activarTextModoPago(){
+        txtCodigoModosPagos.setDisable(false);
+        txtDescModosPago.setDisable(false);
+        txtCodigoModosPagos.setEditable(true);
+        txtDescModosPago.setEditable(true);
+    }
+    
+     
+    public ObservableList getModoPago(){
+        ArrayList<ModosPago> lista = new ArrayList();
+        String sql = "{call Sp_ListModoPago()}";
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                lista.add(new ModosPago(
+                        rs.getInt("modoPagoId"),
+                        rs.getString("modoPagoDesc")
+                
+                ));
+            }
+           
+        }catch(SQLException ex){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR");
+            noti.text("NO SE HA PODIDO CARGAR LA DB "+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }
+        
+        return listaModosPago = FXCollections.observableList(lista);
+        
+    }
+    
+    
+    public void cargarDatosModoPago(){
+        tblModosPago.setItems(getModoPago());
+        colCodigoModosPago.setCellValueFactory(new PropertyValueFactory("modoPagoId"));
+        colDescModoPago.setCellValueFactory(new PropertyValueFactory("modoPagoDesc"));
+    }
+    
+    public void accionModoPago(){
+        switch(tipoOperacionModoPago){
+            case AGREGAR:
+                tipoOperacionModoPago = OperacionModoPago.GUARDAR;
+                disableButtonsModoPago();
+                btnAgregarModosPago.setText("GUARDAR");
+                btnEliminarModosPago.setText("CANCELAR");
+                btnEliminarModosPago.setDisable(false);
+                activarTextModoPago();
+                limpiarModoPago();
+                btnAgregarModosPago.setDisable(false);
+                btnBuscarModosPago.setDisable(true);
+                break;
+            case CANCELAR:
+                tipoOperacionModoPago = OperacionModoPago.NINGUNO;
+                disableButtonsModoPago();
+                disableModoPago();
+                
+                btnAgregarModosPago.setText("AGREGAR");
+                btnEliminarModosPago.setText("ELIMINAR");
+                limpiarModoPago();
+                btnBuscarModosPago.setDisable(true);
+                btnAgregarModosPago.setDisable(false);
+                break;
+        }
+    }
+    
+    public void accionModoPago(String sql){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        PreparedStatement ps;
+        ResultSet rs;
+        Notifications noti = Notifications.create();
+        ButtonType buttonTypeSi = new ButtonType("Si");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        
+        switch(tipoOperacionModoPago){
+            case GUARDAR:
+                alert.setTitle("AGREGAR REGISTRO");
+                alert.setHeaderText("AGREGAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea guardar este registro?");
+                
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get() == buttonTypeSi ){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA AGREGADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                        cargarDatosModoPago();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL AGREGAR");
+                        noti.text("HA OCURRIDO UN ERROR AL GUARDAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                    }
+                }else{
+                    
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA AGREGADO EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                    accionModoPago();
+                }
+                break;
+            case ELIMINAR:
+                 alert.setTitle("ELIMINAR REGISTRO");
+                alert.setHeaderText("ELIMINAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea Eliminar este registro?");
+               
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> resultEliminar = alert.showAndWait();
+                
+                if(resultEliminar.get() == buttonTypeSi){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA ELIMINADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        cargarDatosModoPago();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        
+                        
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL ELIMINAR");
+                        noti.text("HA OCURRIDO UN ERROR AL ELIMINAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                    }
+                }else{
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA ELIMINADO EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                    accionModoPago();
+                }
+                break;
+            case ACTUALIZAR:
+                alert.setTitle("ACTUALIZAR REGISTRO");
+                alert.setHeaderText("ACTUALIZAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea Actualizar este registro?");
+               
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> resultactualizar = alert.showAndWait();
+                if(resultactualizar.get() == buttonTypeSi ){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA ACTUALIZADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                        cargarDatosModoPago();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL ACTUALIZAR");
+                        noti.text("HA OCURRIDO UN ERROR AL ACTUALIZAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                    }
+                }
+                break;
+            case BUSCAR:
+                 try{
+                    ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                    rs = ps.executeQuery();
+                    while(rs.next()){
+                        txtCodigoModosPagos.setText(rs.getString("modoPagoId"));
+                        txtDescModosPago.setText(rs.getString("modoPagoDesc"));
+                        codigoModoPago = rs.getInt("modoPagoId");
+                    }                    
+                    if(rs.first()){
+                        for(int i=0; i<tblModosPago.getItems().size(); i++){
+                            if(colCodigoModosPago.getCellData(i) == codigoModoPago){
+                                tblModosPago.getSelectionModel().select(i);
+                                break;
+                            }
+                        }
+                        activateButtonsModoPago();
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        activarTextModoPago();
+                        tipoOperacionModoPago = OperacionModoPago.NINGUNO;
+                        
+                    }else{
+                         
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL BUSCAR");
+                        noti.text("NO SE HA ENCONTRADO EN LA BASE DE DATOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                        accionModoPago();
+                    }
+                }catch(SQLException ex){
+                    ex.printStackTrace();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR AL BUSCAR");
+                    noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+                    accionModoPago();
+                }
+                break;
+        }
+        
+    
+    }
+    
+    
+    
+    
+    
+    @FXML
+    private void btnAgregarModosPago(MouseEvent event) {
+        if(tipoOperacionModoPago == OperacionModoPago.GUARDAR){
+            if(txtDescModosPago.getText().isEmpty()){
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("HAY CAMPOS VACÍOS");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();   
+                noti.show();
+            }else{
+                String sql="";
+                if(txtDescModosPago.getText().length() > 150){
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR");
+                    noti.text("CAMPOS FUERA DE RANGO, DESCRIPCIÓN NO DEBE PASAR LOS 150 CARACTERES");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();
+                }else{
+                    ModosPago modoPago = new ModosPago();
+                    modoPago.setModoPagoDesc(txtDescModosPago.getText());
+                    
+                    sql = "{call Sp_AddModoPago('"+modoPago.getModoPagoDesc()+"')}";                        
+                    
+                    
+                    tipoOperacionModoPago = OperacionModoPago.GUARDAR;
+                    accionModoPago(sql);
+                }
+            }
+        }else{
+            tipoOperacionModoPago = OperacionModoPago.AGREGAR;
+            accionModoPago();
+        }
     }
 
+    @FXML
+    private void btnEliminarModosPago(MouseEvent event) {
+         if(tipoOperacionModoPago == tipoOperacionModoPago.GUARDAR){
+            tipoOperacionModoPago = OperacionModoPago.CANCELAR;
+            accionModoPago();
+        }else{
+             
+            String sql = "{call Sp_DeleteModoPago('"+codigoModoPago+"')}";
+            tipoOperacionModoPago = OperacionModoPago.ELIMINAR;
+            accionModoPago(sql);
+        }
+    }
+
+    @FXML
+    private void btnEditarModosPago(MouseEvent event) {
+        if(txtDescModosPago.getText().isEmpty()){
+            Notifications noti = Notifications.create();
+               noti.graphic(new ImageView(imgError));
+               noti.title("ERROR");
+               noti.text("HAY CAMPOS VACÍOS");
+               noti.position(Pos.BOTTOM_RIGHT);
+               noti.hideAfter(Duration.seconds(4));
+               noti.darkStyle();   
+               noti.show();
+       }else{
+           if(txtDescModosPago.getText().length() > 150){
+               Notifications noti = Notifications.create();
+               noti.graphic(new ImageView(imgError));
+               noti.title("ERROR");
+               noti.text("CAMPOS FUERA DE RANGO, DESCRIPCIÓN NO PUEDE PASAR LOS 150 CARACTERES");
+               noti.position(Pos.BOTTOM_RIGHT);
+               noti.hideAfter(Duration.seconds(4));
+               noti.darkStyle();   
+               noti.show();
+           }else{
+               ModosPago modoPago = new ModosPago();
+               modoPago.setModoPagoDesc(txtDescModosPago.getText());
+                
+               String sql = "{call Sp_UpdateModoPago('"+codigoModoPago+"','"+modoPago.getModoPagoDesc()+"')}";
+               tipoOperacionModoPago = OperacionModoPago.ACTUALIZAR;
+               accionModoPago(sql);
+           }
+       }
+    }
+
+    @FXML
+    private void btnBuscarModosPago(MouseEvent event) {
+            String sql = "";
+        tipoOperacionModoPago = OperacionModoPago.BUSCAR;
+        if(cmbFiltroModosPagos.getValue().equals("")){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR");
+            noti.text("El CAMPO DE BUSQUEDA ESTA VACÍO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }else{
+            if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
+                
+                sql = "{call Sp_SearchModoPago('"+cmbBuscarTipoCliente.getValue()+"')}";
+                
+            }else{
+                
+                sql = "{call Sp_SearchModoPagoName('"+cmbBuscarTipoCliente.getValue()+"')}";
+            }
+            
+            accionModoPago(sql);
+        } 
+    }
+
+    
+    @FXML
+    private void comboFiltroModoPago(ActionEvent event) {
+        cmbBuscarModosPago.setDisable(false);
+        btnBuscarModosPago.setDisable(false);
+        ArrayList<String> lista = new ArrayList();
+        String sql = "{call Sp_ListModoPago()}";
+        if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
+            try{
+                
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                ResultSet rs = ps.executeQuery();
+                
+                while(rs.next()){
+                    
+                    lista.add(rs.getString("modoPagoId"));
+                    
+                }
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
+        }else{
+            if(cmbFiltroModosPagos.getValue().equals("DESCRIPCIÓN")){
+                try{
+                
+                    PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                    ResultSet rs = ps.executeQuery();
+
+                    while(rs.next()){
+                        
+                        lista.add(rs.getString("modoPagoDesc"));
+                        
+                    }
+                }catch(SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void seleccionarElementosModos(MouseEvent event) {
+        int index = tblModosPago.getSelectionModel().getSelectedIndex();
+        try{
+            txtCodigoModosPagos.setText(String.valueOf(colCodigoModosPago.getCellData(index)));
+            txtDescModosPago.setText(colDescModoPago.getCellData(index));
+            codigoModoPago = colCodigoModosPago.getCellData(index);
+            activateButtonsModoPago();
+            activarTextModoPago();
+        }catch(Exception e){
+        
+        }
+    }
+
+    @FXML
+    private void cmbBuscarModoPago(ActionEvent event) {
+            String sql = "";
+        tipoOperacionModoPago = OperacionModoPago.BUSCAR;
+        if(cmbFiltroModosPagos.getValue().equals("")){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR");
+            noti.text("El CAMPO DE BUSQUEDA ESTA VACÍO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }else{
+            if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
+                
+                sql = "{call Sp_SearchModoPago('"+cmbBuscarTipoCliente.getValue()+"')}";
+                
+            }else{
+                
+                sql = "{call Sp_SearchModoPagoName('"+cmbBuscarTipoCliente.getValue()+"')}";
+            }
+            
+            accionModoPago(sql);
+        } 
+    }
+    
+      @FXML
+    private void ModosPagoInitialize(Event event) {
+         cargarDatosModoPago();
+        ArrayList<String> lista = new ArrayList();
+        cmbFiltroModosPagos.setValue("");
+        lista.add(0,"CÓDIGO");
+        lista.add(1,"DESCRIPCIÓN");
+        disableTipoCliente();
+        listaFiltroModosPago = FXCollections.observableList(lista);
+        cmbFiltroModosPagos.setItems(listaFiltroModosPago);
+        animacion.animacion(anchor1, anchor2);
+    }
+
+  
+    
 }

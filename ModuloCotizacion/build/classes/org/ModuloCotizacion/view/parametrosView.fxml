@@ -237,9 +237,9 @@
                                           <TableColumn fx:id="colDescuentoEspecial" prefWidth="136.800048828125" text="DESCUENTO" />
                                        </columns>
                                     </TableView>
-                                    <JFXButton fx:id="btnBuscarEspecial" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscarEspecial" prefHeight="66.0" prefWidth="73.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
-                                    <ComboBox fx:id="cmbFiltroEspecial" editable="true" layoutX="14.0" layoutY="25.0" onAction="#comboFiltroEspecial" onMouseClicked="#codigoBuscadoProveedores" prefHeight="27.0" prefWidth="383.0" promptText="NOMBRE O CÓDIGO" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="25.0" />
-                                    <ComboBox fx:id="cmbBuscarEspecial" editable="true" layoutX="14.0" layoutY="64.0" onAction="#cmbBuscarEspecial" prefHeight="27.0" prefWidth="408.0" promptText="INGRESE EL VALOR A BUSCAR" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="64.0" />
+                                    <JFXButton fx:id="btnBuscarEspecial" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscarEspecial" prefHeight="66.0" prefWidth="103.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
+                                    <ComboBox fx:id="cmbFiltroEspecial" editable="true" layoutX="14.0" layoutY="25.0" onAction="#comboFiltroEspecial" onMouseClicked="#codigoBuscadoProveedores" prefHeight="27.0" prefWidth="567.0" promptText="NOMBRE O CÓDIGO" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="135.0" AnchorPane.topAnchor="25.0" />
+                                    <ComboBox fx:id="cmbBuscarEspecial" editable="true" layoutX="14.0" layoutY="64.0" onAction="#cmbBuscarEspecial" prefHeight="27.0" prefWidth="566.0" promptText="INGRESE EL VALOR A BUSCAR" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="136.0" AnchorPane.topAnchor="64.0" />
                                  </children>
                               </AnchorPane>
                            </items>
@@ -258,7 +258,7 @@
                   <Tooltip text="Campos Especiales" />
                </tooltip>
             </Tab>
-            <Tab styleClass="tabItem">
+            <Tab onSelectionChanged="#tipoClienteInitialize" styleClass="tabItem">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" onKeyReleased="#atajosProveedores" prefHeight="180.0" prefWidth="200.0" styleClass="anchorOscuro">
                      <children>
@@ -281,8 +281,8 @@
                                                 </HBox>
                                                 <Label layoutX="14.0" layoutY="40.0" text="CÓDIGO:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="130.6" AnchorPane.topAnchor="46.0" />
                                                 <Label layoutX="20.0" layoutY="110.0" prefHeight="18.0" prefWidth="61.0" text="DESCRIPCIÓN:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="119.0" AnchorPane.topAnchor="110.0" />
-                                                <JFXTextField fx:id="txtCodigoProveedores" layoutX="14.0" layoutY="58.0" onKeyReleased="#validarNumeroProveedores" prefHeight="26.0" prefWidth="170.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0" />
-                                                <JFXTextField fx:id="txtNitProveedores" layoutX="16.0" layoutY="225.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="200.0" />
+                                                <JFXTextField fx:id="txtCodigoTipoCliente" layoutX="14.0" layoutY="58.0" onKeyReleased="#validarNumeroProveedores" prefHeight="26.0" prefWidth="170.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0" />
+                                                <JFXTextField fx:id="txtDescuentoTipoCliente" layoutX="16.0" layoutY="225.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="200.0" />
                                                 <HBox alignment="CENTER" layoutX="-2.0" layoutY="312.0" prefHeight="27.0" prefWidth="431.0" AnchorPane.leftAnchor="-6.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="312.0">
                                                    <children>
                                                       <GridPane prefHeight="28.0" prefWidth="250.0">
@@ -295,7 +295,7 @@
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                          </rowConstraints>
                                                          <children>
-                                                            <JFXButton fx:id="btnAgregar" buttonType="RAISED" onMouseClicked="#btnAgregar" styleClass="boton" text="AGREGAR" textFill="WHITE">
+                                                            <JFXButton fx:id="btnAgregarTipoCliente" buttonType="RAISED" onMouseClicked="#btnAgregarTipoCliente" styleClass="boton" text="AGREGAR" textFill="WHITE">
                                                                <GridPane.margin>
                                                                   <Insets />
                                                                </GridPane.margin>
@@ -303,7 +303,7 @@
                                                                   <Font size="11.0" />
                                                                </font>
                                                             </JFXButton>
-                                                            <JFXButton fx:id="btnEliminar" buttonType="RAISED" onMouseClicked="#btnEliminar" prefHeight="24.0" prefWidth="83.0" styleClass="boton" text="ELIMINAR" textFill="WHITE" GridPane.columnIndex="1">
+                                                            <JFXButton fx:id="btnEliminarTipoCliente" buttonType="RAISED" onMouseClicked="#btnEliminarTipoCliente" prefHeight="24.0" prefWidth="83.0" styleClass="boton" text="ELIMINAR" textFill="WHITE" GridPane.columnIndex="1">
                                                                <GridPane.margin>
                                                                   <Insets />
                                                                </GridPane.margin>
@@ -311,7 +311,7 @@
                                                                   <Font size="11.0" />
                                                                </font>
                                                             </JFXButton>
-                                                            <JFXButton fx:id="btnEditar" buttonType="RAISED" onMouseClicked="#btnEditar" prefHeight="24.0" prefWidth="71.0" styleClass="boton" text="EDITAR" textFill="WHITE" GridPane.columnIndex="2">
+                                                            <JFXButton fx:id="btnEditarTipoCliente" buttonType="RAISED" onMouseClicked="#btnEditarTipoCliente" prefHeight="24.0" prefWidth="71.0" styleClass="boton" text="EDITAR" textFill="WHITE" GridPane.columnIndex="2">
                                                                <font>
                                                                   <Font size="11.0" />
                                                                </font>
@@ -321,7 +321,7 @@
                                                    </children>
                                                 </HBox>
                                                 <Label layoutX="20.0" layoutY="175.0" text="DESCUENTO:" AnchorPane.leftAnchor="15.0" />
-                                                <JFXTextField fx:id="txtNitProveedores1" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <JFXTextField fx:id="txtDescripciónTipoCliente" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                              </children>
                                              <padding>
                                                 <Insets left="5.0" />
@@ -333,19 +333,19 @@
                               </AnchorPane>
                               <AnchorPane fx:id="anchor2" minHeight="0.0" minWidth="0.0" prefHeight="441.0" prefWidth="504.0" styleClass="anchorOscuro">
                                  <children>
-                                    <TableView fx:id="tblProveedores" layoutX="15.0" layoutY="131.0" onMouseClicked="#seleccionarElementos" prefHeight="527.0" prefWidth="685.0" AnchorPane.bottomAnchor="104.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="131.0">
+                                    <TableView fx:id="tblTipoCliente" layoutX="15.0" layoutY="128.0" onMouseClicked="#seleccionarElementosTipoCliente" prefHeight="527.0" prefWidth="685.0" AnchorPane.bottomAnchor="107.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="128.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                        <columns>
-                                          <TableColumn fx:id="colCodigoProveedores" prefWidth="76.00001525878906" text="CÓDIGO" />
-                                          <TableColumn fx:id="colNombreProveedores" prefWidth="154.4000244140625" text="DESCRIPCIÓN" />
-                                          <TableColumn fx:id="colNitProveedores" prefWidth="136.800048828125" text="DESCUENTO" />
+                                          <TableColumn fx:id="colCodigoTipoCliente" prefWidth="76.00001525878906" text="CÓDIGO" />
+                                          <TableColumn fx:id="colDescripcionTipoCliente" prefWidth="154.4000244140625" text="DESCRIPCIÓN" />
+                                          <TableColumn fx:id="colDescuentoTipoCliente" prefWidth="136.800048828125" text="DESCUENTO" />
                                        </columns>
                                     </TableView>
-                                    <JFXButton fx:id="btnBuscar" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscar" prefHeight="66.0" prefWidth="73.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
-                                    <ComboBox fx:id="cmbFiltroProveedores" editable="true" layoutX="14.0" layoutY="25.0" onAction="#comboFiltro" onMouseClicked="#codigoBuscadoProveedores" prefHeight="27.0" prefWidth="383.0" promptText="NOMBRE O CÓDIGO" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="25.0" />
-                                    <ComboBox fx:id="cmbBuscar" editable="true" layoutX="14.0" layoutY="64.0" onAction="#cmbBuscar" prefHeight="27.0" prefWidth="408.0" promptText="INGRESE EL VALOR A BUSCAR" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="64.0" />
+                                    <JFXButton fx:id="btnBuscarTipoCliente" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscarTipoCliente" prefHeight="66.0" prefWidth="73.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
+                                    <ComboBox fx:id="cmbFiltroTipoCliente" editable="true" layoutX="14.0" layoutY="25.0" onAction="#comboFiltroTipoCliente" onMouseClicked="#codigoBuscadoProveedores" prefHeight="27.0" prefWidth="383.0" promptText="NOMBRE O CÓDIGO" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="25.0" />
+                                    <ComboBox fx:id="cmbBuscarTipoCliente" editable="true" layoutX="14.0" layoutY="64.0" onAction="#cmbBuscarTipoCliente" prefHeight="27.0" prefWidth="408.0" promptText="INGRESE EL VALOR A BUSCAR" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="64.0" />
                                  </children>
                               </AnchorPane>
                            </items>
@@ -364,7 +364,7 @@
                   <Tooltip text="Proveedores" />
                </tooltip>
             </Tab>
-            <Tab styleClass="tabItem">
+            <Tab onSelectionChanged="#ModosPagoInitialize" styleClass="tabItem">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" onKeyReleased="#atajosProveedores" prefHeight="180.0" prefWidth="200.0" styleClass="anchorOscuro">
                      <children>
@@ -387,7 +387,7 @@
                                                 </HBox>
                                                 <Label layoutX="14.0" layoutY="40.0" text="CÓDIGO:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="130.6" AnchorPane.topAnchor="46.0" />
                                                 <Label layoutX="20.0" layoutY="110.0" prefHeight="18.0" prefWidth="61.0" text="DESCRIPCIÓN:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="119.0" AnchorPane.topAnchor="110.0" />
-                                                <JFXTextField fx:id="txtCodigoProveedores" layoutX="14.0" layoutY="58.0" onKeyReleased="#validarNumeroProveedores" prefHeight="26.0" prefWidth="170.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0" />
+                                                <JFXTextField fx:id="txtCodigoModosPagos" layoutX="14.0" layoutY="58.0" onKeyReleased="#validarNumeroProveedores" prefHeight="26.0" prefWidth="170.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0" />
                                                 <HBox alignment="CENTER" layoutX="-2.0" layoutY="312.0" prefHeight="27.0" prefWidth="431.0" AnchorPane.leftAnchor="-6.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="207.0">
                                                    <children>
                                                       <GridPane prefHeight="28.0" prefWidth="250.0">
@@ -400,7 +400,7 @@
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                          </rowConstraints>
                                                          <children>
-                                                            <JFXButton fx:id="btnAgregar" buttonType="RAISED" onMouseClicked="#btnAgregar" styleClass="boton" text="AGREGAR" textFill="WHITE">
+                                                            <JFXButton fx:id="btnAgregarModosPago" buttonType="RAISED" onMouseClicked="#btnAgregarModosPago" styleClass="boton" text="AGREGAR" textFill="WHITE">
                                                                <GridPane.margin>
                                                                   <Insets />
                                                                </GridPane.margin>
@@ -408,7 +408,7 @@
                                                                   <Font size="11.0" />
                                                                </font>
                                                             </JFXButton>
-                                                            <JFXButton fx:id="btnEliminar" buttonType="RAISED" onMouseClicked="#btnEliminar" prefHeight="24.0" prefWidth="83.0" styleClass="boton" text="ELIMINAR" textFill="WHITE" GridPane.columnIndex="1">
+                                                            <JFXButton fx:id="btnEliminarModosPago" buttonType="RAISED" onMouseClicked="#btnEliminarModosPago" prefHeight="24.0" prefWidth="83.0" styleClass="boton" text="ELIMINAR" textFill="WHITE" GridPane.columnIndex="1">
                                                                <GridPane.margin>
                                                                   <Insets />
                                                                </GridPane.margin>
@@ -416,7 +416,7 @@
                                                                   <Font size="11.0" />
                                                                </font>
                                                             </JFXButton>
-                                                            <JFXButton fx:id="btnEditar" buttonType="RAISED" onMouseClicked="#btnEditar" prefHeight="24.0" prefWidth="71.0" styleClass="boton" text="EDITAR" textFill="WHITE" GridPane.columnIndex="2">
+                                                            <JFXButton fx:id="btnEditarModosPago" buttonType="RAISED" onMouseClicked="#btnEditarModosPago" prefHeight="24.0" prefWidth="71.0" styleClass="boton" text="EDITAR" textFill="WHITE" GridPane.columnIndex="2">
                                                                <font>
                                                                   <Font size="11.0" />
                                                                </font>
@@ -425,7 +425,7 @@
                                                       </GridPane>
                                                    </children>
                                                 </HBox>
-                                                <JFXTextField fx:id="txtNitProveedores1" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <JFXTextField fx:id="txtDescModosPago" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                              </children>
                                              <padding>
                                                 <Insets left="5.0" />
@@ -437,18 +437,18 @@
                               </AnchorPane>
                               <AnchorPane fx:id="anchor2" minHeight="0.0" minWidth="0.0" prefHeight="441.0" prefWidth="504.0" styleClass="anchorOscuro">
                                  <children>
-                                    <TableView fx:id="tblProveedores" layoutX="15.0" layoutY="131.0" onMouseClicked="#seleccionarElementos" prefHeight="527.0" prefWidth="685.0" AnchorPane.bottomAnchor="104.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="131.0">
+                                    <JFXButton fx:id="btnBuscarModosPago" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscarModosPago" prefHeight="66.0" prefWidth="73.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
+                                    <ComboBox fx:id="cmbFiltroModosPagos" editable="true" layoutX="14.0" layoutY="25.0" onAction="#comboFiltroModoPago" onMouseClicked="#codigoBuscadoProveedores" prefHeight="27.0" prefWidth="383.0" promptText="NOMBRE O CÓDIGO" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="25.0" />
+                                    <TableView fx:id="tblModosPago" layoutX="15.0" layoutY="131.0" onMouseClicked="#seleccionarElementosModos" prefHeight="527.0" prefWidth="685.0" AnchorPane.bottomAnchor="104.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="131.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                        <columns>
-                                          <TableColumn fx:id="colCodigoProveedores" prefWidth="76.00001525878906" text="CÓDIGO" />
-                                          <TableColumn fx:id="colNombreProveedores" prefWidth="154.4000244140625" text="MODOS DE PAGO" />
+                                          <TableColumn fx:id="colCodigoModosPago" prefWidth="76.00001525878906" text="CÓDIGO" />
+                                          <TableColumn fx:id="colDescModoPago" prefWidth="154.4000244140625" text="MODOS DE PAGO" />
                                        </columns>
                                     </TableView>
-                                    <JFXButton fx:id="btnBuscar" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscar" prefHeight="66.0" prefWidth="73.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
-                                    <ComboBox fx:id="cmbFiltroProveedores" editable="true" layoutX="14.0" layoutY="25.0" onAction="#comboFiltro" onMouseClicked="#codigoBuscadoProveedores" prefHeight="27.0" prefWidth="383.0" promptText="NOMBRE O CÓDIGO" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="25.0" />
-                                    <ComboBox fx:id="cmbBuscar" editable="true" layoutX="14.0" layoutY="64.0" onAction="#cmbBuscar" prefHeight="27.0" prefWidth="408.0" promptText="INGRESE EL VALOR A BUSCAR" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="64.0" />
+                                    <ComboBox fx:id="cmbBuscarModosPago" editable="true" layoutX="14.0" layoutY="64.0" onAction="#cmbBuscarModoPago" prefHeight="27.0" prefWidth="408.0" promptText="INGRESE EL VALOR A BUSCAR" styleClass="comboOscuro" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="108.18181394466694" AnchorPane.topAnchor="64.0" />
                                  </children>
                               </AnchorPane>
                            </items>
