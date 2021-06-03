@@ -813,6 +813,21 @@ public class MenuPrincipalContoller implements Initializable {
         inventario();
     }
     
+    /* COTIZACIONES*/
+        @FXML
+    private void cotizacionView(ActionEvent event) throws IOException {
+        cotizacion();
+    }
+    
+    public void cotizacion() throws IOException{
+        String inventarioUrl = "org/ModuloCotizacion/view/CotizacionesView.fxml";
+        cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
+    }
+    
+     @FXML
+    private void cotizacionAtajo(MouseEvent event) throws IOException {
+        cotizacion();
+    }
    
     /*FACTURA */
     public void factura() throws IOException{

@@ -925,7 +925,7 @@ public class InventarioViewController implements Initializable {
                 nuevoInventario.setProductoId(cmbCodigoProductoInventario.getValue());
                 nuevoInventario.setProductoDesc(txtProductoInventario.getText());                
                 nuevoInventario.setProveedorNombre(txtProveedorInventario.getValue());                
-                nuevoInventario.setCategoriaNombre(cmbNombreCategoria.getValue());
+                nuevoInventario.setCategoriaNombre("PRODUCTO");
                 nuevoInventario.setProductoPrecio(Double.parseDouble(txtCostoNuevo.getText()));                                
                 nuevoInventario.setInventarioProductoCant(Integer.parseInt(txtCantidadInventario.getText()));                
                 nuevoInventario.setEstadoProductoDesc(cmbNombreEstado.getValue());
