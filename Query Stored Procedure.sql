@@ -107,13 +107,21 @@ DELIMITER $$
 		begin 
 			select tc.tipoClienteDescuento 
 				from TipoCliente as tc
-					where TipoCliente.tipoClienteDesc = nameBuscado;
+					where TC.tipoClienteDesc = nameBuscado;
         end $$
 DELIMITER ;
 
+DELIMITER $$
+	create procedure Sp_ListTipoClienteCC(nameBuscado varchar(50))
+		begin 
+			select tc.tipoClienteId 
+				from TipoCliente as tc
+					where TC.tipoClienteDesc = nameBuscado;
+        end $$
+DELIMITER ; 
 -- Cotizacion 
 DELIMITER $$
-	create procedure Sp_AddCotizacion(codigo int(5), cliente int(5), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
+	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
 		begin
 			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha, cotizacionCantida, cotizacionModeloRef, cotizacionProducto, cotizacionTipoPrecio, cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionDescuento, cotizacionDescuentoNeto ,cotizacionPrecioU, cotizacionTotal )
 				values(codigo , cliente,tipoCliente, mesajero, img, fecha, cantidad, referencia, producto, tipoPrecio, alto, ancho, largo, facVenta, observaicion, descuento, descNeto,precioU, total);
@@ -1192,6 +1200,7 @@ insert into usuarios values(0,"admin", "admin", 1);
 
 insert into estadoproductos values(1,'AGOTADO'),(2,'EXISTENCIA') 
 */
+insert into categoriaproductos values(1,"PRODUCTO")
 
 
 

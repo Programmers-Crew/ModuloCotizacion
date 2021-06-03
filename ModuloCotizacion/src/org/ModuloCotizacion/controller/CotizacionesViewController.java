@@ -68,6 +68,7 @@ public class CotizacionesViewController implements Initializable {
     ObservableList<String> listaFactorVenta;
     ObservableList<String> listaMolduraRef;
     ObservableList<String> listaCodigoCotizaciones;
+     ObservableList<String> listaProducto;
     
     Integer codigo = 0;
     String tipoClienteDescuento = "";
@@ -298,7 +299,7 @@ public class CotizacionesViewController implements Initializable {
                 btnAgregar.setText("GUARDAR");
                 btnEliminar.setText("CANCELAR");
                 btnEliminar.setDisable(false);
-                desactivarText();
+                activarText();
                 btnBuscar.setDisable(true);
                 limpiarText();
                 break;
@@ -530,6 +531,8 @@ public class CotizacionesViewController implements Initializable {
         }
     }
     
+    
+    @FXML
     private void btnAgregar(MouseEvent event) {
         if(tipoOperacion == Operacion.GUARDAR){
             if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtTipoCliente.getValue().isEmpty() || txtVendedor.getValue().isEmpty() || 
@@ -548,7 +551,7 @@ public class CotizacionesViewController implements Initializable {
                     nuevoCotizaciones.setClienteNombre(txtNIT.getValue());
                     nuevoCotizaciones.setTipoClienteDesc(txtTipoCliente.getValue());
                     nuevoCotizaciones.setUsuarioNombre(txtVendedor.getValue());
-                    nuevoCotizaciones.setCotizacionImg("Imagen aqui");
+                    nuevoCotizaciones.setCotizacionImg("Tipo Precios");
                     nuevoCotizaciones.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
                     nuevoCotizaciones.setCotizacionCantida(Double.parseDouble(txtCantidad.getText()));
                     nuevoCotizaciones.setCotizacionModeloRef(txtMolduraReferencia.getValue());
@@ -567,7 +570,8 @@ public class CotizacionesViewController implements Initializable {
                     nuevoCotizaciones.setCotizacionPrecioU(precioUnit);
                     
                     
-                    Double TotalC = (precioUnit * Double.parseDouble(txtCantidad.getText()))*(buscarCodigoTipoCliente(txtTipoCliente.getValue())/100);
+                    Double descuentoR = (precioUnit * Double.parseDouble(txtCantidad.getText()))*(buscarCodigoTipoCliente(txtTipoCliente.getValue()) + Double.parseDouble(txtDescuento.getText())/100);
+                    Double TotalC = (precioUnit * Double.parseDouble(txtCantidad.getText())) - descuentoR;
                     nuevoCotizaciones.setCotizacionTotal(TotalC);
                     
                     
@@ -584,11 +588,14 @@ public class CotizacionesViewController implements Initializable {
                             noti.show();
                             tipoOperacion = Operacion.GUARDAR;
                         }else{
-                            String sql = "{call Sp_AddCotizacion('"+nuevoCotizaciones.getCotizacionId()+"','"+nuevoCotizaciones.getClienteNombre()+"','"+nuevoCotizaciones.getTipoClienteDesc()
-                            +"','"+nuevoCotizaciones.getUsuarioNombre()+"','"+nuevoCotizaciones.getCotizacionFecha()+"','"+nuevoCotizaciones.getCotizacionCantida()+"','"+nuevoCotizaciones.getCotizacionModeloRef()
-                                    +"','"+nuevoCotizaciones.getProductoDesc()+"','"+nuevoCotizaciones.getCotizacionTipoPrecio()+"','"+nuevoCotizaciones.getCotizacionAlto()+"','"+nuevoCotizaciones.getCotizacionAncho()
-                                    +"','"+nuevoCotizaciones.getCotizacionLargo()+"','"+nuevoCotizaciones.getCotizacionDescuento()+"','"+nuevoCotizaciones.getCotizacionDescuentoNeto()+"','"+nuevoCotizaciones.getCotizacionPrecioU()+"','"+nuevoCotizaciones.getCotizacionTotal()+"')}";                            
+                            String sql = "{call Sp_AddCotizacion('"+nuevoCotizaciones.getCotizacionId()+"','"+nuevoCotizaciones.getClienteNombre()+"','"+buscarCodigoTipoClienteDos(nuevoCotizaciones.getTipoClienteDesc())
+                            +"','"+buscarCodigoVendedor(nuevoCotizaciones.getUsuarioNombre())+"','"+nuevoCotizaciones.getCotizacionImg()+"','"+nuevoCotizaciones.getCotizacionFecha()+"','"+nuevoCotizaciones.getCotizacionCantida()+"','"+nuevoCotizaciones.getCotizacionModeloRef()
+                            +"','"+nuevoCotizaciones.getProductoDesc()+"','"+nuevoCotizaciones.getCotizacionTipoPrecio()+"','"+nuevoCotizaciones.getCotizacionAlto()+"','"+nuevoCotizaciones.getCotizacionAncho()
+                            +"','"+nuevoCotizaciones.getCotizacionLargo()+"','"+nuevoCotizaciones.getCotizacionDesc()+"','"+nuevoCotizaciones.getCotizacionDescuento()+"','"+nuevoCotizaciones.getCotizacionDescuentoNeto()+"','"+nuevoCotizaciones.getCotizacionPrecioU()+"','"+nuevoCotizaciones.getCotizacionTotal()+"')}";                            
                             accionProveedores(sql);
+                            System.out.println(sql);
+                            System.out.println(buscarCodigoTipoCliente(txtTipoCliente.getValue()));
+                            
                         }
                     }
                 }
@@ -599,10 +606,10 @@ public class CotizacionesViewController implements Initializable {
     }
     
         Double tipoClienteDescuentoS = 0.0;
-        public Double buscarCodigoTipoCliente(String tipoClienteDesc){    
+        public Double buscarCodigoTipoCliente(String tipoClienteDescuento){    
         try{
             PreparedStatement sp = Conexion.getIntance().getConexion().prepareCall("{call Sp_ListTipoClienteC(?)}");
-            sp.setString(1, tipoClienteDesc);
+            sp.setString(1, tipoClienteDescuento);
             ResultSet resultado = sp.executeQuery(); 
             
             while(resultado.next()){
@@ -613,6 +620,22 @@ public class CotizacionesViewController implements Initializable {
         }
         return tipoClienteDescuentoS;
     }
+        
+    Integer codigoTC = 0;
+    public int buscarCodigoTipoClienteDos(String tipoClienteDescuento){    
+        try{
+            PreparedStatement sp = Conexion.getIntance().getConexion().prepareCall("{call Sp_ListTipoClienteCC(?)}");
+            sp.setString(1, tipoClienteDescuento);
+            ResultSet resultado = sp.executeQuery(); 
+            
+            while(resultado.next()){
+            codigoTC = resultado.getInt(1);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return codigoTC;
+    }     
         
     Integer usuarioId = 0;    
     public int buscarCodigoVendedor(String tipoClienteDesc){    
@@ -630,7 +653,7 @@ public class CotizacionesViewController implements Initializable {
         return usuarioId;
     }    
     
-         public void llenarComboTipoC(){
+    public void llenarComboTipoC(){
         ArrayList<String> lista = new ArrayList();
         String sql= "{call Sp_ListTipoCliente()}";
             int x =0;
@@ -719,13 +742,42 @@ public class CotizacionesViewController implements Initializable {
         txtNIT.setItems(listaNit);
     }   
 
-    
+        public void llenarComboMateriales(){
+        ArrayList<String> lista = new ArrayList();
+        String sql= "{call Sp_ListInventarioProducto()}";
+            int x =0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(x, rs.getString("productoDesc"));
+                x++;
+            }
+            
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS CMB");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        listaProducto = FXCollections.observableList(lista);
+        txtProducto.setItems(listaProducto);
+    }
+        
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         llenarComboNit();
         llenarComboVendedor();
         llenarComboTipoC();
         limpiarText();
+        llenarComboMateriales();
     }    
 
     

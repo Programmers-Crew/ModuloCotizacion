@@ -135,7 +135,7 @@ create table TipoCliente(
 
 create table Cotizacion(
 	cotizacionId int(10) UNSIGNED ZEROFILL primary key auto_increment,
-    cotizacionCliente int(5) UNSIGNED ZEROFILL not null ,
+    cotizacionCliente varchar(10)  not null ,
 	cotizacionTipoClienteId int(5) UNSIGNED ZEROFILL not null,
     cotizacionImg varchar(100) not null,
     cotizacionMensajero int(5) UNSIGNED ZEROFILL not null,
@@ -154,7 +154,7 @@ create table Cotizacion(
     cotizacionPrecioU double not null,
     cotizacionTotal double not null,
     CONSTRAINT FK_cotizacionVendedor FOREIGN KEY (cotizacionMensajero) REFERENCES Usuarios(usuarioId),
-	CONSTRAINT FK_cotizacionCliente FOREIGN KEY (cotizacionCliente) REFERENCES Clientes(clienteId),
+	CONSTRAINT FK_cotizacionCliente FOREIGN KEY (cotizacionCliente) REFERENCES Clientes(clienteNit),
     cotizacionCamposEspeciales int(5) UNSIGNED ZEROFILL,
 	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId),
 	CONSTRAINT FK_cotizacionProducto FOREIGN KEY (cotizacionProducto) REFERENCES InventarioProductos(productoId),
