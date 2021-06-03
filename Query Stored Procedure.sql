@@ -33,6 +33,7 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
 -- Campos Especiales
 DELIMITER $$
 	create procedure  Sp_AddCamposEspeciales(nombre varchar(150), precio double)

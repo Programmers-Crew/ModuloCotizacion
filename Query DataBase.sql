@@ -163,7 +163,7 @@ create table Cotizacion(
 );
 
 create table ModoPago(
-	modoPagoId int(5) UNSIGNED ZEROFILL primary key not null,
+	modoPagoId int(5) UNSIGNED ZEROFILL primary key not null auto_increment,
     modoPagoDesc varchar(20) not null
 );
 
