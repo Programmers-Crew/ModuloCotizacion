@@ -402,14 +402,6 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
-DELIMITER $$
-	create procedure SpDesactivarProd()
-		begin
-			update inventarioproductos as ip
-				set estadoProductoId = 2
-					where inventarioProductoCant < 1;
-        end $$
-DELIMITER ;
 
 
 DELIMITER $$
@@ -815,15 +807,6 @@ DELIMITER $$
 		END $$
 DELIMITER ;
 
--- Tipo Usuarios
-DELIMITER $$
-	CREATE PROCEDURE spListarTipoUsuario()
-		BEGIN
-			SELECT * FROM tipoUsuario
-				order by tipoUsuarioId ASC;
-        END $$
-DELIMITER ;
-
 
 -- Usuarios
 DELIMITER $$
@@ -899,37 +882,6 @@ DELIMITER $$
 DELIMITER ;
 
 
--- Login
-DELIMITER $$
-	CREATE PROCEDURE  SpLogin(usuarioNom varchar(30), pass varchar(40))
-		BEGIN
-			select u.usuarioNombre, u.usuarioPassword
-				from usuarios as u
-					where u.usuarioNombre = usuarioNom and u.usuarioPassword = pass;
-		END $$
-DELIMITER ;
-
-DELIMITER $$
-	CREATE PROCEDURE  SpLoginAdmin(usuarioNom varchar(100), pass varchar(100))
-		BEGIN
-			select u.usuarioNombre, u.usuarioPassword
-				from usuarios as u
-					where (u.usuarioNombre = usuarioNom and u.usuarioPassword = pass) and tipoUsuarioId = 1;
-		END $$
-DELIMITER ;
-
-
-DELIMITER $$
- CREATE PROCEDURE  SpLoginValidar(usuarioNom varchar(30))
-	BEGIN
-		select u.tipoUsuarioId
-		from usuarios as u
-		where u.usuarioNombre = usuarioNom;
-	END $$
-DELIMITER ;
-
-
--- QUERYS CAMBIO DAVIS
 -- procreso de actualizar inventario desde factura - 8/04/2021
 DELIMITER $$
 	create procedure SpActualizarInventarioProductosFacturacion(idBuscado varchar(7), cant double, estado tinyint(1))
@@ -942,24 +894,7 @@ DELIMITER ;
 
 
 
-DELIMITER $$ 
-	CREATE PROCEDURE SpListarCredit()
-		BEGIN
-			SELECT *
-            FROM creditos
-            WHERE creditoEstado = 1 group by noFactura;
-        END $$
-DELIMITER ;
 
-
-DELIMITER $$
-	create procedure SpMarcarPagadocFac(idBuscado int)
-		begin
-			update Creditos as c
-				set creditoEstado = 2 
-					where c.noFactura = idBuscado;
-        end $$
-DELIMITER ;
 
 DELIMITER $$
 	create procedure SpBuscarProductosFac(idBuscado varchar(7))
@@ -984,10 +919,6 @@ DELIMITER $$
 				CategoriaProductos as cp
 			on
 				pr.categoriaId = cp.categoriaId 
-			inner join 
-				tipoProducto as tp
-			on 
-				pr.tipoProductoId = tp.tipoProdId
 			inner join
 				inventarioproductos as ip
 			on pr.productoId = ip.productoId
@@ -1020,10 +951,6 @@ DELIMITER $$
 				CategoriaProductos as cp
 			on
 				pr.categoriaId = cp.categoriaId 
-			inner join 
-				tipoProducto as tp
-			on 
-				pr.tipoProductoId = tp.tipoProdId
 			inner join
 				inventarioproductos as ip
 			on pr.productoId = ip.productoId
@@ -1153,14 +1080,7 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
-DELIMITER $$
-	create procedure SpBucarCreditosVencidos()
-		begin 
-			select idCredito
-				from creditos
-					where creditoDiasRestantes < 0;
-        end $$
-DELIMITER ;
+
 
 
 -- 04 - 04
@@ -1183,24 +1103,11 @@ DELIMITER $$
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
 			on p.proveedorId = pr.proveedorId
-		inner join tipoproducto as tp
-			on p.tipoProductoId = tp.tipoProdId
 		where pr.proveedorNombre = proveedor
 		order by 
 			p.productoId ASC;
         END $$
 DELIMITER ;
-
-
--- insert obligatorios 
-/*
-insert into tipousuario values(0,"Administrador"),(1,"Empleado");
-insert into usuarios values(0,"admin", "admin", 1);
-
-
-insert into estadoproductos values(1,'AGOTADO'),(2,'EXISTENCIA') 
-*/
-insert into categoriaproductos values(1,"PRODUCTO")
 
 
 
