@@ -150,16 +150,16 @@ create table Cotizacion(
     cotizacionFacVenta int(5) UNSIGNED ZEROFILL not null,
     cotizacionDesc varchar(100) not null,
     cotizacionDescuento double not null,
+    cotizacionDescuentoNeto double not null,
     cotizacionPrecioU double not null,
     cotizacionTotal double not null,
     CONSTRAINT FK_cotizacionVendedor FOREIGN KEY (cotizacionMensajero) REFERENCES Usuarios(usuarioId),
 	CONSTRAINT FK_cotizacionCliente FOREIGN KEY (cotizacionCliente) REFERENCES Clientes(clienteId),
     cotizacionCamposEspeciales int(5) UNSIGNED ZEROFILL,
-
-	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId)
+	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId),
 	CONSTRAINT FK_cotizacionProducto FOREIGN KEY (cotizacionProducto) REFERENCES InventarioProductos(productoId),
 	CONSTRAINT FK_cotizacionCampoEspeciales FOREIGN KEY (cotizacionCamposEspeciales) REFERENCES camposEspeciales(campoId),
-	CONSTRAINT FK_cotizacionFacVenta FOREIGN KEY (cotizacionFacVenta) REFERENCES factorVenta(factorVentaId),
+	CONSTRAINT FK_cotizacionFacVenta FOREIGN KEY (cotizacionFacVenta) REFERENCES factorVenta(factorVentaId)
 );
 
 create table ModoPago(
