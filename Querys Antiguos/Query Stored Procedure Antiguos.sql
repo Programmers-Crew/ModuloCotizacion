@@ -1161,7 +1161,7 @@ insert into tipofactura(tipoFactura,tipoFacturaDesc)
 insert into estadofactura(estadoFactura,estadoFacturaDesc)
 	values(1,"ACTIVA"), (2,"ORDEN DE COMPRA");
     
-insert into tipousuario values(0,"Administrador"),(0,"Empleado");
+insert into tipousuario values(0,"Administrador"),(0,"Empleado"),(0,"Vendedor");
 
 insert into usuarios values(0,"admin", "admin", 1);
 INSERT INTO clientes(clienteNit,clienteNombre) values("C/F","C/F");

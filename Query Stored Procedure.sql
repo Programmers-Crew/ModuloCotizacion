@@ -80,10 +80,12 @@ DELIMITER ;
 
 DELIMITER $$
 	create procedure Sp_UpdateTipoCliente(idBuscado int(5) , tipoDesc varchar(50), tipoDescuento double)
+		begin
 		update TipoCliente 
 			set tipoClienteDesc =  tipoDesc,
 				tipoClienteDescuento = tipoDescuento
 			where tipoClienteId = idBuscado;
+		end $$
 DELIMITER ;
 
 DELIMITER $$
@@ -111,14 +113,17 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
+
 DELIMITER $$
-	create procedure Sp_ListTipoClienteCC(nameBuscado varchar(50))
+	create procedure Sp_ListTipoClienteCC(id int)
 		begin 
-			select tc.tipoClienteId 
+			select tc.tipoClienteId , tipoClienteDesc, tipoClienteDescuento
 				from TipoCliente as tc
-					where TC.tipoClienteDesc = nameBuscado;
+					where TC.tipoClienteId = id;
         end $$
 DELIMITER ; 
+
 -- Cotizacion 
 DELIMITER $$
 	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
@@ -163,6 +168,8 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
+drop procedure Sp_ListarCotizaciones;
 DELIMITER $$
 	create procedure Sp_ListarCotizaciones()
 		begin 
@@ -172,7 +179,7 @@ DELIMITER $$
                    tc.tipoClienteDesc,
                    u.usuarioNombre,
                    ip.productoDesc,
-                   fv.campoNombre, fv.campoPrecio
+                   fv.factorVentaDesc, fv.factorVentaDescuento
 				from Cotizacion as c
 				inner join Clientes as cl
 					on c.cotizacionCliente = cl.clienteId
@@ -185,9 +192,38 @@ DELIMITER $$
 				inner join FactorVenta as fv
 					on c.cotizacionFacVenta = fv.factorVentaId
 				inner join CamposEspeciales as ce
-					on c.cotizacionCamposEspeciales = fv.campoNombre;
+					on c.cotizacionCamposEspeciales = ce.campoNombre;
         end $$
 DELIMITER ;
+
+drop procedure  Sp_SearchCotizaciones;
+DELIMITER $$
+	create procedure Sp_SearchCotizaciones( codigo int)
+		begin 
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef, c.cotizacionTipoPrecio ,
+                   c.cotizacionAlto , c.cotizacionAncho , c.cotizacionLargo,c.cotizacionDesc , c.cotizacionDescuento , c.cotizacionPrecioU , c.cotizacionTotal, c.cotizacionDescuentoNeto,
+				   cl.clienteNombre,
+                   tc.tipoClienteDesc,
+                   u.usuarioNombre,
+                   ip.productoDesc,
+                   fv.factorVentaDesc, fv.factorVentaDescuento
+				from Cotizacion as c
+				inner join Clientes as cl
+					on c.cotizacionCliente = cl.clienteId
+				inner join TipoCliente as tc
+					on c.cotizacionTipoClienteId = tc.tipoClienteId
+				inner join Usuarios as u
+					on c.cotizacionMensajero = u.usuarioId
+				inner join InventarioProductos as ip
+					on c.cotizacionProducto = ip.productoId
+				inner join FactorVenta as fv
+					on c.cotizacionFacVenta = fv.factorVentaId
+				inner join CamposEspeciales as ce
+					on c.cotizacionCamposEspeciales = ce.campoNombre
+				where c.cotizacionId = codigo;
+        end $$
+DELIMITER ;
+
 
 -- Modo Pago 
 DELIMITER $$
@@ -818,6 +854,19 @@ DELIMITER $$
 						order by usuarioId ASC;
         END $$
 DELIMITER ;
+
+-- CAMBIO #1
+DELIMITER $$
+	create procedure Sp_ListUsuarioVendedor()
+		BEGIN 
+			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
+				from Usuarios, tipousuario 
+					where Usuarios.tipoUsuarioId = tipousuario.tipoUsuarioId 
+					and  Usuarios.tipoUsuarioId = 3
+						order by usuarioId ASC;
+        END $$
+DELIMITER ;
+
 
 DELIMITER $$
 	create procedure Sp_ListUsuarioC(username varchar(20))
