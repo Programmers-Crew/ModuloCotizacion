@@ -126,15 +126,15 @@ DELIMITER ;
 
 -- Cotizacion 
 DELIMITER $$
-	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
+	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
 		begin
-			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha, cotizacionCantida, cotizacionModeloRef, cotizacionProducto, cotizacionTipoPrecio, cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionDescuento, cotizacionDescuentoNeto ,cotizacionPrecioU, cotizacionTotal )
-				values(codigo , cliente,tipoCliente, mesajero, img, fecha, cantidad, referencia, producto, tipoPrecio, alto, ancho, largo, facVenta, observaicion, descuento, descNeto,precioU, total);
+			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha, cotizacionCantida, cotizacionModeloRef, cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionDescuento, cotizacionDescuentoNeto ,cotizacionPrecioU, cotizacionTotal )
+				values(codigo , cliente,tipoCliente, mesajero, img, fecha, cantidad, referencia,  alto, ancho, largo, observaicion, descuento, descNeto,precioU, total);
         end $$
 DELIMITER ;
 
 DELIMITER $$
-	create procedure Sp_UpdateCotizacion(idBuscado int(5),cliente int(5), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, facVenta int(5), observaicion varchar(50), descuento double, descNeto double ,precioU double, total double, camposEspeciales int(5))
+	create procedure Sp_UpdateCotizacion(idBuscado int(5),cliente int(5), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), tipoPrecio varchar(50), alto double, ancho double, largo double, facVenta int(5), observaicion varchar(50), descuento double, descNeto double ,precioU double, total double, camposEspeciales int(5))
 		begin
 			update Cotizacion
 				set cotizacionCliente = cliente, 
@@ -168,35 +168,27 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
-
-drop procedure Sp_ListarCotizaciones;
+drop procedure if exists Sp_ListarCotizaciones;
 DELIMITER $$
 	create procedure Sp_ListarCotizaciones()
 		begin 
-			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef, c.cotizacionTipoPrecio ,
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef,
                    c.cotizacionAlto , c.cotizacionAncho , c.cotizacionLargo,c.cotizacionDesc , c.cotizacionDescuento , c.cotizacionPrecioU , c.cotizacionTotal, c.cotizacionDescuentoNeto,
-				   cl.clienteNombre,
+				   c.cotizacionCliente,
+                   cl.clienteNombre,
                    tc.tipoClienteDesc,
-                   u.usuarioNombre,
-                   ip.productoDesc,
-                   fv.factorVentaDesc, fv.factorVentaDescuento
+                   tc.tipoClienteDescuento,
+                   u.usuarioNombre
 				from Cotizacion as c
 				inner join Clientes as cl
-					on c.cotizacionCliente = cl.clienteId
+					on c.cotizacionCliente = cl.clienteNit
 				inner join TipoCliente as tc
 					on c.cotizacionTipoClienteId = tc.tipoClienteId
 				inner join Usuarios as u
-					on c.cotizacionMensajero = u.usuarioId
-				inner join InventarioProductos as ip
-					on c.cotizacionProducto = ip.productoId
-				inner join FactorVenta as fv
-					on c.cotizacionFacVenta = fv.factorVentaId
-				inner join CamposEspeciales as ce
-					on c.cotizacionCamposEspeciales = ce.campoNombre;
+					on c.cotizacionMensajero = u.usuarioId;
         end $$
 DELIMITER ;
 
-drop procedure  Sp_SearchCotizaciones;
 DELIMITER $$
 	create procedure Sp_SearchCotizaciones( codigo int)
 		begin 

@@ -45,18 +45,14 @@ public class CotizacionesViewController implements Initializable {
 
     @FXML
     private AnchorPane anchor;
-
-
-
  
 
-    
     
     //Variables
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
     public Operacion cancelar = Operacion.NINGUNO;
     public Operacion tipoOperacion = Operacion.NINGUNO;
-
+    int codigoCotizacion=0;
     
     CambioScene cambioScene = new CambioScene();
     Image imgError = new Image("org/ModuloCotizacion/img/error.png");
@@ -152,7 +148,10 @@ public class CotizacionesViewController implements Initializable {
     private TableColumn<Cotizaciones, Double> colLargoCotizacion;
     @FXML
     private TableColumn<Cotizaciones, String> colDescCotizacion;
-    
+    @FXML
+    private TableColumn<Cotizaciones, String> nit;
+
+
     //CamposEspeciales
     @FXML
     private TableView<Cotizaciones> tblCotizacion;
@@ -177,12 +176,15 @@ public class CotizacionesViewController implements Initializable {
         txtTipoCliente.setValue("");
         txtVendedor.setValue("");
         txtMolduraReferencia.setValue("");
-        txtAncho.setText("");
-        txtLargo.setText("");        
-        txtAlto.setText("");
+        txtAncho.setText("0.00");
+        txtLargo.setText("0.00");        
+        txtAlto.setText("0.00");
+        txtDescuentoCotizacion.setText("0.00");
+        txtPrecioUCotizacion.setText("0.00");
+        txtTotalCotizacion.setText("0.00");
         txtDescripcion.setText("");
-        txtCantidad.setText("");
-        txtDescuento.setText("");        
+        txtCantidad.setText("1");
+        txtDescuento.setText("0.00");        
     }
     
     
@@ -195,6 +197,18 @@ public class CotizacionesViewController implements Initializable {
     public void activarControles(){    
         btnEditar.setDisable(false);
         btnEliminar.setDisable(false);
+    }
+    
+    public void disableButtonsSeleccion(){
+        btnAgregarCampoEspecial.setDisable(true);
+        btnMandarProduccion.setDisable(true);
+        btnGenerarWord.setDisable(true);
+    }
+    
+    public void activateButtonsSeleccion(){
+        btnAgregarCampoEspecial.setDisable(false);
+        btnMandarProduccion.setDisable(false);
+        btnGenerarWord.setDisable(false);
     }
     
     public void desactivarText(){
@@ -229,7 +243,7 @@ public class CotizacionesViewController implements Initializable {
         txtDescuento.setEditable(true);
     }
 
-    public ObservableList<Cotizaciones> getProveedores(){
+    public ObservableList<Cotizaciones> getCotizacion(){
         ArrayList<Cotizaciones> lista = new ArrayList();
         ArrayList<String> listaCodigo = new ArrayList();
         String sql= "{call Sp_ListarCotizaciones()}";
@@ -239,28 +253,25 @@ public class CotizacionesViewController implements Initializable {
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 lista.add(new Cotizaciones(
-                              rs.getInt("cotizacionId"),
-                              rs.getString("cotizacionImg"),
-                              rs.getDate("cotizacionFecha"),
-                              rs.getDouble("cotizacionCantida"),
-                              rs.getString("cotizacionModeloRef"),
-                              rs.getString("cotizacionTipoPrecio"),
-                              rs.getDouble("cotizacionAlto"),
-                              rs.getDouble("cotizacionAncho"),
-                              rs.getDouble("cotizacionLargo"),
-                              rs.getString("cotizacionDesc"),
-                              rs.getDouble("cotizacionDescuentoNeto"),
-                              rs.getDouble("cotizacionDescuento"),
-                              rs.getDouble("cotizacionPrecioU"),
-                              rs.getDouble("cotizacionTotal"),                        
-                              rs.getString("clienteNombre"),
-                              rs.getString("tipoClienteDesc"),
-                              rs.getString("usuarioNombre"),
-                              rs.getString("productoDesc"),
-                              rs.getString("campoNombre"),
-                              rs.getDouble("campoPrecio")                                                
+                    rs.getInt("cotizacionId"),
+                    rs.getString("cotizacionImg"),
+                    rs.getDate("cotizacionFecha"),
+                    rs.getDouble("cotizacionCantida"),
+                    rs.getString("cotizacionModeloRef"),
+                    rs.getDouble("cotizacionAlto"),
+                    rs.getDouble("cotizacionAncho"),
+                    rs.getDouble("cotizacionLargo"),
+                    rs.getString("cotizacionDesc"),
+                    rs.getDouble("cotizacionDescuentoNeto"),
+                    rs.getDouble("cotizacionDescuento"),
+                    rs.getDouble("cotizacionPrecioU"),
+                    rs.getDouble("cotizacionTotal"),                        
+                    rs.getString("clienteNombre"),
+                    rs.getString("tipoClienteDesc"),
+                    rs.getString("usuarioNombre"),
+                    rs.getString("clienteNombre")
                 ));                
-                listaCodigo.add(x, rs.getString("cotizacionId;"));
+                listaCodigo.add(x, rs.getString("cotizacionId"));
                 x++;
             }
         }catch(SQLException ex){
@@ -281,8 +292,8 @@ public class CotizacionesViewController implements Initializable {
     }
     
     
-    public void cargarDatosProveedores(){
-       tblCotizacion.setItems(getProveedores());
+    public void cargarDatosCotizaciones(){
+       tblCotizacion.setItems(getCotizacion());
        colCodigoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionId"));
        colFechaCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionFecha"));
        colCantidadCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionCantida"));
@@ -290,7 +301,7 @@ public class CotizacionesViewController implements Initializable {
        colAltoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionAlto"));
        colLargoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionLargo"));
        colDescCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDesc"));
-       
+       nit.setCellValueFactory(new PropertyValueFactory("clienteNombre"));
        limpiarText();
        desactivarControles();
     }
@@ -352,7 +363,7 @@ public class CotizacionesViewController implements Initializable {
                         noti.show();
                         tipoOperacion = Operacion.CANCELAR;
                         accion();
-                        cargarDatosProveedores();
+                        cargarDatosCotizaciones();
                         
                     }catch (SQLException ex) {
                         ex.printStackTrace();
@@ -363,8 +374,6 @@ public class CotizacionesViewController implements Initializable {
                         noti.hideAfter(Duration.seconds(4));
                         noti.darkStyle();
                         noti.show();
-                        tipoOperacion = Operacion.CANCELAR;
-                        accion();
                     }
                 }else{
                     
@@ -401,7 +410,7 @@ public class CotizacionesViewController implements Initializable {
                         noti.hideAfter(Duration.seconds(4));
                         noti.darkStyle();
                         noti.show();
-                        cargarDatosProveedores();
+                        cargarDatosCotizaciones();
                         tipoOperacion = Operacion.CANCELAR;
                         accion();
                         
@@ -453,7 +462,7 @@ public class CotizacionesViewController implements Initializable {
                         noti.show();
                         tipoOperacion = Operacion.CANCELAR;
                         accion();
-                        cargarDatosProveedores();
+                        cargarDatosCotizaciones();
                     }catch (SQLException ex) {
                         ex.printStackTrace();
                         noti.graphic(new ImageView(imgError));
@@ -540,7 +549,7 @@ public class CotizacionesViewController implements Initializable {
     @FXML
     private void btnAgregar(MouseEvent event) {
         if(tipoOperacion == Operacion.GUARDAR){
-            if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtTipoCliente.getValue().isEmpty() || txtVendedor.getValue().isEmpty() || 
+            if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtVendedor.getValue().isEmpty() || 
                txtAncho.getText().isEmpty() || txtAlto.getText().isEmpty() || txtLargo.getText().isEmpty() || txtDescripcion.getText().isEmpty() || txtCantidad.getText().isEmpty()){
                 Notifications noti = Notifications.create();
                 noti.graphic(new ImageView(imgError));
@@ -560,7 +569,6 @@ public class CotizacionesViewController implements Initializable {
                     nuevoCotizaciones.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
                     nuevoCotizaciones.setCotizacionCantida(Double.parseDouble(txtCantidad.getText()));
                     nuevoCotizaciones.setCotizacionModeloRef(txtMolduraReferencia.getValue());
-                    nuevoCotizaciones.setCotizacionTipoPrecio("Tipo Precios");
                     nuevoCotizaciones.setCotizacionAlto(Double.parseDouble(txtAlto.getText()));
                     nuevoCotizaciones.setCotizacionAncho(Double.parseDouble(txtAncho.getText()));
                     nuevoCotizaciones.setCotizacionLargo(Double.parseDouble(txtLargo.getText()));
@@ -570,12 +578,12 @@ public class CotizacionesViewController implements Initializable {
                     Double descuentoNeto =  Double.parseDouble(txtDescuento.getText());
                     nuevoCotizaciones.setCotizacionDescuentoNeto(descuentoNeto);
                     
-                    Double precioUnit = (Double.parseDouble(txtAlto.getText()) * Double.parseDouble(txtAncho.getText()) * Double.parseDouble(txtLargo.getText()))*0.0005;                    
+                    Double precioUnit = Double.parseDouble(txtPrecioUCotizacion.getText());
                     nuevoCotizaciones.setCotizacionPrecioU(precioUnit);
                     
                     
-                    Double descuentoR = (precioUnit * Double.parseDouble(txtCantidad.getText()))*(Double.parseDouble(txtDescuento.getText())/100);
-                    Double TotalC = (precioUnit * Double.parseDouble(txtCantidad.getText())) - descuentoR;
+                    Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());
+                    
                     nuevoCotizaciones.setCotizacionTotal(TotalC);
                     
                     
@@ -594,8 +602,9 @@ public class CotizacionesViewController implements Initializable {
                         }else{
                             String sql = "{call Sp_AddCotizacion('"+nuevoCotizaciones.getCotizacionId()+"','"+nuevoCotizaciones.getClienteNombre()+"','"+buscarCodigoTipoClienteDos()
                             +"','"+buscarCodigoVendedor()+"','"+nuevoCotizaciones.getCotizacionImg()+"','"+nuevoCotizaciones.getCotizacionFecha()+"','"+nuevoCotizaciones.getCotizacionCantida()+"','"+nuevoCotizaciones.getCotizacionModeloRef()
-                            +"','"+nuevoCotizaciones.getCotizacionTipoPrecio()+"','"+nuevoCotizaciones.getCotizacionAlto()+"','"+nuevoCotizaciones.getCotizacionAncho()
+                            +"','"+nuevoCotizaciones.getCotizacionAlto()+"','"+nuevoCotizaciones.getCotizacionAncho()
                             +"','"+nuevoCotizaciones.getCotizacionLargo()+"','"+nuevoCotizaciones.getCotizacionDesc()+"','"+nuevoCotizaciones.getCotizacionDescuento()+"','"+nuevoCotizaciones.getCotizacionDescuentoNeto()+"','"+nuevoCotizaciones.getCotizacionPrecioU()+"','"+nuevoCotizaciones.getCotizacionTotal()+"')}";                            
+                            System.out.println(sql);
                             accionProveedores(sql);
                             
                         }
@@ -610,10 +619,15 @@ public class CotizacionesViewController implements Initializable {
    
         
     public int buscarCodigoTipoClienteDos(){    
-        int busqueda = txtTipoCliente.getValue().indexOf("|");
-        
-        String valor1 = txtTipoCliente.getValue().substring(busqueda+1, txtTipoCliente.getValue().length());
-        int codigoTC = Integer.parseInt(valor1);
+        int codigoTC;
+        if(!txtTipoCliente.getValue().isEmpty()){
+            int busqueda = txtTipoCliente.getValue().indexOf("|");
+
+            String valor1 = txtTipoCliente.getValue().substring(busqueda+1, txtTipoCliente.getValue().length());
+             codigoTC = Integer.parseInt(valor1);
+        }else{
+            codigoTC = 1;
+        }
         return codigoTC;
     }     
     
@@ -630,29 +644,22 @@ public class CotizacionesViewController implements Initializable {
             
             while(rs.next()){
                 double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-                double valor = (ancho * largo * alto * 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
-                double precioUnitario1 = valor/Double.parseDouble(txtCantidad.getText());
-
-
-                txtDescuentoCotizacion.setText(txtDescuento.getText());
-                txtPrecioUCotizacion.setText(String.valueOf(precioUnitario1));
-                txtTotalCotizacion.setText(String.valueOf(valor));
                 
                 txtDescuento.setText(rs.getString("tipoClienteDescuento"));
                 
-                double descuentoTexto = Double.parseDouble(txtDescuento.getText())* Double.parseDouble(txtTotalCotizacion.getText());
+                double cantidad = Double.parseDouble(txtCantidad.getText());
+        
+        
+                double valor = (ancho * largo * alto * 0.0005 * cantidad);
+              
+                double descuentoTexto = Double.parseDouble(txtDescuento.getText())*valor;
                 
+                valor = valor-descuentoTexto;
+                double precioUnitario1 = valor/Double.parseDouble(txtCantidad.getText());
+        
+                txtPrecioUCotizacion.setText(String.valueOf(precioUnitario1));
+                txtTotalCotizacion.setText(String.valueOf(valor));
                 txtDescuentoCotizacion.setText(String.valueOf(descuentoTexto));
-                
-                double precioTotal = Double.parseDouble(txtTotalCotizacion.getText())- descuentoTexto;
-                
-                double precioUnitario = precioTotal/Double.parseDouble(txtCantidad.getText());
-                
-                txtPrecioUCotizacion.setText(String.valueOf(precioUnitario));
-                
-                txtTotalCotizacion.setText(String.valueOf(precioTotal));
-                
-                txtPrecioUCotizacion.setText(String.valueOf(precioUnitario));
                 
             }
             
@@ -778,8 +785,11 @@ public class CotizacionesViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         llenarComboNit();
         llenarComboVendedor();
+        desactivarText();
         llenarComboTipoC();
         limpiarText();
+        disableButtonsSeleccion();
+        cargarDatosCotizaciones();
         llenarMolduras();
         txtDescuentoCotizacion.setText("0.00");
         txtAncho.setText("0.00");
@@ -882,11 +892,14 @@ public class CotizacionesViewController implements Initializable {
             
         }else{
             double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-            double valor = (ancho * largo * alto * 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
+            double descuentoTexto = Double.parseDouble(txtDescuento.getText())*((ancho * largo * alto )* 0.0005);
+            
+            txtDescuentoCotizacion.setText(String.valueOf(descuentoTexto));
+            
+            
+            double valor = ((ancho * largo * alto )* 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
             double precioUnitario = valor/Double.parseDouble(txtCantidad.getText());
             
-            
-            txtDescuentoCotizacion.setText(txtDescuento.getText());
             txtPrecioUCotizacion.setText(String.valueOf(precioUnitario));
             txtTotalCotizacion.setText(String.valueOf(valor));
             
@@ -895,19 +908,12 @@ public class CotizacionesViewController implements Initializable {
 
 
 
-      @FXML
+    @FXML
     private void txtLargoCambio(KeyEvent event) {
          if(txtAncho.getText().isEmpty() || txtLargo.getText().isEmpty() || txtAlto.getText().isEmpty()){
             
         }else{
-            double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-            double valor = (ancho * largo * alto * 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
-            double precioUnitario = valor/Double.parseDouble(txtCantidad.getText());
-            
-            
-            txtDescuentoCotizacion.setText(txtDescuento.getText());
-            txtPrecioUCotizacion.setText(String.valueOf(precioUnitario));
-            txtTotalCotizacion.setText(String.valueOf(valor));
+            calcularprecio();
             
         }
     }
@@ -917,15 +923,7 @@ public class CotizacionesViewController implements Initializable {
          if(txtAncho.getText().isEmpty() || txtLargo.getText().isEmpty() || txtAlto.getText().isEmpty()){
             
         }else{
-            double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-            double valor = (ancho * largo * alto * 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
-            double precioUnitario = valor/Double.parseDouble(txtCantidad.getText());
-            
-            
-            txtDescuentoCotizacion.setText(txtDescuento.getText());
-            txtPrecioUCotizacion.setText(String.valueOf(precioUnitario));
-            txtTotalCotizacion.setText(String.valueOf(valor));
-            
+            calcularprecio();
         }
     }
 
@@ -934,15 +932,7 @@ public class CotizacionesViewController implements Initializable {
          if(txtAncho.getText().isEmpty() || txtLargo.getText().isEmpty() || txtAlto.getText().isEmpty()){
             
         }else{
-            double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-            double valor = (ancho * largo * alto * 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
-            double precioUnitario = valor/Double.parseDouble(txtCantidad.getText());
-            
-            
-            txtDescuentoCotizacion.setText(txtDescuento.getText());
-            txtPrecioUCotizacion.setText(String.valueOf(precioUnitario));
-            txtTotalCotizacion.setText(String.valueOf(valor));
-            
+            calcularprecio();
         }
     }
     
@@ -953,20 +943,24 @@ public class CotizacionesViewController implements Initializable {
 
     @FXML
     private void txtCantidadCambio(KeyEvent event) {
+         
         double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-        double valor = (ancho * largo * alto * 0.0005* Double.parseDouble(txtCantidad.getText()))- Double.parseDouble(txtDescuentoCotizacion.getText());
-       
+        double valor = (ancho * largo * alto * 0.0005* Double.parseDouble(txtCantidad.getText()));
+        double descuentoTexto = Double.parseDouble(txtDescuento.getText())*valor;
+       valor = valor- descuentoTexto;
         txtTotalCotizacion.setText(String.valueOf(valor));
     }
 
     @FXML
     private void txtDescuentoCambio(KeyEvent event) {
+        double cantidad = Double.parseDouble(txtCantidad.getText());
+        
         double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-        double valor = (ancho * largo * alto * 0.0005)- Double.parseDouble(txtDescuentoCotizacion.getText());
+        double valor = (ancho * largo * alto * 0.0005 * cantidad)- Double.parseDouble(txtDescuentoCotizacion.getText());
         double precioUnitario1 = valor/Double.parseDouble(txtCantidad.getText());
 
         
-        double descuentoTexto = Double.parseDouble(txtDescuento.getText())* Double.parseDouble(txtTotalCotizacion.getText());
+        double descuentoTexto = Double.parseDouble(txtDescuento.getText())*valor;
         txtDescuentoCotizacion.setText(txtDescuento.getText());
         txtPrecioUCotizacion.setText(String.valueOf(precioUnitario1));
         txtTotalCotizacion.setText(String.valueOf(valor));
@@ -985,7 +979,6 @@ public class CotizacionesViewController implements Initializable {
     }
 
   
-    
     @FXML
     private void BuscarMoldura(ActionEvent event) {
         String sql = "{call Sp_SearchCotizaciones('"+txtMolduraReferencia.getValue()+"')}";
@@ -1016,5 +1009,55 @@ public class CotizacionesViewController implements Initializable {
     }
 
     
+    @FXML
+    private void validarNumero(KeyEvent event) {
+        char letra = event.getCharacter().charAt(0);
+        
+        if(!Character.isDigit(letra)){
+            
+            if(letra != '.'){
+                if(!Character.isWhitespace(letra)){
+                    event.consume();
+                }else{
+                    if(Character.isSpaceChar(letra)){
+                        
+                        event.consume();
+                    }
+                }
+            }
+            
+        }
+    }
    
+    
+    @FXML
+    private void seleccionarElementosCotizacion(MouseEvent event) {
+        activateButtonsSeleccion();
+        int index = tblCotizacion.getSelectionModel().getSelectedIndex();
+        try{
+            
+            txtCodigo.setText(colCodigoCotizacion.getCellData(index).toString());            
+            txtNIT.setValue(nit.getCellData(index));            
+            txtFecha.setValue(colFechaCotizacion.getCellData(index).toLocalDate());    
+           
+            txtAncho.setText(colAnchoCotizacion.getCellData(index).toString());                        
+            txtLargo.setText(colAltoCotizacion.getCellData(index).toString());                        
+            txtAlto.setText(colLargoCotizacion.getCellData(index).toString());    
+            
+            txtDescripcion.setText(colDescCotizacion.getCellData(index));                        
+            txtCantidad.setText(colCantidadCotizacion.getCellData(index).toString());      
+            
+            codigoCotizacion = colCodigoCotizacion.getCellData(index);
+            
+            activarControles();
+            activarText();
+            
+        }catch(Exception ex){
+            
+        }
+    }
+
+
+    
+    
 }

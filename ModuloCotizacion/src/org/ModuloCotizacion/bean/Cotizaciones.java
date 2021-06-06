@@ -7,8 +7,7 @@ public class Cotizaciones {
     private String cotizacionImg;
     private Date cotizacionFecha;
     private Double cotizacionCantida;        
-    private String cotizacionModeloRef;        
-    private String cotizacionTipoPrecio;        
+    private String cotizacionModeloRef;          
     private Double cotizacionAlto;        
     private Double cotizacionAncho;        
     private Double cotizacionLargo;        
@@ -20,20 +19,17 @@ public class Cotizaciones {
     private String clienteNombre;
     private String tipoClienteDesc;
     private String usuarioNombre;
-    private String productoDesc;
-    private String campoNombre;
-    private Double campoPrecio;
+    private String nit;
 
     public Cotizaciones() {
     }
 
-    public Cotizaciones(Integer cotizacionId, String cotizacionImg, Date cotizacionFecha, Double cotizacionCantida, String cotizacionModeloRef, String cotizacionTipoPrecio, Double cotizacionAlto, Double cotizacionAncho, Double cotizacionLargo, String cotizacionDesc, Double cotizacionDescuentoNeto, Double cotizacionDescuento, Double cotizacionPrecioU, Double cotizacionTotal, String clienteNombre, String tipoClienteDesc, String usuarioNombre, String productoDesc, String campoNombre, Double campoPrecio) {
+    public Cotizaciones(Integer cotizacionId, String cotizacionImg, Date cotizacionFecha, Double cotizacionCantida, String cotizacionModeloRef, Double cotizacionAlto, Double cotizacionAncho, Double cotizacionLargo, String cotizacionDesc, Double cotizacionDescuentoNeto, Double cotizacionDescuento, Double cotizacionPrecioU, Double cotizacionTotal, String clienteNombre, String tipoClienteDesc, String usuarioNombre, String nit) {
         this.cotizacionId = cotizacionId;
         this.cotizacionImg = cotizacionImg;
         this.cotizacionFecha = cotizacionFecha;
         this.cotizacionCantida = cotizacionCantida;
         this.cotizacionModeloRef = cotizacionModeloRef;
-        this.cotizacionTipoPrecio = cotizacionTipoPrecio;
         this.cotizacionAlto = cotizacionAlto;
         this.cotizacionAncho = cotizacionAncho;
         this.cotizacionLargo = cotizacionLargo;
@@ -45,11 +41,19 @@ public class Cotizaciones {
         this.clienteNombre = clienteNombre;
         this.tipoClienteDesc = tipoClienteDesc;
         this.usuarioNombre = usuarioNombre;
-        this.productoDesc = productoDesc;
-        this.campoNombre = campoNombre;
-        this.campoPrecio = campoPrecio;
+        this.nit = nit;
     }
 
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
+
+    
+    
     public Double getCotizacionDescuentoNeto() {
         return cotizacionDescuentoNeto;
     }
@@ -100,13 +104,6 @@ public class Cotizaciones {
         this.cotizacionModeloRef = cotizacionModeloRef;
     }
 
-    public String getCotizacionTipoPrecio() {
-        return cotizacionTipoPrecio;
-    }
-
-    public void setCotizacionTipoPrecio(String cotizacionTipoPrecio) {
-        this.cotizacionTipoPrecio = cotizacionTipoPrecio;
-    }
 
     public Double getCotizacionAlto() {
         return cotizacionAlto;
@@ -188,27 +185,5 @@ public class Cotizaciones {
         this.usuarioNombre = usuarioNombre;
     }
 
-    public String getProductoDesc() {
-        return productoDesc;
-    }
 
-    public void setProductoDesc(String productoDesc) {
-        this.productoDesc = productoDesc;
-    }
-
-    public String getCampoNombre() {
-        return campoNombre;
-    }
-
-    public void setCampoNombre(String campoNombre) {
-        this.campoNombre = campoNombre;
-    }
-
-    public Double getCampoPrecio() {
-        return campoPrecio;
-    }
-
-    public void setCampoPrecio(Double campoPrecio) {
-        this.campoPrecio = campoPrecio;
-    }
 }
