@@ -121,14 +121,7 @@ create table FactorVenta(
 );
 
 
-create table CamposEspeciales(
-	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
-	campoNombre varchar(150),
-    campoPrecio double,
-    campoCotizacion int(10),
-	CONSTRAINT FK_cotizacion FOREIGN KEY (campoCotizacion) REFERENCES Cotizacion(cotizacionId)
 
-);
 
 create table TipoCliente(
 	tipoClienteId int(5) UNSIGNED ZEROFILL primary key auto_increment,
@@ -157,7 +150,13 @@ create table Cotizacion(
 	CONSTRAINT FK_cotizacionCliente FOREIGN KEY (cotizacionCliente) REFERENCES Clientes(clienteNit),
 	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId)
 );
-
+create table CamposEspeciales(
+	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+	campoNombre varchar(150),
+    campoPrecio double,
+    campoCotizacion int(10) zerofill,
+	CONSTRAINT FK_cotizacion FOREIGN KEY (campoCotizacion) REFERENCES Cotizacion(cotizacionId)
+);
 create table ModoPago(
 	modoPagoId int(5) UNSIGNED ZEROFILL primary key not null auto_increment,
     modoPagoDesc varchar(20) not null

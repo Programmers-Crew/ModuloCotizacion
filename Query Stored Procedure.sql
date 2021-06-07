@@ -44,12 +44,30 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
+	create procedure  Sp_AddCamposEspecialesCotizacion(nombre varchar(150), precio double,cotizacion int(10))
+		begin
+			insert into CamposEspeciales(campoNombre,campoPrecio,campoCotizacion)
+				values(nombre, precio, cotizacion);
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
 	create procedure Sp_UpdateCamposEspeciales(idBuscado int(5),nombre varchar(150), precio double)
 		begin
 			update CamposEspeciales
 				set campoNombre  = nombre,
 					campoPrecio = precio
 				where campoId = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_UpdateCamposCotizacion(campoN varchar(150), campo int(10))
+		begin
+			update CamposEspeciales
+				SET campoCotizacion = campo
+				where campoNombre = campoN;
         end $$
 DELIMITER ;
 
@@ -66,6 +84,34 @@ DELIMITER $$
 		begin 
 			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
 				from CamposEspeciales as ce;
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_SearchNameCamposEspeciales( nameCampo varchar(150))
+		begin 
+			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
+				from CamposEspeciales as ce
+                where ce.campoNombre = nameCampo;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_SearchCamposEspeciales( codigo int(5))
+		begin 
+			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
+				from CamposEspeciales as ce
+                where ce.campoId = codigo;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_SearchCamposEspecialescotizacion( codigo int(5))
+		begin 
+			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
+				from CamposEspeciales as ce
+                where ce.campoCotizacion = codigo;
         end $$
 DELIMITER ;
 
@@ -161,6 +207,16 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
+	create procedure Sp_UpdateCotizacionTotal(idBuscado int(5),total double)
+		begin
+			update Cotizacion
+				set cotizacionDescuentoNeto = (cotizacionTotal+total)*cotizacionDescuento,
+                cotizacionTotal = (cotizacionTotal+total)-cotizacionDescuentoNeto
+			where cotizacionId = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
 	create procedure Sp_DeleteCotizacion(idBuscado int(5))
 		begin
 			delete from Cotizacion
@@ -189,30 +245,26 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
+
 DELIMITER $$
 	create procedure Sp_SearchCotizaciones( codigo int)
 		begin 
-			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef, c.cotizacionTipoPrecio ,
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef,
                    c.cotizacionAlto , c.cotizacionAncho , c.cotizacionLargo,c.cotizacionDesc , c.cotizacionDescuento , c.cotizacionPrecioU , c.cotizacionTotal, c.cotizacionDescuentoNeto,
-				   cl.clienteNombre,
+				   c.cotizacionCliente,
+                   cl.clienteNombre,
                    tc.tipoClienteDesc,
-                   u.usuarioNombre,
-                   ip.productoDesc,
-                   fv.factorVentaDesc, fv.factorVentaDescuento
+                   tc.tipoClienteDescuento,
+                   u.usuarioNombre, u.usuarioId
 				from Cotizacion as c
 				inner join Clientes as cl
-					on c.cotizacionCliente = cl.clienteId
+					on c.cotizacionCliente = cl.clienteNit
 				inner join TipoCliente as tc
 					on c.cotizacionTipoClienteId = tc.tipoClienteId
 				inner join Usuarios as u
 					on c.cotizacionMensajero = u.usuarioId
-				inner join InventarioProductos as ip
-					on c.cotizacionProducto = ip.productoId
-				inner join FactorVenta as fv
-					on c.cotizacionFacVenta = fv.factorVentaId
-				inner join CamposEspeciales as ce
-					on c.cotizacionCamposEspeciales = ce.campoNombre
-				where c.cotizacionId = codigo;
+				where c.cotizacionId=codigo;
         end $$
 DELIMITER ;
 

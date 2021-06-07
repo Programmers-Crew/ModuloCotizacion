@@ -4,8 +4,14 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,8 +28,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -32,10 +43,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javax.swing.JFileChooser;
 import org.ModuloCotizacion.bean.Animations;
 import org.ModuloCotizacion.bean.CambioScene;
+import org.ModuloCotizacion.bean.CamposEspeciales;
 import org.ModuloCotizacion.bean.Cotizaciones;
 import org.ModuloCotizacion.bean.ValidarStyle;
 import org.ModuloCotizacion.db.Conexion;
@@ -45,7 +59,10 @@ public class CotizacionesViewController implements Initializable {
 
     @FXML
     private AnchorPane anchor;
- 
+    @FXML
+    private JFXButton btnAgregarImagen;
+
+   
 
     
     //Variables
@@ -71,7 +88,10 @@ public class CotizacionesViewController implements Initializable {
     ObservableList<String> listaFactorVenta;
     ObservableList<String> listaMolduraRef;
     ObservableList<String> listaCodigoCotizaciones;
-     ObservableList<String> listaProducto;
+    ObservableList<String> listaProducto;
+    ObservableList<String> listaCamposEspeciales;
+    
+    ObservableList<CamposEspeciales>listaCamposEsp2;
     
     Integer codigo = 0;
     String tipoClienteDescuento = "";
@@ -167,7 +187,6 @@ public class CotizacionesViewController implements Initializable {
     private JFXTextField txtPrecioUCotizacion;
     @FXML
     private JFXTextField txtTotalCotizacion;
-    
     public void limpiarText(){
         txtCodigo.setText("");
         txtNIT.setValue("");
@@ -778,7 +797,7 @@ public class CotizacionesViewController implements Initializable {
     }   
 
     
-        
+  
         
     
     @Override
@@ -1029,6 +1048,74 @@ public class CotizacionesViewController implements Initializable {
         }
     }
    
+    public ObservableList getCamposEspeciales(){
+        ArrayList<CamposEspeciales> lista = new ArrayList();
+        String sql = "{call Sp_SearchCamposEspecialescotizacion('"+codigoCotizacion+"')}";
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                lista.add(new CamposEspeciales(
+                        rs.getInt("campoId"),
+                        rs.getString("campoNombre"),
+                        rs.getDouble("campoPrecio")
+                
+                ));
+            }
+           
+        }catch(SQLException ex){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR");
+            noti.text("NO SE HA PODIDO CARGAR LA DB "+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }
+        
+        return listaCamposEsp2 = FXCollections.observableList(lista);
+        
+    }
+    
+    
+    public void cargarDatosCamposEspeciales(){
+        tblCamposEspeciales.setItems(getCamposEspeciales());
+        colDescCampoEspecial.setCellValueFactory(new PropertyValueFactory("campoNombre"));
+        colPrecioCampoEspecial.setCellValueFactory(new PropertyValueFactory("campoPrecio"));
+    }
+    
+    public void listCotizacion(){
+        String sql = "{call Sp_SearchCotizaciones('"+codigoCotizacion+"')}";
+        
+        PreparedStatement ps;
+        try {
+            ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                txtDescuentoCotizacion.setText(rs.getString("cotizacionDescuentoNeto"));
+                txtPrecioUCotizacion.setText(rs.getString("cotizacionPrecioU"));
+                txtTotalCotizacion.setText(rs.getString("cotizacionTotal"));
+                txtDescuento.setText(rs.getString("cotizacionDescuento"));
+                txtVendedor.setValue(rs.getString("usuarioNombre")+" |"+ rs.getString("usuarioId"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR EN LA BASE DE DATOS");
+            noti.text("NO SE HA REALIZADO LA BUSQUEDA DE COTIZACIÓN"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }
+        
+        
+        
+        
+    }
     
     @FXML
     private void seleccionarElementosCotizacion(MouseEvent event) {
@@ -1051,13 +1138,131 @@ public class CotizacionesViewController implements Initializable {
             
             activarControles();
             activarText();
-            
+            cargarDatosCamposEspeciales();
+            listCotizacion();
         }catch(Exception ex){
             
         }
     }
+    
 
 
+     @FXML
+    private void btnAgregarCampoEspecial(MouseEvent event) {
+        Dialog dialog = new Dialog();
+        dialog.setTitle("AGREGAR CAMPO ESPECIAL");
+        dialog.setHeaderText("Ingrese el campo especial a agregar");
+        dialog.setResizable(true);
+
+        Label label1 = new Label("DESCRIPCIÓN: ");
+        Label label2 = new Label("PRECIO: ");
+        
+        
+        TextField descripcion = new TextField();
+        TextField precio = new TextField();
+        GridPane grid = new GridPane();
+        
+        grid.add(label1, 1, 1);
+        grid.add(descripcion, 2, 1);
+        
+        grid.add(label2, 1, 3);
+        grid.add(precio, 2, 3);
+        
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("Guardar", ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+        
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        
+        if(result.get() == buttonTypeOk){
+            String sql = "{call Sp_AddCamposEspecialesCotizacion('"+descripcion.getText()+"','"+precio.getText()+"','"+codigoCotizacion+"')}";                        
+            
+                try{
+                    PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                    ps.execute();
+                    
+                    String sql1 = "{call Sp_UpdateCotizacionTotal('"+codigoCotizacion+"','"+precio.getText()+"')}";
+                    PreparedStatement ps1 = Conexion.getIntance().getConexion().prepareCall(sql1);
+                    ps1.execute();
+                    cargarDatosCamposEspeciales();
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgCorrecto));
+                    noti.title("REGISTRO GUARDADO");
+                    noti.text("SE HA GUARDADO EL CAMPO ESPECIAL");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();
+
+                }catch(SQLException ex){
+                    ex.printStackTrace();
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR EN LA BASE DE DATOS");
+                    noti.text("HUBO UN ERROR AL GUARDAR EL REGISTRO"+ex);
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();
+                }
+        }else{
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("OPERACIÓN CANCELADA");
+            noti.text("NO SE HA REALIZADO NINGUNA OPERACIÓN");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }        
+    }
+ 
     
-    
+    @FXML
+    private void btnAgregarImagen(MouseEvent event) {
+       JFileChooser fileChooser = new JFileChooser();   
+           int option = fileChooser.showOpenDialog(fileChooser);
+            if(option == JFileChooser.APPROVE_OPTION){
+                if(fileChooser.getSelectedFile()!=null){
+                    try {
+                        File archivo = fileChooser.getSelectedFile();
+                        
+                        String Dest = System.getProperty("user.dir")+"../img"+archivo.getName();
+                        Path Destino = Paths.get(Dest);
+                        
+                        String Orig = archivo.getPath();
+                        Path Origen = Paths.get(Orig);
+                        
+                        Files.copy(Origen, Destino, REPLACE_EXISTING);
+                        
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("IMAGEN CARGADA");
+                        noti.text("LA IMAGEN SE HA CARGADO EXITOSAMENTE");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                    } catch (IOException ex) {
+                       Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR EN IMAGEN");
+                        noti.text("NO SE HA PODIDO CARGAR LA IMAGEN"+ex);
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                    }
+                    
+                    
+                    
+                }
+                    
+                }
+            }
+
 }
