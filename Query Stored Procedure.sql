@@ -179,6 +179,7 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
 DELIMITER $$
 	create procedure Sp_UpdateCotizacion(idBuscado int(5),cliente int(5), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), tipoPrecio varchar(50), alto double, ancho double, largo double, facVenta int(5), observaicion varchar(50), descuento double, descNeto double ,precioU double, total double, camposEspeciales int(5))
 		begin
@@ -228,8 +229,8 @@ drop procedure if exists Sp_ListarCotizaciones;
 DELIMITER $$
 	create procedure Sp_ListarCotizaciones()
 		begin 
-			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef,
-                   c.cotizacionAlto , c.cotizacionAncho , c.cotizacionLargo,c.cotizacionDesc , c.cotizacionDescuento , c.cotizacionPrecioU , c.cotizacionTotal, c.cotizacionDescuentoNeto,
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha,
+					c.cotizacionDescuento  , c.cotizacionTotal, c.cotizacionDescuentoNeto,
 				   c.cotizacionCliente,
                    cl.clienteNombre,
                    tc.tipoClienteDesc,
@@ -268,6 +269,23 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+-- cotizacion detalle y cotizacion detalle backup
+DELIMITER $$
+	create procedure Sp_AddCotizacionBackup(cantidad double,  alto double, ancho double, largo double, observaicion varchar(50), precioU double, total double)
+		begin
+			insert into CotizacionDetalleBackup(cotizacionCantida,  cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionPrecioU, cotizacionTotalParcial)
+				values(cantidad, alto, ancho, largo, observaicion,precioU, total);
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListCotizacionBackUp()
+		begin
+			SELECT backupId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial
+            FROM  cotizaciondetallebackup;
+            
+        end $$
+DELIMITER ;
 
 -- Modo Pago 
 DELIMITER $$

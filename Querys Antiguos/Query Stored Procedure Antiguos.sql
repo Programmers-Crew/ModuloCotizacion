@@ -1168,6 +1168,7 @@ INSERT INTO clientes(clienteNit,clienteNombre) values("C/F","C/F");
 
 insert into estadoproductos values(1,'EXISTENCIA'),(2,'AGOTADO');
 
+insert into TipoCliente values(1,'DEFAULT',0.00);
 
 DELIMITER $$
 	create procedure Sp_DevolucionProductos(serie varchar(5),idBuscado int)
@@ -1220,10 +1221,6 @@ create procedure SpBuscareProveedorNit(proveedor varchar(50))
 			where proveedorNombre = proveedor;
     end $$
 DELIMITER ;
-
-
-
-
 
 
 

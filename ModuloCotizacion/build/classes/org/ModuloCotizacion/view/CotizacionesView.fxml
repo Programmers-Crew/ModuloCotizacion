@@ -54,7 +54,7 @@
                            <items>
                               <AnchorPane fx:id="anchor1" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorOscuro">
                                  <children>
-                                    <SplitPane dividerPositions="0.4708048395581273" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <SplitPane dividerPositions="0.5010416666666667" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <items>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="342.0" prefWidth="334.0">
                                              <children>
@@ -70,22 +70,28 @@
                                                 <ComboBox fx:id="txtVendedor" editable="true" layoutX="15.0" layoutY="380.0" prefHeight="26.0" prefWidth="306.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <Label layoutX="15.0" layoutY="279.0" text="FACTOR VENTA:" AnchorPane.leftAnchor="15.0" />
                                                 <ComboBox fx:id="txtTipoCliente" editable="true" layoutX="15.0" layoutY="310.0" onAction="#tipoClienteDescuento" prefHeight="26.0" prefWidth="219.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <JFXButton fx:id="btnAgregarImagen" buttonType="RAISED" layoutX="15.0" layoutY="425.0" onMouseClicked="#btnAgregarImagen" prefHeight="36.0" prefWidth="143.0" styleClass="boton" text="AGREGAR IMAGEN" textFill="WHITE" AnchorPane.leftAnchor="15.0">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </JFXButton>
+                                                <Label fx:id="txtImagen" layoutX="175.0" layoutY="434.0" text="Seleccione el archivo..." />
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane prefHeight="370.0" prefWidth="403.0">
                                              <children>
                                                 <Label layoutX="27.0" layoutY="25.0" text="FECHA:" AnchorPane.leftAnchor="15.0" />
-                                                <JFXButton fx:id="btnAgregar" buttonType="RAISED" layoutX="28.0" layoutY="437.0" onMouseClicked="#btnAgregar" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="AGREGAR" textFill="WHITE">
+                                                <JFXButton fx:id="btnAgregar" buttonType="RAISED" layoutX="27.0" layoutY="396.0" onMouseClicked="#btnAgregar" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="AGREGAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
                                                 </JFXButton>
-                                                <JFXButton fx:id="btnEditar" buttonType="RAISED" layoutX="219.0" layoutY="437.0" onMouseClicked="#btnImprimir" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="EDITAR" textFill="WHITE">
+                                                <JFXButton fx:id="btnEditar" buttonType="RAISED" layoutX="218.0" layoutY="396.0" onMouseClicked="#btnImprimir" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="EDITAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
                                                 </JFXButton>
-                                                <JFXButton fx:id="btnEliminar" buttonType="RAISED" layoutX="123.0" layoutY="437.0" onMouseClicked="#btnImprimir" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="ELIMINAR" textFill="WHITE">
+                                                <JFXButton fx:id="btnEliminar" buttonType="RAISED" layoutX="122.0" layoutY="396.0" onMouseClicked="#btnImprimir" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="ELIMINAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
@@ -130,11 +136,6 @@
                                                 <TextField fx:id="txtCantidad" layoutX="20.0" layoutY="336.0" onKeyReleased="#txtCantidadCambio" onKeyTyped="#validarNumero" prefHeight="26.0" prefWidth="114.0" AnchorPane.leftAnchor="15.0" />
                                                 <Label layoutX="160.0" layoutY="319.0" text="DESCUENTO:" />
                                                 <TextField fx:id="txtDescuento" layoutX="162.0" layoutY="336.0" onKeyReleased="#txtDescuentoCambio" onKeyTyped="#validarNumero" prefHeight="26.0" prefWidth="114.0" />
-                                                <JFXButton fx:id="btnAgregarImagen" buttonType="RAISED" layoutX="28.0" layoutY="373.0" onMouseClicked="#btnAgregarImagen" prefHeight="36.0" prefWidth="143.0" styleClass="boton" text="AGREGAR IMAGEN" textFill="WHITE" AnchorPane.leftAnchor="15.0">
-                                                   <font>
-                                                      <Font size="11.0" />
-                                                   </font>
-                                                </JFXButton>
                                              </children>
                                           </AnchorPane>
                                        </items>
@@ -143,22 +144,20 @@
                               </AnchorPane>
                               <AnchorPane fx:id="anchor2" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorOscuro">
                                  <children>
-                                    <TableView fx:id="tblCotizacion" layoutX="15.0" layoutY="63.0" onMouseClicked="#seleccionarElementosCotizacion" prefHeight="384.0" prefWidth="702.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="63.0">
+                                    <TableView fx:id="tblCotizacion" layoutX="15.0" layoutY="63.0" onMouseClicked="#seleccionarElementosCotizacion" prefHeight="291.0" prefWidth="701.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="63.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                        <columns>
                                           <TableColumn fx:id="colCodigoCotizacion" prefWidth="75.0" text="CÓDIGO" />
                                           <TableColumn fx:id="colFechaCotizacion" prefWidth="99.2000150680542" text="FECHA" />
-                                          <TableColumn fx:id="colCantidadCotizacion" prefWidth="75.0" text="CANTIDAD" />
-                                          <TableColumn fx:id="colAnchoCotizacion" prefWidth="75.0" text="ANCHO" />
-                                          <TableColumn fx:id="colAltoCotizacion" prefWidth="129.60003662109375" text="ALTO" />
-                                          <TableColumn fx:id="colLargoCotizacion" prefWidth="154.4000244140625" text="LARGO" />
-                                          <TableColumn fx:id="colDescCotizacion" prefWidth="136.800048828125" text="DESCRIPCIÓN" />
-                                          <TableColumn fx:id="nit" prefWidth="75.0" text="NIT" />
+                                          <TableColumn fx:id="colClienteCotizacion" prefWidth="75.0" text="CLIENTE" />
+                                          <TableColumn fx:id="colDescuentoCotizacion" prefWidth="75.0" text="DESCUENTO" />
+                                          <TableColumn fx:id="colNetoCotizacion" prefWidth="129.60003662109375" text="DESCUENTO NETO" />
+                                          <TableColumn fx:id="colTotalCotizacion" prefWidth="154.4000244140625" text="TOTAL" />
                                        </columns>
                                     </TableView>
-                                    <TableView fx:id="tblCamposEspeciales" layoutX="15.0" layoutY="599.0" onMouseClicked="#seleccionarElementos" prefHeight="197.0" prefWidth="573.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="599.0">
+                                    <TableView fx:id="tblCamposEspeciales" layoutX="15.0" layoutY="588.0" onMouseClicked="#seleccionarElementos" prefHeight="159.0" prefWidth="702.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="588.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
@@ -214,6 +213,31 @@
                                        </font>
                                     </JFXButton>
                                     <JFXButton fx:id="btnMandarProduccion" buttonType="RAISED" layoutX="191.0" layoutY="818.0" onMouseClicked="#btnImprimir" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="MANDAR A PRODUCCIÓN" textFill="WHITE" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="191.0">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton fx:id="verImagen" buttonType="RAISED" layoutX="545.0" layoutY="818.0" onMouseClicked="#verImagen" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="VER IMAGEN" textFill="WHITE" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="545.0">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <TableView fx:id="tblCotizacionDetalle" layoutX="14.0" layoutY="375.0" onMouseClicked="#seleccionarElementosCotizacion" prefHeight="198.0" prefWidth="702.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                       <columns>
+                                          <TableColumn fx:id="colCodigoDetalle" prefWidth="75.0" text="CÓDIGO" />
+                                          <TableColumn fx:id="colCantidadDetalle" prefWidth="99.2000150680542" text="CANTIDAD" />
+                                          <TableColumn fx:id="colDetalleDescripcion" prefWidth="75.0" text="DESCRIPCIÓN" />
+                                          <TableColumn fx:id="colAnchoDetalle" prefWidth="75.0" text="ANCHO" />
+                                          <TableColumn fx:id="colAltoDetalle" prefWidth="129.60003662109375" text="ALTO" />
+                                          <TableColumn fx:id="colLargoDetalle" prefWidth="154.4000244140625" text="LARGO" />
+                                          <TableColumn fx:id="colPrecioDetalle" prefWidth="136.800048828125" text="PRECIO U." />
+                                          <TableColumn fx:id="colTotalDetalle" prefWidth="75.0" text="TOTAL" />
+                                       </columns>
+                                    </TableView>
+                                    <JFXButton fx:id="btnGuardarCotizacion" buttonType="RAISED" layoutX="15.0" layoutY="766.0" onMouseClicked="#btnGuardarCotizacion" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="GUARDAR COTIZACIÓN" textFill="WHITE">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
