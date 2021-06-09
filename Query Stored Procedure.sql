@@ -172,10 +172,10 @@ DELIMITER ;
 
 -- Cotizacion 
 DELIMITER $$
-	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
+	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date,   descuento double, descNeto double, total double)
 		begin
-			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha, cotizacionCantida, cotizacionModeloRef, cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionDescuento, cotizacionDescuentoNeto ,cotizacionPrecioU, cotizacionTotal )
-				values(codigo , cliente,tipoCliente, mesajero, img, fecha, cantidad, referencia,  alto, ancho, largo, observaicion, descuento, descNeto,precioU, total);
+			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha,   cotizacionDescuento, cotizacionDescuentoNeto, cotizacionTotal )
+				values(codigo , cliente,tipoCliente, mesajero, img, fecha,  descuento, descNeto, total);
         end $$
 DELIMITER ;
 
@@ -208,11 +208,11 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
-	create procedure Sp_UpdateCotizacionTotal(idBuscado int(5),total double)
+	create procedure Sp_UpdateCotizacionTotal(idBuscado int(5),total double, descuento double)
 		begin
 			update Cotizacion
-				set cotizacionDescuentoNeto = (cotizacionTotal+total)*cotizacionDescuento,
-                cotizacionTotal = (cotizacionTotal+total)-cotizacionDescuentoNeto
+				set cotizacionDescuentoNeto = descuento,
+                cotizacionTotal = total
 			where cotizacionId = idBuscado;
         end $$
 DELIMITER ;
@@ -251,8 +251,8 @@ DELIMITER ;
 DELIMITER $$
 	create procedure Sp_SearchCotizaciones( codigo int)
 		begin 
-			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef,
-                   c.cotizacionAlto , c.cotizacionAncho , c.cotizacionLargo,c.cotizacionDesc , c.cotizacionDescuento , c.cotizacionPrecioU , c.cotizacionTotal, c.cotizacionDescuentoNeto,
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , 
+					c.cotizacionDescuento , c.cotizacionTotal, c.cotizacionDescuentoNeto,
 				   c.cotizacionCliente,
                    cl.clienteNombre,
                    tc.tipoClienteDesc,
@@ -277,6 +277,15 @@ DELIMITER $$
 				values(cantidad, alto, ancho, largo, observaicion,precioU, total);
         end $$
 DELIMITER ;
+DELIMITER $$
+	create procedure SpTransferirBackupCotizacion(codigo int)
+		BEGIN
+			insert into cotizaciondetalle(detalleId,cotizacionCantida,cotizacionDesc,cotizacionAlto,cotizacionLargo,cotizacionAncho,cotizacionPrecioU,cotizacionTotalParcial,cotizacionid)
+				select backupId,cotizacionCantida,cotizacionDesc,cotizacionAlto, cotizacionLargo,cotizacionAncho,cotizacionPrecioU,cotizacionTotalParcial, codigo
+					from CotizacionDetalleBackup;
+			delete from CotizacionDetalleBackup where backupId>0;
+		END $$
+DELIMITER ;
 
 DELIMITER $$
 	create procedure Sp_ListCotizacionBackUp()
@@ -286,6 +295,35 @@ DELIMITER $$
             
         end $$
 DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListCotizacionDetalle(codigo int)
+		begin
+			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
+            FROM  cotizaciondetalle
+            where cotizacionid = codigo;
+            
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_SearchCotizacionDetalle(codigo int)
+		begin
+			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
+            FROM  cotizaciondetalle
+            where detalleId = codigo;
+            
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListCotizacionDetalleS()
+		begin
+			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
+            FROM  cotizaciondetalle;
+        end $$
+DELIMITER ;
+
 
 -- Modo Pago 
 DELIMITER $$
