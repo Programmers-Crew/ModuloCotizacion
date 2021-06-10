@@ -44,12 +44,30 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
+	create procedure  Sp_AddCamposEspecialesCotizacion(nombre varchar(150), precio double,cotizacion int(10))
+		begin
+			insert into CamposEspeciales(campoNombre,campoPrecio,campoCotizacion)
+				values(nombre, precio, cotizacion);
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
 	create procedure Sp_UpdateCamposEspeciales(idBuscado int(5),nombre varchar(150), precio double)
 		begin
 			update CamposEspeciales
 				set campoNombre  = nombre,
 					campoPrecio = precio
 				where campoId = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_UpdateCamposCotizacion(campoN varchar(150), campo int(10))
+		begin
+			update CamposEspeciales
+				SET campoCotizacion = campo
+				where campoNombre = campoN;
         end $$
 DELIMITER ;
 
@@ -69,6 +87,34 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
+DELIMITER $$
+	create procedure Sp_SearchNameCamposEspeciales( nameCampo varchar(150))
+		begin 
+			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
+				from CamposEspeciales as ce
+                where ce.campoNombre = nameCampo;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_SearchCamposEspeciales( codigo int(5))
+		begin 
+			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
+				from CamposEspeciales as ce
+                where ce.campoId = codigo;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_SearchCamposEspecialescotizacion( codigo int(5))
+		begin 
+			select ce.campoId  , ce.campoNombre  , ce.campoPrecio 
+				from CamposEspeciales as ce
+                where ce.campoCotizacion = codigo;
+        end $$
+DELIMITER ;
+
 -- Tipo Cliente
 DELIMITER $$
 	create procedure Sp_AddTipoCliente(TipoDesc varchar(50), tipoDescuento double)
@@ -80,10 +126,12 @@ DELIMITER ;
 
 DELIMITER $$
 	create procedure Sp_UpdateTipoCliente(idBuscado int(5) , tipoDesc varchar(50), tipoDescuento double)
+		begin
 		update TipoCliente 
 			set tipoClienteDesc =  tipoDesc,
 				tipoClienteDescuento = tipoDescuento
 			where tipoClienteId = idBuscado;
+		end $$
 DELIMITER ;
 
 DELIMITER $$
@@ -111,25 +159,29 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
+
 DELIMITER $$
-	create procedure Sp_ListTipoClienteCC(nameBuscado varchar(50))
+	create procedure Sp_ListTipoClienteCC(id int)
 		begin 
-			select tc.tipoClienteId 
+			select tc.tipoClienteId , tipoClienteDesc, tipoClienteDescuento
 				from TipoCliente as tc
-					where TC.tipoClienteDesc = nameBuscado;
+					where TC.tipoClienteId = id;
         end $$
 DELIMITER ; 
+
 -- Cotizacion 
 DELIMITER $$
-	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, observaicion varchar(50), descuento double, descNeto double,precioU double, total double)
+	create procedure Sp_AddCotizacion(codigo int(5), cliente varchar(10), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date,   descuento double, descNeto double, total double)
 		begin
-			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha, cotizacionCantida, cotizacionModeloRef, cotizacionProducto, cotizacionTipoPrecio, cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionDescuento, cotizacionDescuentoNeto ,cotizacionPrecioU, cotizacionTotal )
-				values(codigo , cliente,tipoCliente, mesajero, img, fecha, cantidad, referencia, producto, tipoPrecio, alto, ancho, largo, facVenta, observaicion, descuento, descNeto,precioU, total);
+			insert into Cotizacion(cotizacionId,cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha,   cotizacionDescuento, cotizacionDescuentoNeto, cotizacionTotal )
+				values(codigo , cliente,tipoCliente, mesajero, img, fecha,  descuento, descNeto, total);
         end $$
 DELIMITER ;
 
+
 DELIMITER $$
-	create procedure Sp_UpdateCotizacion(idBuscado int(5),cliente int(5), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), producto varchar(7), tipoPrecio varchar(50), alto double, ancho double, largo double, facVenta int(5), observaicion varchar(50), descuento double, descNeto double ,precioU double, total double, camposEspeciales int(5))
+	create procedure Sp_UpdateCotizacion(idBuscado int(5),cliente int(5), tipoCliente int(5), mesajero int(5), img varchar(50), fecha date, cantidad double, referencia varchar(100), tipoPrecio varchar(50), alto double, ancho double, largo double, facVenta int(5), observaicion varchar(50), descuento double, descNeto double ,precioU double, total double, camposEspeciales int(5))
 		begin
 			update Cotizacion
 				set cotizacionCliente = cliente, 
@@ -156,6 +208,16 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
+	create procedure Sp_UpdateCotizacionTotal(idBuscado int(5),total double, descuento double)
+		begin
+			update Cotizacion
+				set cotizacionDescuentoNeto = descuento,
+                cotizacionTotal = total
+			where cotizacionId = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
 	create procedure Sp_DeleteCotizacion(idBuscado int(5))
 		begin
 			delete from Cotizacion
@@ -163,31 +225,105 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+drop procedure if exists Sp_ListarCotizaciones;
 DELIMITER $$
 	create procedure Sp_ListarCotizaciones()
 		begin 
-			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , c.cotizacionCantida , c.cotizacionModeloRef, c.cotizacionTipoPrecio ,
-                   c.cotizacionAlto , c.cotizacionAncho , c.cotizacionLargo,c.cotizacionDesc , c.cotizacionDescuento , c.cotizacionPrecioU , c.cotizacionTotal, c.cotizacionDescuentoNeto,
-				   cl.clienteNombre,
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha,
+					c.cotizacionDescuento  , c.cotizacionTotal, c.cotizacionDescuentoNeto,
+				   c.cotizacionCliente,
+                   cl.clienteNombre,
                    tc.tipoClienteDesc,
-                   u.usuarioNombre,
-                   ip.productoDesc,
-                   fv.campoNombre, fv.campoPrecio
+                   tc.tipoClienteDescuento,
+                   u.usuarioNombre
 				from Cotizacion as c
 				inner join Clientes as cl
-					on c.cotizacionCliente = cl.clienteId
+					on c.cotizacionCliente = cl.clienteNit
+				inner join TipoCliente as tc
+					on c.cotizacionTipoClienteId = tc.tipoClienteId
+				inner join Usuarios as u
+					on c.cotizacionMensajero = u.usuarioId;
+        end $$
+DELIMITER ;
+
+
+
+DELIMITER $$
+	create procedure Sp_SearchCotizaciones( codigo int)
+		begin 
+			select c.cotizacionId, c.cotizacionImg , c.cotizacionFecha , 
+					c.cotizacionDescuento , c.cotizacionTotal, c.cotizacionDescuentoNeto,
+				   c.cotizacionCliente,
+                   cl.clienteNombre,
+                   tc.tipoClienteDesc,
+                   tc.tipoClienteDescuento,
+                   u.usuarioNombre, u.usuarioId
+				from Cotizacion as c
+				inner join Clientes as cl
+					on c.cotizacionCliente = cl.clienteNit
 				inner join TipoCliente as tc
 					on c.cotizacionTipoClienteId = tc.tipoClienteId
 				inner join Usuarios as u
 					on c.cotizacionMensajero = u.usuarioId
-				inner join InventarioProductos as ip
-					on c.cotizacionProducto = ip.productoId
-				inner join FactorVenta as fv
-					on c.cotizacionFacVenta = fv.factorVentaId
-				inner join CamposEspeciales as ce
-					on c.cotizacionCamposEspeciales = fv.campoNombre;
+				where c.cotizacionId=codigo;
         end $$
 DELIMITER ;
+
+-- cotizacion detalle y cotizacion detalle backup
+DELIMITER $$
+	create procedure Sp_AddCotizacionBackup(cantidad double,  alto double, ancho double, largo double, observaicion varchar(50), precioU double, total double)
+		begin
+			insert into CotizacionDetalleBackup(cotizacionCantida,  cotizacionAlto, cotizacionAncho, cotizacionLargo, cotizacionDesc, cotizacionPrecioU, cotizacionTotalParcial)
+				values(cantidad, alto, ancho, largo, observaicion,precioU, total);
+        end $$
+DELIMITER ;
+DELIMITER $$
+	create procedure SpTransferirBackupCotizacion(codigo int)
+		BEGIN
+			insert into cotizaciondetalle(detalleId,cotizacionCantida,cotizacionDesc,cotizacionAlto,cotizacionLargo,cotizacionAncho,cotizacionPrecioU,cotizacionTotalParcial,cotizacionid)
+				select backupId,cotizacionCantida,cotizacionDesc,cotizacionAlto, cotizacionLargo,cotizacionAncho,cotizacionPrecioU,cotizacionTotalParcial, codigo
+					from CotizacionDetalleBackup;
+			delete from CotizacionDetalleBackup where backupId>0;
+		END $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListCotizacionBackUp()
+		begin
+			SELECT backupId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial
+            FROM  cotizaciondetallebackup;
+            
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListCotizacionDetalle(codigo int)
+		begin
+			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
+            FROM  cotizaciondetalle
+            where cotizacionid = codigo;
+            
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_SearchCotizacionDetalle(codigo int)
+		begin
+			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
+            FROM  cotizaciondetalle
+            where detalleId = codigo;
+            
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure Sp_ListCotizacionDetalleS()
+		begin
+			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
+            FROM  cotizaciondetalle;
+        end $$
+DELIMITER ;
+
 
 -- Modo Pago 
 DELIMITER $$
@@ -402,14 +538,6 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
-DELIMITER $$
-	create procedure SpDesactivarProd()
-		begin
-			update inventarioproductos as ip
-				set estadoProductoId = 2
-					where inventarioProductoCant < 1;
-        end $$
-DELIMITER ;
 
 
 DELIMITER $$
@@ -815,15 +943,6 @@ DELIMITER $$
 		END $$
 DELIMITER ;
 
--- Tipo Usuarios
-DELIMITER $$
-	CREATE PROCEDURE spListarTipoUsuario()
-		BEGIN
-			SELECT * FROM tipoUsuario
-				order by tipoUsuarioId ASC;
-        END $$
-DELIMITER ;
-
 
 -- Usuarios
 DELIMITER $$
@@ -835,6 +954,19 @@ DELIMITER $$
 						order by usuarioId ASC;
         END $$
 DELIMITER ;
+
+-- CAMBIO #1
+DELIMITER $$
+	create procedure Sp_ListUsuarioVendedor()
+		BEGIN 
+			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
+				from Usuarios, tipousuario 
+					where Usuarios.tipoUsuarioId = tipousuario.tipoUsuarioId 
+					and  Usuarios.tipoUsuarioId = 3
+						order by usuarioId ASC;
+        END $$
+DELIMITER ;
+
 
 DELIMITER $$
 	create procedure Sp_ListUsuarioC(username varchar(20))
@@ -899,37 +1031,6 @@ DELIMITER $$
 DELIMITER ;
 
 
--- Login
-DELIMITER $$
-	CREATE PROCEDURE  SpLogin(usuarioNom varchar(30), pass varchar(40))
-		BEGIN
-			select u.usuarioNombre, u.usuarioPassword
-				from usuarios as u
-					where u.usuarioNombre = usuarioNom and u.usuarioPassword = pass;
-		END $$
-DELIMITER ;
-
-DELIMITER $$
-	CREATE PROCEDURE  SpLoginAdmin(usuarioNom varchar(100), pass varchar(100))
-		BEGIN
-			select u.usuarioNombre, u.usuarioPassword
-				from usuarios as u
-					where (u.usuarioNombre = usuarioNom and u.usuarioPassword = pass) and tipoUsuarioId = 1;
-		END $$
-DELIMITER ;
-
-
-DELIMITER $$
- CREATE PROCEDURE  SpLoginValidar(usuarioNom varchar(30))
-	BEGIN
-		select u.tipoUsuarioId
-		from usuarios as u
-		where u.usuarioNombre = usuarioNom;
-	END $$
-DELIMITER ;
-
-
--- QUERYS CAMBIO DAVIS
 -- procreso de actualizar inventario desde factura - 8/04/2021
 DELIMITER $$
 	create procedure SpActualizarInventarioProductosFacturacion(idBuscado varchar(7), cant double, estado tinyint(1))
@@ -942,24 +1043,7 @@ DELIMITER ;
 
 
 
-DELIMITER $$ 
-	CREATE PROCEDURE SpListarCredit()
-		BEGIN
-			SELECT *
-            FROM creditos
-            WHERE creditoEstado = 1 group by noFactura;
-        END $$
-DELIMITER ;
 
-
-DELIMITER $$
-	create procedure SpMarcarPagadocFac(idBuscado int)
-		begin
-			update Creditos as c
-				set creditoEstado = 2 
-					where c.noFactura = idBuscado;
-        end $$
-DELIMITER ;
 
 DELIMITER $$
 	create procedure SpBuscarProductosFac(idBuscado varchar(7))
@@ -984,10 +1068,6 @@ DELIMITER $$
 				CategoriaProductos as cp
 			on
 				pr.categoriaId = cp.categoriaId 
-			inner join 
-				tipoProducto as tp
-			on 
-				pr.tipoProductoId = tp.tipoProdId
 			inner join
 				inventarioproductos as ip
 			on pr.productoId = ip.productoId
@@ -1020,10 +1100,6 @@ DELIMITER $$
 				CategoriaProductos as cp
 			on
 				pr.categoriaId = cp.categoriaId 
-			inner join 
-				tipoProducto as tp
-			on 
-				pr.tipoProductoId = tp.tipoProdId
 			inner join
 				inventarioproductos as ip
 			on pr.productoId = ip.productoId
@@ -1153,14 +1229,7 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
-DELIMITER $$
-	create procedure SpBucarCreditosVencidos()
-		begin 
-			select idCredito
-				from creditos
-					where creditoDiasRestantes < 0;
-        end $$
-DELIMITER ;
+
 
 
 -- 04 - 04
@@ -1183,24 +1252,11 @@ DELIMITER $$
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
 			on p.proveedorId = pr.proveedorId
-		inner join tipoproducto as tp
-			on p.tipoProductoId = tp.tipoProdId
 		where pr.proveedorNombre = proveedor
 		order by 
 			p.productoId ASC;
         END $$
 DELIMITER ;
-
-
--- insert obligatorios 
-/*
-insert into tipousuario values(0,"Administrador"),(1,"Empleado");
-insert into usuarios values(0,"admin", "admin", 1);
-
-
-insert into estadoproductos values(1,'AGOTADO'),(2,'EXISTENCIA') 
-*/
-insert into categoriaproductos values(1,"PRODUCTO")
 
 
 

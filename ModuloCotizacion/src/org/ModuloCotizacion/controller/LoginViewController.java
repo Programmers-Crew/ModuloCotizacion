@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -164,8 +165,13 @@ public class LoginViewController implements Initializable {
                             break;
                         }
                     }
-                    primaryStage.setWidth(primary.getVisualBounds().getWidth());
-                    primaryStage.setHeight(primary.getVisualBounds().getHeight());
+                    Screen screen = Screen.getPrimary();
+                    Rectangle2D bounds = screen.getVisualBounds();
+
+                    primaryStage.setX(bounds.getMinX());
+                    primaryStage.setY(bounds.getMinY());
+                    primaryStage.setWidth(bounds.getWidth());
+                    primaryStage.setHeight(bounds.getHeight());
                     primaryStage.setMinWidth(1500);
                     primaryStage.setMinHeight(800);
                     primaryStage.setScene(scene);

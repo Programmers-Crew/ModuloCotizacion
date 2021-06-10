@@ -121,17 +121,14 @@ create table FactorVenta(
 );
 
 
-create table CamposEspeciales(
-	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
-	campoNombre varchar(150),
-    campoPrecio double
-);
+
 
 create table TipoCliente(
 	tipoClienteId int(5) UNSIGNED ZEROFILL primary key auto_increment,
     tipoClienteDesc varchar(50) unique not null,
     tipoClienteDescuento double not null
 );
+
 
 create table Cotizacion(
 	cotizacionId int(10) UNSIGNED ZEROFILL primary key auto_increment,
@@ -140,26 +137,48 @@ create table Cotizacion(
     cotizacionImg varchar(100) not null,
     cotizacionMensajero int(5) UNSIGNED ZEROFILL not null,
     cotizacionFecha date not null,
-    cotizacionCantida double  not null,
-    cotizacionModeloRef varchar(100) not null,
-    cotizacionProducto varchar(7) not null ,
-	cotizacionAlto double not null,
-    cotizacionTipoPrecio varchar(50) not null,
-    cotizacionLargo double not null,
-    cotizacionAncho double not null,
-    cotizacionFacVenta int(5) UNSIGNED ZEROFILL not null,
-    cotizacionDesc varchar(100) not null,
     cotizacionDescuento double not null,
     cotizacionDescuentoNeto double not null,
-    cotizacionPrecioU double not null,
     cotizacionTotal double not null,
     CONSTRAINT FK_cotizacionVendedor FOREIGN KEY (cotizacionMensajero) REFERENCES Usuarios(usuarioId),
 	CONSTRAINT FK_cotizacionCliente FOREIGN KEY (cotizacionCliente) REFERENCES Clientes(clienteNit),
-    cotizacionCamposEspeciales int(5) UNSIGNED ZEROFILL,
-	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId),
-	CONSTRAINT FK_cotizacionProducto FOREIGN KEY (cotizacionProducto) REFERENCES InventarioProductos(productoId),
-	CONSTRAINT FK_cotizacionCampoEspeciales FOREIGN KEY (cotizacionCamposEspeciales) REFERENCES camposEspeciales(campoId),
-	CONSTRAINT FK_cotizacionFacVenta FOREIGN KEY (cotizacionFacVenta) REFERENCES factorVenta(factorVentaId)
+	CONSTRAINT FK_cotizacionTipoCliente FOREIGN KEY (cotizacionTipoClienteId) REFERENCES tipoCliente(tipoClienteId)
+);
+
+
+create table CotizacionDetalle(
+	detalleId int(10) UNSIGNED ZEROFILL primary key auto_increment,
+	cotizacionCantida double  not null,
+    cotizacionDesc varchar(100) not null,
+	cotizacionAlto double not null,
+	cotizacionLargo double not null,
+    cotizacionAncho double not null,
+    cotizacionPrecioU double not null,
+    cotizacionTotalParcial double not null, 
+    cotizacionid int(10) zerofill not null,
+    CONSTRAINT FK_cotizacion FOREIGN KEY (cotizacionid) REFERENCES Cotizacion(cotizacionId)
+);
+
+
+create table CotizacionDetalleBackup(
+	backupId int(10) UNSIGNED ZEROFILL primary key auto_increment,
+	cotizacionCantida double  not null,
+    cotizacionDesc varchar(100) not null,
+	cotizacionAlto double not null,
+	cotizacionLargo double not null,
+    cotizacionAncho double not null,
+    cotizacionPrecioU double not null,
+    cotizacionTotalParcial double not null
+);
+
+
+
+create table CamposEspeciales(
+	campoId int(5) UNSIGNED ZEROFILL primary key auto_increment,
+	campoNombre varchar(150),
+    campoPrecio double,
+    campoCotizacion int(10) zerofill,
+	CONSTRAINT FK_cotizacion1 FOREIGN KEY (campoCotizacion) REFERENCES Cotizacion(cotizacionId)
 );
 
 create table ModoPago(

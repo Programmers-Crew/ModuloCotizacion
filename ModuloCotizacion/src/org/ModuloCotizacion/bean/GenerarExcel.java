@@ -126,7 +126,7 @@ public class GenerarExcel {
                     } catch (IOException ex) {
                         Logger.getLogger(GenerarExcel.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    System.out.println("si se pudo");
+                    
                 }
             }
     }

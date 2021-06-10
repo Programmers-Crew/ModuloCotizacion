@@ -1205,8 +1205,10 @@ public class MenuPrincipalContoller implements Initializable {
                         nuevoUsuario.setUsuarioPassword(txtPassword.getText());
                         if(cmbTipoUsuario.getValue().equals("Administrador")){
                                tipoUsuario = 1;
-                        }else{
+                        }else if(cmbTipoUsuario.getValue().equals("Empleado")){
                             tipoUsuario = 2;
+                        }else{
+                                tipoUsuario = 3;
                         }
 
                         String sql = "{call spAgregarUsuario('"+nuevoUsuario.getUsuarioNombre()+"','"+nuevoUsuario.getUsuarioPassword()+"','"+tipoUsuario+"')}";
@@ -1238,8 +1240,10 @@ public class MenuPrincipalContoller implements Initializable {
         nuevoUsuario.setUsuarioPassword(txtPassword.getText());
         if(cmbTipoUsuario.getValue().equals("Administrador")){
                tipoUsuario = 1;
-        }else{
+        }else if(cmbTipoUsuario.getValue().equals("Empleado")){
             tipoUsuario = 2;
+        }else{
+            tipoUsuario = 3;
         }
         tipoOperacion = Operacion.ACTUALIZAR;
         String sql = "{call SpActualizarUsuario('"+nuevoUsuario.getUsuarioId()+"','"+nuevoUsuario.getUsuarioNombre()+"','"+nuevoUsuario.getUsuarioPassword()+"','"+tipoUsuario+"')}";
