@@ -209,7 +209,7 @@
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <JFXButton fx:id="btnGenerarWord" buttonType="RAISED" layoutX="379.0" layoutY="795.0" onMouseClicked="#btnImprimir" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="GENERAR WORD" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="379.0">
+                                    <JFXButton fx:id="btnGenerarWord" buttonType="RAISED" layoutX="379.0" layoutY="795.0" onMouseClicked="#btnGenerarWord" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="GENERAR WORD" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="379.0">
                                        <font>
                                           <Font size="11.0" />
                                        </font>

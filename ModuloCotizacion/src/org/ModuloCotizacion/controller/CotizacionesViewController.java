@@ -52,6 +52,7 @@ import org.ModuloCotizacion.bean.CamposEspeciales;
 import org.ModuloCotizacion.bean.Cotizaciones;
 import org.ModuloCotizacion.bean.ValidarStyle;
 import org.ModuloCotizacion.bean.cotizacionBackup;
+import org.ModuloCotizacion.bean.generarCotizacion;
 import org.ModuloCotizacion.db.Conexion;
 import org.controlsfx.control.Notifications;
 
@@ -70,7 +71,7 @@ public class CotizacionesViewController implements Initializable {
     @FXML
     private TextField txtTotalParcial;
 
-   
+  
 
     
     //Variables
@@ -1559,5 +1560,13 @@ public class CotizacionesViewController implements Initializable {
         }
     }
 
-    
+      @FXML
+    private void btnGenerarWord(MouseEvent event) {
+        generarCotizacion generar = new generarCotizacion();
+        
+        generar.generar(listaCamposEsp2, listaCotizacionesBack, Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtImagen.getText(), anchor, Integer.parseInt(txtCodigo.getText()), txtNIT.getValue(), txtNombre.getText(), txtDireccion.getText(), Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()));
+        
+    }
+
+   
 }
