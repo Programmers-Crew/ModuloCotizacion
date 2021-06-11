@@ -1222,5 +1222,18 @@ create procedure SpBuscareProveedorNit(proveedor varchar(50))
     end $$
 DELIMITER ;
 
-
+DELIMITER $$
+	create procedure Sp_UpdateBackUpCotizacion(idBuscado int(10), cantidad double, desccrip varchar(100), alto double, largo double, ancho double, precioU double, totalP double)
+		begin 
+			update cotizaciondetallebackup as cb
+				set cotizacionCantida = cantidad,
+					cotizacionDesc = desccrip,
+                    cotizacionAlto = alto,
+                    cotizacionLargo = largo,
+                    cotizacionAncho = ancho,
+                    cotizacionPrecioU = precioU,
+                    cotizacionTotalParcial = totalP
+					where backupId = idBuscado;
+        end $$
+DELIMITER ;
 
