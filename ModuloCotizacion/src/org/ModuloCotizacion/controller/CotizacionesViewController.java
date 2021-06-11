@@ -1254,9 +1254,26 @@ public class CotizacionesViewController implements Initializable {
         txtDescuentoCotizacion.setText(colNetoCotizacion.getCellData(index).toString());
         txtTotalCotizacion.setText(colTotalCotizacion.getCellData(index).toString());
         codigoCotizacion =colCodigoCotizacion.getCellData(index);
-        
+        cargarMore();
         cargarDatosCamposEspeciales();
         cargarDatosCotizacionesDetalle();
+    }
+    
+    
+    public void cargarMore(){
+          String sql="{call Sp_SearchCotizaciones('"+codigoCotizacion+"')}";
+        
+        try {
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                txtImagen.setText(rs.getString("cotizacionImg"));
+                txtVendedor.setValue(rs.getString("usuarioNombre")+ " |"+rs.getString("usuarioId"));
+            }
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
     
     public ObservableList<cotizacionBackup> getCotizaciondetalle(){
@@ -1592,7 +1609,7 @@ public class CotizacionesViewController implements Initializable {
     private void btnGenerarWord(MouseEvent event) {
         generarCotizacion generar = new generarCotizacion();
         
-        generar.generar(listaCamposEsp2, listaCotizacionesBack, Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtImagen.getText(), anchor, Integer.parseInt(txtCodigo.getText()), txtNIT.getValue(), txtNombre.getText(), txtDireccion.getText(), Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()));
+        generar.generar(listaCamposEsp2, listaCotizacionesBack, Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtImagen.getText(), anchor, Integer.parseInt(txtCodigo.getText()), txtNIT.getValue(), txtNombre.getText(), txtDireccion.getText(), Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtFecha.getValue().toString());
         
     }
     

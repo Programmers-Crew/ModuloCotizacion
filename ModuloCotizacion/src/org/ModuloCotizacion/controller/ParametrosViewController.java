@@ -22,7 +22,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,33 +54,7 @@ public class ParametrosViewController implements Initializable {
     @FXML
     private AnchorPane anchor1;
     @FXML
-    private JFXTextField txtCodigoFactor;
-    @FXML
-    private JFXTextField descuentoFactor;
-    @FXML
-    private JFXButton btnAgregarFactor;
-    @FXML
-    private JFXButton btnEliminarFactor;
-    @FXML
-    private JFXButton btnEditarFactor;
-    @FXML
-    private TextArea descFactor;
-    @FXML
     private AnchorPane anchor2;
-    @FXML
-    private TableView<FactorVenta> tblFactor;
-    @FXML
-    private TableColumn<FactorVenta, Integer> colCodigoFactor;
-    @FXML
-    private TableColumn<FactorVenta, String> colDescFactor;
-    @FXML
-    private TableColumn<FactorVenta, Double> colDescuentoFactor;
-    @FXML
-    private JFXButton btnBuscarFactor;
-    @FXML
-    private ComboBox<String> cmbFiltroDesc;
-    @FXML
-    private ComboBox<String> cmbBuscarFactor;
     @FXML
     private AnchorPane anchor;
     
@@ -122,85 +95,20 @@ public class ParametrosViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cargarDatos();
         ArrayList<String> lista = new ArrayList();
-        cmbFiltroDesc.setValue("");
         lista.add(0,"CÓDIGO");
         lista.add(1,"DESCRIPCIÓN");
         listaFiltro = FXCollections.observableList(lista);
-        cmbFiltroDesc.setItems(listaFiltro);
         animacion.animacion(anchor1, anchor2);
     }    
     
     
-    public void disableCamposFactor(){
-        txtCodigoFactor.setDisable(true);
-        descFactor.setDisable(true);
-        descuentoFactor.setDisable(true);
-    }
-    
-    public void limpiarText(){
-        txtCodigoFactor.setText("");
-        descFactor.setText("");
-        descuentoFactor.setText("");
-    }
-    
-    public void disableButtons(){
-        btnAgregarFactor.setDisable(true);
-        btnEliminarFactor.setDisable(true);
-        btnEditarFactor.setDisable(true);
-    }
-     public void activateButtons(){
-        btnAgregarFactor.setDisable(false);
-        btnEliminarFactor.setDisable(false);
-        btnEditarFactor.setDisable(false);
-    }
-    public void activarText(){
-        txtCodigoFactor.setDisable(false);
-        descFactor.setDisable(false);
-        descuentoFactor.setDisable(false);
-        txtCodigoFactor.setEditable(true);
-        descFactor.setEditable(true);
-        descuentoFactor.setEditable(true);
-    }
-    
-    public ObservableList getFactorVenta(){
-        ArrayList<FactorVenta> lista = new ArrayList();
-        String sql = "{call Sp_ListFactorVenta()}";
-        try{
-            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-            ResultSet rs = ps.executeQuery();
-            
-            while(rs.next()){
-                lista.add(new FactorVenta(
-                        rs.getInt("factorVentaId"),
-                        rs.getString("factorVentaDesc"),
-                        rs.getDouble("factorVentaDescuento")
-                
-                ));
-            }
-           
-        }catch(SQLException ex){
-             Notifications noti = Notifications.create();
-            noti.graphic(new ImageView(imgError));
-            noti.title("ERROR");
-            noti.text("NO SE HA PODIDO CARGAR LA DB "+ex);
-            noti.position(Pos.BOTTOM_RIGHT);
-            noti.hideAfter(Duration.seconds(4));
-            noti.darkStyle();   
-            noti.show();
-        }
-        
-        return listaFactor = FXCollections.observableList(lista);
-    }
     
     
-    public void cargarDatos(){
-        tblFactor.setItems(getFactorVenta());
-        colCodigoFactor.setCellValueFactory(new PropertyValueFactory("factorVentaId"));
-        colDescFactor.setCellValueFactory(new PropertyValueFactory("factorVentaDesc"));
-        colDescuentoFactor.setCellValueFactory(new PropertyValueFactory("factorVentaDescuento"));
-    }
+   
+    
+    
+  
     
     
     
@@ -210,448 +118,9 @@ public class ParametrosViewController implements Initializable {
     cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
     
-    public void accionFactor(){
-        switch(tipoOperacionFactor){
-            case AGREGAR:
-                tipoOperacionFactor = OperacionFactor.GUARDAR;
-                disableButtons();
-                btnAgregarFactor.setText("GUARDAR");
-                btnEliminarFactor.setText("CANCELAR");
-                btnEliminarFactor.setDisable(false);
-                activarText();
-                limpiarText();
-                btnAgregarFactor.setDisable(false);
-                btnBuscarFactor.setDisable(true);
-                break;
-            case CANCELAR:
-                tipoOperacionFactor = OperacionFactor.NINGUNO;
-                disableButtons();
-                disableCamposFactor();
-                
-                btnAgregarFactor.setText("AGREGAR");
-                btnEliminarFactor.setText("ELIMINAR");
-                limpiarText();
-                btnBuscarFactor.setDisable(true);
-                btnAgregarFactor.setDisable(false);
-                break;
-        }
-    }
-    
-    public void accionFactor(String sql){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        PreparedStatement ps;
-        ResultSet rs;
-        Notifications noti = Notifications.create();
-        ButtonType buttonTypeSi = new ButtonType("Si");
-        ButtonType buttonTypeNo = new ButtonType("No");
-        
-        switch(tipoOperacionFactor){
-            case GUARDAR:
-                 alert.setTitle("AGREGAR REGISTRO");
-                alert.setHeaderText("AGREGAR REGISTRO");
-                alert.setContentText("¿Está seguro que desea guardar este registro?");
-                
-                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
-                
-                Optional<ButtonType> result = alert.showAndWait();
-                if(result.get() == buttonTypeSi ){
-                    try {
-                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                        ps.execute();
-                        
-                        noti.graphic(new ImageView(imgCorrecto));
-                        noti.title("OPERACIÓN EXITOSA");
-                        noti.text("SE HA AGREGADO EXITOSAMENTE EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                        cargarDatos();
-                        
-                    }catch (SQLException ex) {
-                        ex.printStackTrace();
-                        noti.graphic(new ImageView(imgError));
-                        noti.title("ERROR AL AGREGAR");
-                        noti.text("HA OCURRIDO UN ERROR AL GUARDAR EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                    }
-                }else{
-                    
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("OPERACIÓN CANCELADA");
-                    noti.text("NO SE HA AGREGADO EL REGISTRO");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();
-                    noti.show();
-                    tipoOperacionFactor = OperacionFactor.CANCELAR;
-                    accionFactor();
-                }
-                break;
-            case ELIMINAR:
-                 alert.setTitle("ELIMINAR REGISTRO");
-                alert.setHeaderText("ELIMINAR REGISTRO");
-                alert.setContentText("¿Está seguro que desea Eliminar este registro?");
-               
-                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
-                
-                Optional<ButtonType> resultEliminar = alert.showAndWait();
-                
-                if(resultEliminar.get() == buttonTypeSi){
-                    try {
-                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                        ps.execute();
-                        
-                        noti.graphic(new ImageView(imgCorrecto));
-                        noti.title("OPERACIÓN EXITOSA");
-                        noti.text("SE HA ELIMINADO EXITOSAMENTE EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        cargarDatos();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                        
-                    }catch (SQLException ex) {
-                        ex.printStackTrace();
-                        
-                        
-                        noti.graphic(new ImageView(imgError));
-                        noti.title("ERROR AL ELIMINAR");
-                        noti.text("HA OCURRIDO UN ERROR AL ELIMINAR EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                    }
-                }else{
-                     noti.graphic(new ImageView(imgError));
-                    noti.title("OPERACIÓN CANCELADA");
-                    noti.text("NO SE HA ELIMINADO EL REGISTRO");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();
-                    noti.show();
-                    tipoOperacionFactor = OperacionFactor.CANCELAR;
-                    accionFactor();
-                }
-                break;
-            case ACTUALIZAR:
-                alert.setTitle("ACTUALIZAR REGISTRO");
-                alert.setHeaderText("ACTUALIZAR REGISTRO");
-                alert.setContentText("¿Está seguro que desea Actualizar este registro?");
-               
-                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
-                
-                Optional<ButtonType> resultactualizar = alert.showAndWait();
-                if(resultactualizar.get() == buttonTypeSi ){
-                    try {
-                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                        ps.execute();
-                        
-                        noti.graphic(new ImageView(imgCorrecto));
-                        noti.title("OPERACIÓN EXITOSA");
-                        noti.text("SE HA ACTUALIZADO EXITOSAMENTE EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                        cargarDatos();
-                    }catch (SQLException ex) {
-                        ex.printStackTrace();
-                        noti.graphic(new ImageView(imgError));
-                        noti.title("ERROR AL ACTUALIZAR");
-                        noti.text("HA OCURRIDO UN ERROR AL ACTUALIZAR EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                    }
-                }
-                break;
-            case BUSCAR:
-                 try{
-                    ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                    rs = ps.executeQuery();
-                    while(rs.next()){
-                        txtCodigoFactor.setText(rs.getString("factorVentaId"));
-                        descFactor.setText(rs.getString("factorVentaDesc"));
-                        descuentoFactor.setText(rs.getString("factorVentaDescuento"));
-                        codigo=rs.getInt("factorVentaId");
-                    }                    
-                    if(rs.first()){
-                        for(int i=0; i<tblFactor.getItems().size(); i++){
-                            if(colCodigoFactor.getCellData(i) == codigo){
-                                tblFactor.getSelectionModel().select(i);
-                                break;
-                            }
-                        }
-                        activateButtons();
-                        noti.graphic(new ImageView(imgCorrecto));
-                        noti.title("OPERACIÓN EXITOSA");
-                        noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        activarText();
-                        tipoOperacionFactor = OperacionFactor.NINGUNO;
-                        
-                    }else{
-                         
-                        noti.graphic(new ImageView(imgError));
-                        noti.title("ERROR AL BUSCAR");
-                        noti.text("NO SE HA ENCONTRADO EN LA BASE DE DATOS");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionFactor = OperacionFactor.CANCELAR;
-                        accionFactor();
-                    }
-                }catch(SQLException ex){
-                    ex.printStackTrace();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR AL BUSCAR");
-                    noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();
-                    noti.show();
-                    tipoOperacionFactor = OperacionFactor.CANCELAR;
-                    accionFactor();
-                }
-                break;
-        }
-        
-    
-    }
-    
-
-
-    @FXML
-    private void btnAgregarFactor(MouseEvent event) {
-         if(tipoOperacionFactor == OperacionFactor.GUARDAR){
-            if(descFactor.getText().isEmpty() || descuentoFactor.getText().isEmpty()){
-                 Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR");
-                    noti.text("HAY CAMPOS VACÍOS");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-            }else{
-                String sql="";
-                if(descFactor.getText().length() > 150){
-                    Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR");
-                    noti.text("CAMPOS FUERA DE RANGO, DESCRIPCIÓN NO DEBE PASAR LOS 150 CARACTERES");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-                }else{
-                    FactorVenta factorVenta = new FactorVenta();
-                    factorVenta.setFactorVentaDesc(descFactor.getText());
-                    factorVenta.setFactorVentaDescuento(Double.parseDouble(descuentoFactor.getText()));
-                    
-                    sql = "{call Sp_AddFactorVenta('"+factorVenta.getFactorVentaDesc()+"','"+factorVenta.getFactorVentaDescuento()+"')}";                        
-                    
-                    
-                    tipoOperacionFactor = OperacionFactor.GUARDAR;
-                    accionFactor(sql);
-                }
-            }
-        }else{
-            tipoOperacionFactor = OperacionFactor.AGREGAR;
-            accionFactor();
-        }
-    }
-    
-    
-    @FXML
-    private void seleccionarElementosParametros(MouseEvent event) {
-        int index = tblFactor.getSelectionModel().getSelectedIndex();
-        try{
-            txtCodigoFactor.setText(String.valueOf(colCodigoFactor.getCellData(index)));
-            descFactor.setText(colDescFactor.getCellData(index));
-            descuentoFactor.setText(String.valueOf(colDescuentoFactor.getCellData(index)));
-            codigo = colCodigoFactor.getCellData(index);
-            activateButtons();
-            activarText();
-        }catch(Exception e){
-        
-        }
-    }
-    
-    @FXML
-    private void btnEliminarFactor(MouseEvent event) {
-        if(tipoOperacionFactor == OperacionFactor.GUARDAR){
-            tipoOperacionFactor = OperacionFactor.CANCELAR;
-            accionFactor();
-        }else{
-             
-            String sql = "{call Sp_DeleteFactorVenta('"+codigo+"')}";
-            tipoOperacionFactor = OperacionFactor.ELIMINAR;
-            accionFactor(sql);
-        }
-    }
 
     
-    @FXML
-    private void btnEditarFactor(MouseEvent event) {
-        if(descFactor.getText().isEmpty() || descuentoFactor.getText().isEmpty()){
-            Notifications noti = Notifications.create();
-               noti.graphic(new ImageView(imgError));
-               noti.title("ERROR");
-               noti.text("HAY CAMPOS VACÍOS");
-               noti.position(Pos.BOTTOM_RIGHT);
-               noti.hideAfter(Duration.seconds(4));
-               noti.darkStyle();   
-               noti.show();
-       }else{
-           if(descFactor.getText().length() > 25 || descuentoFactor.getText().length() > 9){
-               Notifications noti = Notifications.create();
-               noti.graphic(new ImageView(imgError));
-               noti.title("ERROR");
-               noti.text("CAMPOS FUERA DE RANGO, NOMBRE NO DEBE PASAR LOS 25 CARACTERES Y EL NIT NO DEBE PASAR LOS 9 CARACTERES");
-               noti.position(Pos.BOTTOM_RIGHT);
-               noti.hideAfter(Duration.seconds(4));
-               noti.darkStyle();   
-               noti.show();
-           }else{
-               FactorVenta factorVenta = new FactorVenta();
-               factorVenta.setFactorVentaDesc(descFactor.getText());
-               factorVenta.setFactorVentaDescuento(Double.parseDouble(descuentoFactor.getText()));
-               String sql = "{call Sp_UpdateFactorVenta('"+codigo+"','"+factorVenta.getFactorVentaDesc()+"','"+factorVenta.getFactorVentaDescuento()+"')}";
-               tipoOperacionFactor = OperacionFactor.ACTUALIZAR;
-               accionFactor(sql);
-           }
-       }
-    }
-    
-    
-    @FXML
-    private void comboFiltroFactor(ActionEvent event) {
-        cmbBuscarFactor.setDisable(false);
-        btnBuscarFactor.setDisable(false);
-        ArrayList<String> lista = new ArrayList();
-        String sql = "{call Sp_ListFactorVenta()}";
-        if(cmbFiltroDesc.getValue().equals("CÓDIGO")){
-            try{
-                
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                ResultSet rs = ps.executeQuery();
-                
-                while(rs.next()){
-                    lista.add(rs.getString("factorVentaId"));
-                }
-            }catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }else{
-            if(cmbFiltroDesc.getValue().equals("DESCRIPCIÓN")){
-                try{
-                
-                    PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                    ResultSet rs = ps.executeQuery();
-
-                    while(rs.next()){
-                        lista.add(rs.getString("factorVentaDesc"));
-                    }
-                }catch(SQLException ex){
-                    ex.printStackTrace();
-                }
-            }
-            
-        }
-        
-        
-        listaCombo = FXCollections.observableList(lista);
-        cmbBuscarFactor.setItems(listaCombo);
-        new AutoCompleteComboBoxListener(cmbBuscarFactor);
-        
-    }
-    
-    
-    @FXML
-    private void btnBuscarFactor(MouseEvent event) {
-        String sql = "";
-        tipoOperacionFactor = OperacionFactor.BUSCAR;
-        if(cmbBuscarFactor.getValue().equals("")){
-            Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR");
-                    noti.text("El CAMPO DE BUSQUEDA ESTA VACÍO");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-        }else{
-            if(cmbBuscarFactor.getValue().equals("CÓDIGO")){
-                
-                sql = "{call Sp_SearchFactorVenta('"+cmbBuscarFactor.getValue()+"')}";
-                
-            }else{
-                sql = "{call Sp_SearchName('"+cmbBuscarFactor.getValue()+"')}";
-            }
-            
-            System.out.println(sql);
-            accionFactor(sql);
-        } 
-    }
-
-    
-    
-    @FXML
-    private void cmbBuscarFactor(ActionEvent event) {
-        String sql = "";
-        tipoOperacionFactor = OperacionFactor.BUSCAR;
-        if(cmbBuscarFactor.getValue().equals("")){
-            Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR");
-                    noti.text("El CAMPO DE BUSQUEDA ESTA VACÍO");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-        }else{
-            if(cmbFiltroDesc.getValue().equals("CÓDIGO")){
-                
-                sql = "{call Sp_SearchFactorVenta('"+cmbBuscarFactor.getValue()+"')}";
-
-            }else{
-                sql = "{call Sp_SearchName('"+cmbBuscarFactor.getValue()+"')}";
-            }
-            
-            accionFactor(sql);
-        }
-    }
-    
-    
-    
-
    
-    
-    
-    
     
     
     
@@ -673,7 +142,7 @@ public class ParametrosViewController implements Initializable {
     @FXML
     private JFXTextField txtNombreEspecial;
     @FXML
-    private TableView<?> tblCamposEspecial;
+    private TableView<CamposEspeciales> tblCamposEspecial;
     @FXML
     private TableColumn<CamposEspeciales, Integer> colCodigoEspecial;
     @FXML
@@ -801,7 +270,7 @@ public class ParametrosViewController implements Initializable {
                 
                 btnAgregarEspecial.setText("AGREGAR");
                 btnEliminarEspecial.setText("ELIMINAR");
-                limpiarText();
+                limpiarCamposEspeciales();
                 btnBuscarEspecial.setDisable(true);
                 btnAgregarEspecial.setDisable(false);
                 break;
@@ -965,7 +434,7 @@ public class ParametrosViewController implements Initializable {
                         codigoEspecial = rs.getInt("campoId");
                     }                    
                     if(rs.first()){
-                        for(int i=0; i<tblFactor.getItems().size(); i++){
+                        for(int i=0; i<tblCamposEspecial.getItems().size(); i++){
                             if(colCodigoEspecial.getCellData(i) == codigoEspecial){
                                 tblCamposEspecial.getSelectionModel().select(i);
                                 break;
