@@ -297,6 +297,30 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
+	create procedure Sp_UpdateBackUpCotizacion(idBuscado int(10), cantidad double, desccrip varchar(100), alto double, largo double, ancho double, precioU double, totalP double)
+		begin 
+			update cotizaciondetallebackup as cb
+				set cotizacionCantida = cantidad,
+					cotizacionDesc = desccrip,
+                    cotizacionAlto = alto,
+                    cotizacionLargo = largo,
+                    cotizacionAncho = ancho,
+                    cotizacionPrecioU = precioU,
+                    cotizacionTotalParcial = totalP
+					where backupId = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpEliminarBackuCo(idBuscado int(5))
+		begin
+			delete from cotizaciondetallebackup
+				where backupId = idBuscado;
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
 	create procedure Sp_ListCotizacionDetalle(codigo int)
 		begin
 			SELECT detalleId, cotizacionCantida, cotizacionDesc, cotizacionAlto, cotizacionLargo, cotizacionAncho, cotizacionPrecioU, cotizacionTotalParcial,cotizacionid
@@ -1257,6 +1281,8 @@ DELIMITER $$
 			p.productoId ASC;
         END $$
 DELIMITER ;
+
+
 
 
 

@@ -1194,16 +1194,51 @@ public class CotizacionesViewController implements Initializable {
         
     }
     
+    public void activatTextBackup(){
+        txtAncho.setEditable(true);
+        txtLargo.setEditable(true);
+        txtAlto.setEditable(true);
+        txtDescripcion.setEditable(true);
+        txtCantidad.setEditable(true);
+        txtMolduraReferencia.setDisable(false);
+        
+        btnEditar.setDisable(false);
+        btnEliminar.setDisable(false);
+    }
+    
     
      @FXML
     private void seleccionarElementosDetalle(MouseEvent event) {
-        int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
-        txtAncho.setText(colAnchoDetalle.getCellData(index).toString());
-        txtLargo.setText(colLargoDetalle.getCellData(index).toString());
-        txtAlto.setText(colAltoDetalle.getCellData(index).toString());
-        txtDescripcion.setText(colDetalleDescripcion.getCellData(index));
-        txtCantidad.setText(colCantidadDetalle.getCellData(index).toString());
-        txtPrecioUCotizacion.setText(colPrecioDetalle.getCellData(index).toString());
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            ButtonType buttonTypeSi = new ButtonType("Si");
+            ButtonType buttonTypeNo = new ButtonType("No");
+
+            alert.setTitle("WARNING");
+            alert.setHeaderText("EDITAR/ELIMINAR REGISTRO DE FACTURA");
+            alert.setContentText("¿Está seguro que desea editar/eliminar este registro?");
+
+            alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get() == buttonTypeSi){
+                try{     
+                     int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
+                    txtAncho.setText(colAnchoDetalle.getCellData(index).toString());
+                    txtLargo.setText(colLargoDetalle.getCellData(index).toString());
+                    txtAlto.setText(colAltoDetalle.getCellData(index).toString());
+                    txtDescripcion.setText(colDetalleDescripcion.getCellData(index));
+                    txtCantidad.setText(colCantidadDetalle.getCellData(index).toString());
+                    txtPrecioUCotizacion.setText(colPrecioDetalle.getCellData(index).toString());
+                    activatTextBackup();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+                tblCotizacionDetalle.getSelectionModel().clearSelection();
+            } 
+
+        
         
     }
     
@@ -1512,6 +1547,7 @@ public class CotizacionesViewController implements Initializable {
                     noti.hideAfter(Duration.seconds(4));
                     noti.darkStyle();   
                     noti.show();
+                    cargarDatosCotizaciones();
 
 
                 }catch(SQLException ex){
@@ -1550,15 +1586,7 @@ public class CotizacionesViewController implements Initializable {
     }
 
     
-    
-    
-    @FXML
-    private void btnEliminar(MouseEvent event) {
-        if(tipoOperacion == Operacion.GUARDAR){
-            tipoOperacion = Operacion.CANCELAR;
-            accion();
-        }
-    }
+
 
       @FXML
     private void btnGenerarWord(MouseEvent event) {
@@ -1567,6 +1595,100 @@ public class CotizacionesViewController implements Initializable {
         generar.generar(listaCamposEsp2, listaCotizacionesBack, Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtImagen.getText(), anchor, Integer.parseInt(txtCodigo.getText()), txtNIT.getValue(), txtNombre.getText(), txtDireccion.getText(), Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()));
         
     }
-
-   
+    
+    //BTN EDITAR
+          @FXML
+    private void btnEditar(MouseEvent event) {
+        if(txtAncho.getText().equals("") || txtLargo.getText().isEmpty() || txtAlto.getText().isEmpty() ||  txtCantidad.getText().isEmpty()){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR");
+            noti.text("HAY UN CAMPO VACÍO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }else{
+            int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
+            cotizacionBackup nuevoDetalle = new cotizacionBackup();
+            nuevoDetalle.setBackupId(colCodigoDetalle.getCellData(index));
+            
+            nuevoDetalle.setCotizacionAncho(Double.parseDouble(txtAncho.getText()));            
+            nuevoDetalle.setCotizacionLargo(Double.parseDouble(txtLargo.getText()));
+            nuevoDetalle.setCotizacionAlto(Double.parseDouble(txtAlto.getText()));            
+            nuevoDetalle.setCotizacionCantida(Double.parseDouble(txtCantidad.getText()));
+            nuevoDetalle.setCotizacionDesc(txtDescripcion.getText());
+            nuevoDetalle.setCotizacionPrecioU(Double.parseDouble(txtPrecioUCotizacion.getText()));
+            nuevoDetalle.setCotizacionTotalParcial(Double.parseDouble(txtCantidad.getText())*Double.parseDouble(txtPrecioUCotizacion.getText()));                                    
+            
+           String sql = "{call Sp_UpdateBackUpCotizacion('"+nuevoDetalle.getBackupId()+"','"+nuevoDetalle.getCotizacionCantida()+"','"+nuevoDetalle.getCotizacionDesc()+"','"+nuevoDetalle.getCotizacionAlto()+"','"+nuevoDetalle.getCotizacionLargo()+"','"+nuevoDetalle.getCotizacionAncho()+"','"+nuevoDetalle.getCotizacionPrecioU()+"','"+nuevoDetalle.getCotizacionTotalParcial()+"')}";
+           try{
+               PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+               ps.execute();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgCorrecto));
+                noti.title("OPERACIÓN EXITOSA");
+                noti.text("SE HA EDITADO EXITOSAMENTE EL REGISTRO");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+                tipoOperacion = Operacion.NINGUNO;
+                cargarDatosCotizacionesBack();
+                btnEditar.setDisable(true);
+                btnEliminar.setDisable(true);
+           }catch(SQLException ex){
+               ex.printStackTrace();
+                 Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("NO SE HA PODIDO ACTUALIZAR EL CAMPO");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+           }
+        }
+    }
+    
+    @FXML
+    public void btnEliminar(){
+            int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
+            cotizacionBackup nuevoDetalle = new cotizacionBackup();
+            nuevoDetalle.setBackupId(colCodigoDetalle.getCellData(index));
+            
+            String sql = "{call SpEliminarBackuCo('"+nuevoDetalle.getBackupId()+"')}";
+            
+            try{
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                ps.execute();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgCorrecto));
+                noti.title("OPERACIÓN EXITOSA");
+                noti.text("SE HA EDITADO EXITOSAMENTE EL REGISTRO");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+                tipoOperacion = Operacion.NINGUNO;
+                cargarDatosCotizacionesBack();
+                btnEditar.setDisable(true);
+                btnEliminar.setDisable(true);
+            }catch(Exception e){
+                e.printStackTrace();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("NO SE HA PODIDO ELIMINAR EL CAMPO");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+            }
+    }
+    
+    public void btnProduccion(){
+    
+    
+    }
 }
