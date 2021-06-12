@@ -87,13 +87,7 @@ public class MenuPrincipalContoller implements Initializable {
     @FXML
     private JFXButton btnSiguiente;
 
-    @FXML
-    private void promedioProveedores(ActionEvent event) {
-    }
-
-  
     
-
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO};
     public Operacion tipoOperacion= Operacion.NINGUNO;
     public Operacion cancelar = Operacion.NINGUNO;
@@ -824,9 +818,20 @@ public class MenuPrincipalContoller implements Initializable {
         cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
     }
     
+    /* PRODUCCION*/
+        @FXML
+    private void produccionView(ActionEvent event) throws IOException {
+        produccion();
+    }
+    
+    public void produccion() throws IOException{
+        String inventarioUrl = "org/ModuloCotizacion/view/ProduccionesView.fxml";
+        cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
+    }
+    
      @FXML
-    private void cotizacionAtajo(MouseEvent event) throws IOException {
-        cotizacion();
+    private void produccionAtajo(MouseEvent event) throws IOException {
+        produccion();
     }
    
     /*FACTURA */
@@ -894,6 +899,12 @@ public class MenuPrincipalContoller implements Initializable {
          String inventarioUrl = "org/ModuloCotizacion/view/parametrosView.fxml";
         cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
     }
+    
+    
+    private void parametros() throws IOException{
+         String inventarioUrl = "org/ModuloCotizacion/view/parametrosView.fxml";
+        cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
+    }
 
 
     //atajos de vista en general
@@ -919,10 +930,14 @@ public class MenuPrincipalContoller implements Initializable {
                                
                            }else{
                                if(event.getCode() == KeyCode.F7){
-                                   
+                                   parametros();
                                }else{
                                    if(event.getCode() == KeyCode.F8){
-                                      
+                                      cotizacion();
+                                   }else{
+                                       if(event.getCode() == KeyCode.F9){
+                                           produccion();
+                                       }
                                    }
                                }
                            }
