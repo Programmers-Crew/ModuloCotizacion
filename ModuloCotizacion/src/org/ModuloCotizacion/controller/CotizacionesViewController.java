@@ -1704,8 +1704,79 @@ public class CotizacionesViewController implements Initializable {
             }
     }
     
+    @FXML
     public void btnProduccion(){
-    
-    
-    }
+    Dialog dialog = new Dialog();
+        dialog.setTitle("TRANSFERIR A PRODUCCION");
+        dialog.setHeaderText("Ingrese los campos para transferir a produccion.");
+        dialog.setResizable(true);
+        Label label1 = new Label("Fecha de final: ");
+        
+        JFXDatePicker fechaFinal= new JFXDatePicker();
+        GridPane grid = new GridPane();
+        
+        grid.add(label1, 1, 1);
+        grid.add(fechaFinal, 2, 1);
+        
+        
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("Guardar", ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+        
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        
+        LocalDate date1 = txtFecha.getValue();
+        LocalDate date2 = fechaFinal.getValue();
+        
+        int codigoC = Integer.parseInt(txtCodigo.getText());
+        int estado = 1;
+        
+            
+        if(result.get() == buttonTypeOk){
+                String sql = "{call Sp_TransferirCotizacion('"+codigoC+"','"+estado+"','"+date1+"','"+date2+"')}";
+            try {
+                PreparedStatement psProdccion = Conexion.getIntance().getConexion().prepareCall(sql);
+                
+                psProdccion.execute();
+                
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgCorrecto));
+                noti.title("TRANSFERENCIA GUARDADA");
+                noti.text("Se ha trasnferido la cotización exitosamente");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();   
+                noti.show();
+                limpiarText();
+                limpiarTextBack();
+            } catch (SQLException ex) {
+                 Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("hubo un error en la base de datos"+ex);
+                ex.printStackTrace();
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(10));
+                noti.darkStyle();   
+                noti.show();
+            }
+        }else{
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("TRANSFERENCIA NO GUARDADA");
+            noti.text("No se ha podido transferir cotización a producción");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }
+
+
+        
+        }
 }
+

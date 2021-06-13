@@ -451,13 +451,9 @@ DELIMITER ;
 DELIMITER $$
 	create procedure Sp_ListProduccion()
 		begin 
-			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes,
-				c.cotizacionId, c.cotizacionDesc ,
-                e.estadoProduccionDesc,
-                u. usuarioNombre
+			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, p.produccionCotizacion ,
+                e.estadoProduccionDesc, u. usuarioNombre
 				from Produccion as p
-				inner join Cotizacion as c
-					on p.produccionCotizacion = cotizacionId
 				inner join Estadoproduccion as e
 					on p.produccionEstado = e.estadoProduccionId
 				inner join Usuarios as u
@@ -1284,7 +1280,17 @@ DELIMITER ;
 
 
 
+DELIMITER $$
+	create procedure Sp_TransferirCotizacion(cotizacion int(5), estado int(5), entrada date, salida date)
+		begin
+			insert into produccion(produccionCotizacion,produccionEstado,produccionFechaEntrada,produccionFechaSalida)
+				values(cotizacion, estado, entrada, salida);
+        end $$
+DELIMITER ;
 
+
+
+insert into EstadoProduccion values(1, 'PENDIENTE'),(2, 'PRODUCCION'), (3, 'FINALIZADO'), (4, 'PAUSA')
 
 
 

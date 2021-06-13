@@ -1,3 +1,4 @@
+drop database if exists GrupoAlcon;
 create database GrupoAlcon;
 use GrupoAlcon;
 
@@ -194,14 +195,13 @@ create table EstadoProduccion(
 );
 
 create table Produccion(
-	produccionId int(5) UNSIGNED ZEROFILL not null primary key,
+	produccionId int(5) UNSIGNED ZEROFILL auto_increment not null primary key,
     produccionCotizacion int(5) UNSIGNED ZEROFILL not null,
     produccionEstado int(5) UNSIGNED ZEROFILL not null,
-    produccionOperador int(5) UNSIGNED ZEROFILL not null,
+    produccionOperador int(5) UNSIGNED ZEROFILL,
     produccionFechaEntrada date not null,
     produccionFechaSalida date not null,
-    produccionDiasRestantes int not null,
-    
+    produccionDiasRestantes int,
 	CONSTRAINT FK_produccionCotizacion FOREIGN KEY (produccionCotizacion) REFERENCES Cotizacion(cotizacionId),
 	CONSTRAINT FK_produccionEstado FOREIGN KEY (produccionEstado) REFERENCES estadoProduccion(estadoProduccionId),
 	CONSTRAINT FK_produccionOperador FOREIGN KEY (produccionOperador) REFERENCES Usuarios(usuarioId)

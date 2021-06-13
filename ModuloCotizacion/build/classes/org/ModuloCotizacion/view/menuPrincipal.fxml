@@ -391,6 +391,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#promedioProveedores" text="Modulo de Promedios                      F6" />
                   <MenuItem mnemonicParsing="false" onAction="#parametrosView" text="Modulo de Parametros                     F7" />
                   <MenuItem mnemonicParsing="false" onAction="#cotizacionView" text="Modulo de Cotizaciones                   F8" />
+                  <MenuItem mnemonicParsing="false" onAction="#produccionView" text="Modulo de Producción                     F9" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Reportes">
