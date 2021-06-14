@@ -25,7 +25,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="1000.0" prefWidth="1518.0" stylesheets="@../resource/moduloStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ModuloCotizacion.controller.ProduccionesViewController">
+<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="1000.0" prefWidth="1518.0" stylesheets="@../resource/moduloStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ModuloCotizacion.controller.ProduccionesViewController">
    <children>
       <Pane layoutX="15.0" layoutY="10.0" prefHeight="36.0" prefWidth="600.0" styleClass="bar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -54,24 +54,22 @@
                            <items>
                               <AnchorPane fx:id="anchor1" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorOscuro">
                                  <children>
-                                    <SplitPane dividerPositions="0.5693519079345851" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <SplitPane dividerPositions="0.475" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="439.0" prefWidth="520.0">
                                              <children>
-                                                <JFXTextField fx:id="txtCodigoPr" layoutX="15.0" layoutY="29.0" prefHeight="26.0" prefWidth="304.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <JFXTextField fx:id="txtCodigoPr" layoutX="15.0" layoutY="40.0" prefHeight="26.0" prefWidth="304.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <Label layoutX="15.0" layoutY="14.0" text="CÓDIGO DE PRODUCCIÓN:" />
                                                 <Label layoutX="22.0" layoutY="138.0" text="NIT:" AnchorPane.leftAnchor="15.0" />
                                                 <Label layoutX="5.0" layoutY="73.0" text="SELECCIONE COTIZACIÓN" AnchorPane.leftAnchor="15.0" />
                                                 <ComboBox fx:id="cmbCotizacion" editable="true" layoutX="-17.0" layoutY="100.0" prefHeight="26.0" prefWidth="303.0" styleClass="comboOscuro" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <JFXTextField fx:id="txtNit" editable="false" layoutX="15.0" layoutY="164.0" prefHeight="26.0" prefWidth="170.0" promptText="CAMPO SE LLENA AUTOMÁTICAMENTE" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-                                                <Label layoutX="15.0" layoutY="206.0" text="NOMBRE:" AnchorPane.leftAnchor="15.0" />
-                                                <JFXTextField fx:id="txtNombre" editable="false" layoutX="15.0" layoutY="224.0" prefHeight="26.0" prefWidth="303.0" promptText="CAMPO SE LLENA AUTOMÁTICAMENTE" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-                                                <Label layoutX="15.0" layoutY="266.0" text="DIRECCIÓN" AnchorPane.leftAnchor="15.0" />
-                                                <JFXTextField fx:id="txtDireccion" editable="false" layoutX="54.0" layoutY="285.0" prefHeight="26.0" prefWidth="170.0" promptText="CAMPO SE LLENA AUTOMÁTICAMENTE" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-                                                <Label layoutX="37.0" layoutY="319.0" text="ESTADO" AnchorPane.leftAnchor="15.0" />
-                                                <ComboBox fx:id="cmbEstadoProduccion" editable="true" layoutX="15.0" layoutY="338.0" prefHeight="26.0" prefWidth="303.0" styleClass="comboOscuro" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-                                                <Label layoutX="15.0" layoutY="391.0" text="ESTADO" />
-                                                <ComboBox fx:id="cmbOperador" editable="true" layoutX="14.0" layoutY="421.0" prefHeight="31.0" prefWidth="485.0" styleClass="comboOscuro" />
+                                                <Label layoutX="15.0" layoutY="203.0" text="NOMBRE:" AnchorPane.leftAnchor="15.0" />
+                                                <JFXTextField fx:id="txtNombre" editable="false" layoutX="15.0" layoutY="229.0" prefHeight="26.0" prefWidth="303.0" promptText="CAMPO SE LLENA AUTOMÁTICAMENTE" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <Label layoutX="10.0" layoutY="272.0" text="DIRECCIÓN" AnchorPane.leftAnchor="15.0" />
+                                                <JFXTextField fx:id="txtDireccion" editable="false" layoutX="15.0" layoutY="299.0" prefHeight="26.0" prefWidth="170.0" promptText="CAMPO SE LLENA AUTOMÁTICAMENTE" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <Label layoutX="14.0" layoutY="338.0" text="ESTADO" AnchorPane.leftAnchor="15.0" />
+                                                <ComboBox fx:id="cmbEstadoProduccion" editable="true" layoutX="15.0" layoutY="364.0" prefHeight="31.0" prefWidth="485.0" styleClass="comboOscuro" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane prefHeight="305.0" prefWidth="397.0">
@@ -79,17 +77,17 @@
                                                 <Label layoutX="14.0" layoutY="23.0" text="FECHA DE ENTRADA:" />
                                                 <Label layoutX="14.0" layoutY="86.0" text="FECHA DE SALIDA:" />
                                                 <Label layoutX="15.0" layoutY="152.0" text="DÍAS RESTANTES:" />
-                                                <JFXButton fx:id="btnAgregar" buttonType="RAISED" layoutX="15.0" layoutY="236.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="AGREGAR" textFill="WHITE">
+                                                <JFXButton fx:id="btnAgregar" buttonType="RAISED" layoutX="15.0" layoutY="301.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="AGREGAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
                                                 </JFXButton>
-                                                <JFXButton fx:id="bntEditar" buttonType="RAISED" layoutX="109.0" layoutY="236.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="EDITAR" textFill="WHITE">
+                                                <JFXButton fx:id="bntEditar" buttonType="RAISED" layoutX="113.0" layoutY="301.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="EDITAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
                                                 </JFXButton>
-                                                <JFXButton fx:id="btnEliminar" buttonType="RAISED" layoutX="208.0" layoutY="236.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="ELIMINAR" textFill="WHITE">
+                                                <JFXButton fx:id="btnEliminar" buttonType="RAISED" layoutX="209.0" layoutY="301.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="ELIMINAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
@@ -97,6 +95,8 @@
                                                 <JFXTextField fx:id="txtDiasRestantes" layoutX="21.0" layoutY="177.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <JFXDatePicker fx:id="txtfinal" layoutX="15.0" layoutY="113.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <JFXDatePicker fx:id="txtInicio" layoutX="23.0" layoutY="41.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+                                                <Label layoutX="14.0" layoutY="215.0" text="OPERADOR" />
+                                                <ComboBox fx:id="cmbOperador" editable="true" layoutX="15.0" layoutY="241.0" prefHeight="31.0" prefWidth="485.0" styleClass="comboOscuro" />
                                              </children>
                                           </AnchorPane>
                                       </items>
@@ -105,7 +105,7 @@
                               </AnchorPane>
                               <AnchorPane fx:id="anchor2" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="anchorOscuro">
                                  <children>
-                                    <TableView fx:id="tblCotizacionDetalle" layoutX="14.0" layoutY="382.0" prefHeight="255.0" prefWidth="906.0">
+                                    <TableView fx:id="tblCotizacionDetalle" layoutX="13.0" layoutY="353.0" prefHeight="255.0" prefWidth="906.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="353.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
@@ -120,7 +120,7 @@
                                           <TableColumn fx:id="colTotalDetalle" prefWidth="75.0" text="TOTAL" />
                                        </columns>
                                     </TableView>
-                                    <TableView fx:id="tblProduccion" layoutX="15.0" layoutY="63.0" prefHeight="279.0" prefWidth="573.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="63.0">
+                                    <TableView fx:id="tblProduccion" layoutX="15.0" layoutY="63.0" onMouseClicked="#seleccionarProduccion" prefHeight="279.0" prefWidth="573.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="63.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
@@ -130,9 +130,10 @@
                                           <TableColumn fx:id="colSalida" prefWidth="129.60003662109375" text="FECHA DE SALIDA" />
                                           <TableColumn fx:id="colEntrada" prefWidth="154.4000244140625" text="FECHA DE ENTRADA" />
                                           <TableColumn fx:id="colDiasRestantes" prefWidth="136.800048828125" text="DÍAS RESTANTES" />
+                                          <TableColumn fx:id="colEstado" prefWidth="75.0" text="ESTADO" />
                                        </columns>
                                     </TableView>
-                                    <TableView fx:id="tblCamposEspeciales" layoutX="15.0" layoutY="665.0" prefHeight="197.0" prefWidth="573.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="665.0">
+                                    <TableView fx:id="tblCamposEspeciales" layoutX="15.0" layoutY="620.0" prefHeight="197.0" prefWidth="573.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="620.0">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
@@ -147,9 +148,9 @@
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <AnchorPane layoutX="25.0" layoutY="880.0" prefHeight="68.0" prefWidth="212.0" styleClass="paneBienvenida">
+                                    <AnchorPane layoutX="14.0" layoutY="838.0" prefHeight="68.0" prefWidth="212.0" styleClass="paneBienvenida">
                                        <children>
-                                          <Label layoutX="43.0" layoutY="5.0" text="TOTAL DE COTIZACIÓN" AnchorPane.leftAnchor="43.0" AnchorPane.topAnchor="5.0" />
+                                          <Label layoutX="43.0" layoutY="5.0" text="TOTAL DE COTIZACIÓN" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="43.0" AnchorPane.topAnchor="5.0" />
                                           <JFXTextField fx:id="txtTotalFactura" editable="false" layoutX="17.0" layoutY="23.0" prefHeight="20.0" prefWidth="182.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="13.0">
                                              <font>
                                                 <Font size="17.0" />

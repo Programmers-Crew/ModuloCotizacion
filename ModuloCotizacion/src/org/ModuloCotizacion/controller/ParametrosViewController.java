@@ -134,8 +134,6 @@ public class ParametrosViewController implements Initializable {
     @FXML
     private JFXTextField txtPrecioEspecial;
     @FXML
-    private JFXButton btnAgregarEspecial;
-    @FXML
     private JFXButton btnEliminarEspecial;
     @FXML
     private JFXButton btnEditarEspecial;
@@ -178,13 +176,11 @@ public class ParametrosViewController implements Initializable {
     }
     
     public void disableButtonsCamposEspeciales(){
-        btnAgregarEspecial.setDisable(true);
         btnEliminarEspecial.setDisable(true);
         btnEditarEspecial.setDisable(true);
     }
     
     public void activateButtonsCamposEspeciales(){
-        btnAgregarEspecial.setDisable(false);
         btnEliminarEspecial.setDisable(false);
         btnEditarEspecial.setDisable(false);
     }
@@ -252,27 +248,15 @@ public class ParametrosViewController implements Initializable {
   
     public void accionCamposEspeciales(){
         switch(tipoOperacionCamposEspeciales){
-            case AGREGAR:
-                tipoOperacionCamposEspeciales = OperacionCamposEspeciales.GUARDAR;
-                disableButtonsCamposEspeciales();
-                btnAgregarEspecial.setText("GUARDAR");
-                btnEliminarEspecial.setText("CANCELAR");
-                btnEliminarEspecial.setDisable(false);
-                activarTextCamposEspeciales();
-                limpiarCamposEspeciales();
-                btnAgregarEspecial.setDisable(false);
-                btnBuscarEspecial.setDisable(true);
-                break;
+           
             case CANCELAR:
                 tipoOperacionCamposEspeciales = OperacionCamposEspeciales.NINGUNO;
                 disableButtonsCamposEspeciales();
                 disableCamposEspeciales();
                 
-                btnAgregarEspecial.setText("AGREGAR");
                 btnEliminarEspecial.setText("ELIMINAR");
                 limpiarCamposEspeciales();
                 btnBuscarEspecial.setDisable(true);
-                btnAgregarEspecial.setDisable(false);
                 break;
         }
     }
@@ -483,48 +467,6 @@ public class ParametrosViewController implements Initializable {
     
     
     
-    @FXML
-    private void btnAgregarEspecial(MouseEvent event) {
-         if(tipoOperacionCamposEspeciales == OperacionCamposEspeciales.GUARDAR){
-            if(txtNombreEspecial.getText().isEmpty() || txtPrecioEspecial.getText().isEmpty()){
-                Notifications noti = Notifications.create();
-                noti.graphic(new ImageView(imgError));
-                noti.title("ERROR");
-                noti.text("HAY CAMPOS VACÍOS");
-                noti.position(Pos.BOTTOM_RIGHT);
-                noti.hideAfter(Duration.seconds(4));
-                noti.darkStyle();   
-                noti.show();
-            }else{
-                String sql="";
-                if(txtNombreEspecial.getText().length() > 150){
-                    Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR");
-                    noti.text("CAMPOS FUERA DE RANGO, DESCRIPCIÓN NO DEBE PASAR LOS 150 CARACTERES");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-                }else{
-                    System.out.println(txtPrecioEspecial.getText()+"holaaaaaaaaaaaa");
-                    CamposEspeciales camposEspeciales = new CamposEspeciales();
-                    camposEspeciales.setCampoNombre(txtNombreEspecial.getText());
-                    camposEspeciales.setCampoPrecio(Double.parseDouble(txtPrecioEspecial.getText()));
-                    
-                    sql = "{call Sp_AddCamposEspeciales('"+camposEspeciales.getCampoNombre()+"','"+camposEspeciales.getCampoPrecio()+"')}";                        
-                    
-                    
-                    tipoOperacionFactor = OperacionFactor.GUARDAR;
-                    accionCamposEspeciales(sql);
-                }
-            }
-        }else{
-            tipoOperacionCamposEspeciales = OperacionCamposEspeciales.AGREGAR;
-            accionCamposEspeciales();
-        }
-    
-    }
     
     
     

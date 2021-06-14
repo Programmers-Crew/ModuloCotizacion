@@ -3,17 +3,21 @@ package org.ModuloCotizacion.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,9 +30,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.ModuloCotizacion.bean.Animations;
 import org.ModuloCotizacion.bean.CambioScene;
@@ -43,6 +47,15 @@ import org.controlsfx.control.Notifications;
 
 public class ProduccionesViewController implements Initializable {
 
+    @FXML
+    private JFXButton btnEditar;
+    @FXML
+    private AnchorPane anchor;
+    @FXML
+    private ComboBox<String> cmbEstadoProduccion;
+  
+
+
     //Variables
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
     public Operacion cancelar = Operacion.NINGUNO;
@@ -53,7 +66,7 @@ public class ProduccionesViewController implements Initializable {
     ObservableList<String> listaEstadoProduccion;
     ObservableList<String> listaOperador;
     ObservableList<String> listaCodigoCotizaciones;
-    
+    int codigoCotizacion=0;
     ObservableList<Cotizaciones> listaCotizaciones;
     ObservableList<cotizacionBackup> listaDetalle;
     ObservableList<CamposEspeciales> listaCamposEspeciales;
@@ -92,7 +105,8 @@ public class ProduccionesViewController implements Initializable {
     private TableColumn<Produccion, Date> colEntrada;
     @FXML
     private TableColumn<Produccion, Integer> colDiasRestantes;
-    
+    @FXML
+    private TableColumn<Produccion, String> colEstado;
     
     //TABLE DETALLE
     @FXML
@@ -135,8 +149,6 @@ public class ProduccionesViewController implements Initializable {
     @FXML
     private JFXTextField txtDireccion;
     @FXML
-    private ComboBox<String> cmbEstadoProduccion;
-    @FXML
     private ComboBox<String> cmbOperador;
     @FXML
     private JFXTextField txtDiasRestantes;
@@ -158,11 +170,13 @@ public class ProduccionesViewController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        cargarDatosCotizaciones();
     }    
 
     @FXML
-    private void regresar(MouseEvent event) {
+    private void regresar(MouseEvent event) throws IOException {
+         String menu = "org/ModuloCotizacion/view/menuPrincipal.fxml";
+        cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
 
     @FXML
@@ -220,7 +234,7 @@ public class ProduccionesViewController implements Initializable {
         public ObservableList<Produccion> getProduccion(){
         ArrayList<Produccion> listaP = new ArrayList();
         ArrayList<String> listaCodigo = new ArrayList();
-        String sql= "{call Sp_ListarCotizaciones()}";
+        String sql= "{call Sp_ListProduccion()}";
         int x =0;
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
@@ -231,9 +245,11 @@ public class ProduccionesViewController implements Initializable {
                     rs.getInt("produccionCotizacion"),
                     rs.getDate("produccionFechaEntrada"),
                     rs.getDate("produccionFechaSalida"),
-                    rs.getInt("produccionDiasRestantes")
+                    rs.getInt("produccionDiasRestantes"),
+                    rs.getString("usuarioNombre"),
+                    rs.getString("estadoProduccionDesc")
                 ));                
-                listaCodigo.add(x, rs.getString("cotizacionId"));
+                listaCodigo.add(x, rs.getString("produccionId"));
                 x++;
             }
         }catch(SQLException ex){
@@ -261,21 +277,21 @@ public class ProduccionesViewController implements Initializable {
        colSalida.setCellValueFactory(new PropertyValueFactory("produccionFechaSalida"));
        colEntrada.setCellValueFactory(new PropertyValueFactory("produccionFechaEntrada"));
        colDiasRestantes.setCellValueFactory(new PropertyValueFactory("produccionDiasRestantes"));
-       
+       colEstado.setCellValueFactory(new PropertyValueFactory("produccionEstado"));
        limpiarText();
        desactivarBtn();
     }
     
-        public ObservableList<cotizacionBackup> getCotizacionBack(){
-        int cotizaconId = Integer.parseInt(cmbCotizacion.getValue());
+    
+    public ObservableList<cotizacionBackup> getCotizaciondetalle(){
         ArrayList<cotizacionBackup> lista = new ArrayList();
-        String sql= "{call Sp_ListCotizacionBackUp('"+cotizaconId+"')}";
+        String sql= "{call Sp_ListCotizacionDetalle('"+codigoCotizacion+"')}";
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 lista.add(new cotizacionBackup(
-                    rs.getInt("backupId"),
+                    rs.getInt("detalleId"),
                     rs.getDouble("cotizacionCantida"),
                     rs.getString("cotizacionDesc"),
                     rs.getDouble("cotizacionAlto"),
@@ -301,8 +317,10 @@ public class ProduccionesViewController implements Initializable {
         return listaDetalle = FXCollections.observableList(lista);
     }
     
-    public void cargarDatosCotizacionesBack(){
-       tblCotizacionDetalle.setItems(getCotizacionBack());
+    
+    
+    public void cargarDatosCotizacionesDetalle(){
+       tblCotizacionDetalle.setItems(getCotizaciondetalle());
        colCodigoDetalle.setCellValueFactory(new PropertyValueFactory("backupId"));
        colCantidadDetalle.setCellValueFactory(new PropertyValueFactory("cotizacionCantida"));
        colDetalleDescripcion.setCellValueFactory(new PropertyValueFactory("cotizacionDesc"));
@@ -314,11 +332,10 @@ public class ProduccionesViewController implements Initializable {
        colTotalDetalle.setCellValueFactory(new PropertyValueFactory("cotizacionTotalParcial"));
     }
     
-
+    
     public ObservableList getCamposEspeciales(){
         ArrayList<CamposEspeciales> lista = new ArrayList();
-        int cotizaconId = Integer.parseInt(cmbCotizacion.getValue());
-        String sql = "{call Sp_SearchCamposEspecialescotizacion('"+cotizaconId+"')}";
+        String sql = "{call Sp_SearchCamposEspecialescotizacion('"+codigoCotizacion+"')}";
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
@@ -410,7 +427,7 @@ public class ProduccionesViewController implements Initializable {
                         noti.show();
                         tipoOperacion = Operacion.NINGUNO;
                         limpiarText();
-                        cargarDatosCotizacionesBack();                                                
+                        cargarDatosCotizacionesDetalle();                                                
                         btnAgregar.setText("AGREGAR");
                         btnEliminar.setText("ELIMINAR");
                         btnBuscar.setDisable(false);
@@ -583,7 +600,7 @@ public class ProduccionesViewController implements Initializable {
                     ex.printStackTrace();
                     noti.graphic(new ImageView(imgError));
                     noti.title("ERROR AL BUSCAR");
-                    noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS");
+                    noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
                     noti.position(Pos.BOTTOM_RIGHT);
                     noti.hideAfter(Duration.seconds(4));
                     noti.darkStyle();
@@ -595,5 +612,48 @@ public class ProduccionesViewController implements Initializable {
         }
     }
     
-
+    public void buscarCotizacion(){
+        String sql = "{call Sp_SearchCotizaciones('"+codigoCotizacion+"')}";
+        
+        try {
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                txtNit.setText(rs.getString("cotizacionCliente"));
+                txtNombre.setText(rs.getString("clienteNombre"));
+                txtDireccion.setText(rs.getString("clienteDireccion"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL BUSCAR COTIZACIÓN");
+            noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        
+        
+    }
+    
+    @FXML
+    private void seleccionarProduccion(MouseEvent event) {
+        int item = tblProduccion.getSelectionModel().getSelectedIndex();
+        codigoCotizacion = colCodigoC.getCellData(item);
+        txtCodigoPr.setText(colCodigoPr.getCellData(item).toString());
+        cmbCotizacion.setValue(colCodigoC.getCellData(item).toString());
+        cmbEstadoProduccion.setValue(colEstado.getCellData(item));
+        
+        
+        txtInicio.setValue(LocalDate.parse( colEntrada.getCellData(item).toString()));
+        txtfinal.setValue(LocalDate.parse( colSalida.getCellData(item).toString()));
+        txtDiasRestantes.setText(colDiasRestantes.getCellData(item).toString());
+        cargarDatosCotizacionesDetalle();
+        cargarDatosCamposEspeciales();
+        buscarCotizacion();
+    }
+        
 }

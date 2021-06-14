@@ -10,31 +10,20 @@ public class Produccion {
     private Date produccionFechaEntrada;
     private Date produccionFechaSalida;
     private Integer produccionDiasRestantes;    
-    private String estadoProduccionDesc;
     private String usuarioNombre;
-
+    private String  produccionEstado;
     public Produccion() {
     }
 
-    public Produccion(Integer produccionId, Integer produccionCotizacion, Date produccionFechaEntrada, Date produccionFechaSalida, Integer produccionDiasRestantes, String estadoProduccionDesc, String usuarioNombre) {
+    public Produccion(Integer produccionId, Integer produccionCotizacion, Date produccionFechaEntrada, Date produccionFechaSalida, Integer produccionDiasRestantes,  String usuarioNombre, String produccionEstado) {
         this.produccionId = produccionId;
         this.produccionCotizacion = produccionCotizacion;
         this.produccionFechaEntrada = produccionFechaEntrada;
         this.produccionFechaSalida = produccionFechaSalida;
         this.produccionDiasRestantes = produccionDiasRestantes;
-        this.estadoProduccionDesc = estadoProduccionDesc;
         this.usuarioNombre = usuarioNombre;
+        this.produccionEstado = produccionEstado;
     }
-
-    public Produccion(Integer produccionId, Integer produccionCotizacion, Date produccionFechaEntrada, Date produccionFechaSalida, Integer produccionDiasRestantes) {
-        this.produccionId = produccionId;
-        this.produccionCotizacion = produccionCotizacion;
-        this.produccionFechaEntrada = produccionFechaEntrada;
-        this.produccionFechaSalida = produccionFechaSalida;
-        this.produccionDiasRestantes = produccionDiasRestantes;
-    }
-    
-    
 
     public Integer getProduccionId() {
         return produccionId;
@@ -76,13 +65,7 @@ public class Produccion {
         this.produccionDiasRestantes = produccionDiasRestantes;
     }
 
-    public String getEstadoProduccionDesc() {
-        return estadoProduccionDesc;
-    }
-
-    public void setEstadoProduccionDesc(String estadoProduccionDesc) {
-        this.estadoProduccionDesc = estadoProduccionDesc;
-    }
+    
 
     public String getUsuarioNombre() {
         return usuarioNombre;
@@ -90,6 +73,19 @@ public class Produccion {
 
     public void setUsuarioNombre(String usuarioNombre) {
         this.usuarioNombre = usuarioNombre;
+    }
+
+    public String getProduccionEstado() {
+        return produccionEstado;
+    }
+
+    public void setProduccionEstado(String produccionEstado) {
+        this.produccionEstado = produccionEstado;
+    }
+
+    @Override
+    public String toString() {
+        return "Produccion{" + "produccionId=" + produccionId + ", produccionCotizacion=" + produccionCotizacion + ", produccionFechaEntrada=" + produccionFechaEntrada + ", produccionFechaSalida=" + produccionFechaSalida + ", produccionDiasRestantes=" + produccionDiasRestantes + ", usuarioNombre=" + usuarioNombre + ", produccionEstado=" + produccionEstado + '}';
     }
     
     

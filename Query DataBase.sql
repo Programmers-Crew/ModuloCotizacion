@@ -196,7 +196,7 @@ create table EstadoProduccion(
 
 create table Produccion(
 	produccionId int(5) UNSIGNED ZEROFILL auto_increment not null primary key,
-    produccionCotizacion int(5) UNSIGNED ZEROFILL not null,
+    produccionCotizacion int(5) UNSIGNED ZEROFILL not null unique,
     produccionEstado int(5) UNSIGNED ZEROFILL not null,
     produccionOperador int(5) UNSIGNED ZEROFILL,
     produccionFechaEntrada date not null,
