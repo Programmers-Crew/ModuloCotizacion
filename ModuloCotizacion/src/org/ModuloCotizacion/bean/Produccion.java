@@ -12,10 +12,12 @@ public class Produccion {
     private Integer produccionDiasRestantes;    
     private String usuarioNombre;
     private String  produccionEstado;
+    private double cotizacionTotal;
+    
     public Produccion() {
     }
 
-    public Produccion(Integer produccionId, Integer produccionCotizacion, Date produccionFechaEntrada, Date produccionFechaSalida, Integer produccionDiasRestantes,  String usuarioNombre, String produccionEstado) {
+    public Produccion(Integer produccionId, Integer produccionCotizacion, Date produccionFechaEntrada, Date produccionFechaSalida, Integer produccionDiasRestantes, String usuarioNombre, String produccionEstado, double cotizacionTotal) {
         this.produccionId = produccionId;
         this.produccionCotizacion = produccionCotizacion;
         this.produccionFechaEntrada = produccionFechaEntrada;
@@ -23,7 +25,9 @@ public class Produccion {
         this.produccionDiasRestantes = produccionDiasRestantes;
         this.usuarioNombre = usuarioNombre;
         this.produccionEstado = produccionEstado;
+        this.cotizacionTotal = cotizacionTotal;
     }
+    
 
     public Integer getProduccionId() {
         return produccionId;
@@ -83,10 +87,21 @@ public class Produccion {
         this.produccionEstado = produccionEstado;
     }
 
+    public double getCotizacionTotal() {
+        return cotizacionTotal;
+    }
+
+    public void setCotizacionTotal(double cotizacionTotal) {
+        this.cotizacionTotal = cotizacionTotal;
+    }
+
     @Override
     public String toString() {
-        return "Produccion{" + "produccionId=" + produccionId + ", produccionCotizacion=" + produccionCotizacion + ", produccionFechaEntrada=" + produccionFechaEntrada + ", produccionFechaSalida=" + produccionFechaSalida + ", produccionDiasRestantes=" + produccionDiasRestantes + ", usuarioNombre=" + usuarioNombre + ", produccionEstado=" + produccionEstado + '}';
+        return "Produccion{" + "produccionId=" + produccionId + ", produccionCotizacion=" + produccionCotizacion + ", produccionFechaEntrada=" + produccionFechaEntrada + ", produccionFechaSalida=" + produccionFechaSalida + ", produccionDiasRestantes=" + produccionDiasRestantes + ", usuarioNombre=" + usuarioNombre + ", produccionEstado=" + produccionEstado + ", cotizacionTotal=" + cotizacionTotal + '}';
     }
+    
+    
+    
     
     
     

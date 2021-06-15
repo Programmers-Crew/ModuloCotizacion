@@ -14,8 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -35,6 +33,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.ModuloCotizacion.bean.Animations;
+import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
 import org.ModuloCotizacion.bean.CamposEspeciales;
 import org.ModuloCotizacion.bean.Cotizaciones;
@@ -53,7 +52,10 @@ public class ProduccionesViewController implements Initializable {
     private AnchorPane anchor;
     @FXML
     private ComboBox<String> cmbEstadoProduccion;
-  
+    @FXML
+    private JFXTextField txtTotalCotizacion;
+    
+
 
 
     //Variables
@@ -67,6 +69,7 @@ public class ProduccionesViewController implements Initializable {
     ObservableList<String> listaOperador;
     ObservableList<String> listaCodigoCotizaciones;
     int codigoCotizacion=0;
+    int codigoProduccion=0;
     ObservableList<Cotizaciones> listaCotizaciones;
     ObservableList<cotizacionBackup> listaDetalle;
     ObservableList<CamposEspeciales> listaCamposEspeciales;
@@ -77,7 +80,7 @@ public class ProduccionesViewController implements Initializable {
     Image imgError = new Image("org/ModuloCotizacion/img/error.png");
     Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     Image imgWarning = new Image("org/ModuloCotizacion/img/warning.png");
-    
+    double totalProduccion=0;
     MenuPrincipalContoller menu = new MenuPrincipalContoller();
     ValidarStyle validar = new ValidarStyle();
     
@@ -107,7 +110,10 @@ public class ProduccionesViewController implements Initializable {
     private TableColumn<Produccion, Integer> colDiasRestantes;
     @FXML
     private TableColumn<Produccion, String> colEstado;
-    
+    @FXML
+    private TableColumn<Produccion, String> colOperador;
+    @FXML
+    private TableColumn<Produccion, Double> colTotal;
     //TABLE DETALLE
     @FXML
     private TableView<cotizacionBackup> tblCotizacionDetalle;
@@ -156,10 +162,7 @@ public class ProduccionesViewController implements Initializable {
     private JFXDatePicker txtfinal;
     @FXML
     private JFXDatePicker txtInicio;    
-    @FXML
-    private JFXTextField txtTotalFactura;
     
-    @FXML
     private JFXButton btnAgregar;
     @FXML
     private JFXButton btnEliminar;
@@ -168,9 +171,74 @@ public class ProduccionesViewController implements Initializable {
     @FXML
     private JFXButton bntEditar;
     
+    
+    public void listOperador(){
+        ArrayList<String> lista = new ArrayList();
+        String sql= "{call Sp_ListUsuarioEmpleado()}";
+            int x =0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(x, rs.getString("usuarioNombre")+ " |"+rs.getString("usuarioId"));
+                x++;
+            }
+            
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS CMB");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        listaOperador = FXCollections.observableList(lista);
+        cmbOperador.setItems(listaOperador);
+        new AutoCompleteComboBoxListener(cmbOperador);
+    }
+    
+    public void listEstado(){
+        ArrayList<String> lista = new ArrayList();
+        String sql= "{call Sp_ListEstadoProduccion()}";
+            int x =0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(x, rs.getString("estadoProduccionDesc")+ " |"+rs.getString("estadoProduccionId"));
+                x++;
+            }
+            
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS CMB");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        listaEstadoProduccion = FXCollections.observableList(lista);
+        cmbEstadoProduccion.setItems(listaEstadoProduccion);
+        new AutoCompleteComboBoxListener(cmbEstadoProduccion);
+    }
+    
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cargarDatosCotizaciones();
+        listOperador();
+        listEstado();
+        
     }    
 
     @FXML
@@ -240,14 +308,18 @@ public class ProduccionesViewController implements Initializable {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
+                Date fechaEntrada = rs.getDate("produccionFechaEntrada");
+                Date fechaSalida = rs.getDate("produccionFechaSalida");
+                int resta = fechaSalida.getDate()-fechaEntrada.getDate();
                 listaP.add(new Produccion(
                     rs.getInt("produccionId"),
                     rs.getInt("produccionCotizacion"),
                     rs.getDate("produccionFechaEntrada"),
                     rs.getDate("produccionFechaSalida"),
-                    rs.getInt("produccionDiasRestantes"),
+                    resta,
                     rs.getString("usuarioNombre"),
-                    rs.getString("estadoProduccionDesc")
+                    rs.getString("estadoProduccionDesc"),
+                    rs.getDouble("cotizacionTotal")
                 ));                
                 listaCodigo.add(x, rs.getString("produccionId"));
                 x++;
@@ -278,6 +350,8 @@ public class ProduccionesViewController implements Initializable {
        colEntrada.setCellValueFactory(new PropertyValueFactory("produccionFechaEntrada"));
        colDiasRestantes.setCellValueFactory(new PropertyValueFactory("produccionDiasRestantes"));
        colEstado.setCellValueFactory(new PropertyValueFactory("produccionEstado"));
+       colOperador.setCellValueFactory(new PropertyValueFactory("usuarioNombre"));
+       colTotal.setCellValueFactory(new PropertyValueFactory("cotizacionTotal"));
        limpiarText();
        desactivarBtn();
     }
@@ -371,18 +445,7 @@ public class ProduccionesViewController implements Initializable {
     
     public void accion(){
         switch(tipoOperacion){
-            case AGREGAR:
-                tipoOperacion = Operacion.GUARDAR;
-                cancelar = Operacion.CANCELAR;
-                desactivarBtn();
-                btnAgregar.setText("GUARDAR");
-                btnEliminar.setText("CANCELAR");
-                btnEliminar.setDisable(false);
-                activarText();
-                btnBuscar.setDisable(true);
-                limpiarText();
-                tblCotizacionDetalle.getItems().clear();
-                break;
+            
             case CANCELAR:
                 tipoOperacion = Operacion.NINGUNO;
                 desactivarBtn();
@@ -396,7 +459,7 @@ public class ProduccionesViewController implements Initializable {
         }
     }
         
-        public void accionProveedores(String sql){
+    public void accionProveedores(String sql){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         PreparedStatement ps;
         ResultSet rs;
@@ -405,57 +468,6 @@ public class ProduccionesViewController implements Initializable {
         ButtonType buttonTypeNo = new ButtonType("No");
         switch(tipoOperacion){
             
-            case GUARDAR:
-                alert.setTitle("AGREGAR REGISTRO");
-                alert.setHeaderText("AGREGAR REGISTRO");
-                alert.setContentText("¿Está seguro que desea guardar este registro?");
-                
-                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
-                
-                Optional<ButtonType> result = alert.showAndWait();
-                if(result.get() == buttonTypeSi ){
-                    try {
-                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                        ps.execute();
-                        
-                        noti.graphic(new ImageView(imgCorrecto));
-                        noti.title("OPERACIÓN EXITOSA");
-                        noti.text("SE HA AGREGADO EXITOSAMENTE EL REGISTRO");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacion = Operacion.NINGUNO;
-                        limpiarText();
-                        cargarDatosCotizacionesDetalle();                                                
-                        btnAgregar.setText("AGREGAR");
-                        btnEliminar.setText("ELIMINAR");
-                        btnBuscar.setDisable(false);
-                        cancelar = Operacion.NINGUNO;
-                    }catch (SQLException ex) {
-                        ex.printStackTrace();
-                        noti.graphic(new ImageView(imgError));
-                        noti.title("ERROR AL AGREGAR");
-                        noti.text("HA OCURRIDO UN ERROR AL GUARDAR EL REGISTRO"+ex);
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                    }
-                }else{
-                    
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("OPERACIÓN CANCELADA");
-                    noti.text("NO SE HA AGREGADO EL REGISTRO");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();
-                    noti.show();
-                    tipoOperacion = Operacion.CANCELAR;
-                    accion();
-                }
-                
-                break;
             case ELIMINAR:
                  alert.setTitle("ELIMINAR REGISTRO");
                 alert.setHeaderText("ELIMINAR REGISTRO");
@@ -639,21 +651,222 @@ public class ProduccionesViewController implements Initializable {
         
     }
     
+    
+    public void buscarCodigo(String name){
+        String sql = "{call Sp_SearchEstadoProduccionName('"+name+"')}";
+        
+        try {
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs =  ps.executeQuery();
+            
+            while(rs.next()){
+                cmbEstadoProduccion.setValue(rs.getString("estadoProduccionDesc")+" |"+rs.getString("estadoProduccionId"));
+            }
+        } catch (SQLException ex) {
+             ex.printStackTrace();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL BUSCAR ESTADO");
+            noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        
+        
+    }
+    
+    
+       public void buscarOperador(String name){
+        String sql = "{call Sp_ListUsuarioC('"+name+"')}";
+        
+        try {
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs =  ps.executeQuery();
+            
+            while(rs.next()){
+                cmbOperador.setValue(rs.getString("usuarioNombre")+" |"+rs.getString("usuarioId"));
+            }
+        } catch (SQLException ex) {
+             ex.printStackTrace();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL BUSCAR ESTADO");
+            noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        
+        
+    }
+    
     @FXML
     private void seleccionarProduccion(MouseEvent event) {
         int item = tblProduccion.getSelectionModel().getSelectedIndex();
         codigoCotizacion = colCodigoC.getCellData(item);
         txtCodigoPr.setText(colCodigoPr.getCellData(item).toString());
         cmbCotizacion.setValue(colCodigoC.getCellData(item).toString());
-        cmbEstadoProduccion.setValue(colEstado.getCellData(item));
         
-        
+        buscarCodigo(colEstado.getCellData(item));
+        buscarOperador(colOperador.getCellData(item));
         txtInicio.setValue(LocalDate.parse( colEntrada.getCellData(item).toString()));
         txtfinal.setValue(LocalDate.parse( colSalida.getCellData(item).toString()));
         txtDiasRestantes.setText(colDiasRestantes.getCellData(item).toString());
         cargarDatosCotizacionesDetalle();
         cargarDatosCamposEspeciales();
         buscarCotizacion();
+        txtTotalCotizacion.setText(colTotal.getCellData(item).toString());
+        codigoProduccion = colCodigoPr.getCellData(item);
+        bntEditar.setDisable(false);
+        btnEliminar.setDisable(false);
     }
+    
+    
         
+    public int buscarCodigoEstado(){    
+        int codigoTC=0;
+        if(!cmbEstadoProduccion.getValue().isEmpty()){
+            int busqueda = cmbEstadoProduccion.getValue().indexOf("|");
+
+            String valor1 = cmbEstadoProduccion.getValue().substring(busqueda+1, cmbEstadoProduccion.getValue().length());
+             codigoTC = Integer.parseInt(valor1);
+        }
+        return codigoTC;
+    }     
+    
+    public int buscarCodigoOperador(){    
+        int codigoTC=0;
+        if(!cmbOperador.getValue().isEmpty()){
+            int busqueda = cmbOperador.getValue().indexOf("|");
+
+            String valor1 = cmbOperador.getValue().substring(busqueda+1, cmbOperador.getValue().length());
+             codigoTC = Integer.parseInt(valor1);
+        }
+        return codigoTC;
+    } 
+    
+    @FXML
+    private void btnEditar(MouseEvent event) {
+        
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        ButtonType buttonTypeSi = new ButtonType("Si");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        alert.setTitle("AGREGAR REGISTRO");
+        alert.setHeaderText("AGREGAR REGISTRO");
+        alert.setContentText("¿Está seguro que desea guardar este registro?");
+
+        alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == buttonTypeSi ){
+            
+            Produccion nueva = new Produccion();
+            nueva.setProduccionFechaEntrada(Date.valueOf(txtInicio.getValue()));
+            nueva.setProduccionFechaSalida(Date.valueOf(txtfinal.getValue()));
+            nueva.setProduccionDiasRestantes(Integer.parseInt(txtDiasRestantes.getText()));
+            String sql = "{call Sp_UpdateProduccion('"+codigoProduccion+"','"+buscarCodigoEstado()+"','"+nueva.getProduccionFechaEntrada()+"','"+nueva.getProduccionFechaSalida()+"','"+nueva.getProduccionDiasRestantes()+"'"
+                    + ",'"+buscarCodigoOperador()+"')}";
+
+            try {
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                ps.execute();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgCorrecto));
+                noti.title("OPERACIÓN EXITOSA");
+                noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+                limpiarText();
+                cargarDatosCotizaciones();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR AL EDITAR PRODUCCIÓN");
+                noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+            }
+            
+        }else{
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("OPERACIÓN CANCELADA");
+            noti.text("No se ha editado la producción");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        
+        }
+        
+        
+        
+        
+    }
+
+    @FXML
+    private void btnEliminar(MouseEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        ButtonType buttonTypeSi = new ButtonType("Si");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        alert.setTitle("AGREGAR REGISTRO");
+        alert.setHeaderText("AGREGAR REGISTRO");
+        alert.setContentText("¿Está seguro que desea guardar este registro?");
+
+        alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == buttonTypeSi ){
+            String sql = "{call Sp_DeleteProduccion('"+codigoProduccion+"')}";
+            try {
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                ps.execute();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgCorrecto));
+                noti.title("OPERACIÓN EXITOSA");
+                noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+                limpiarText();
+                cargarDatosCotizaciones();
+            } catch (SQLException ex) {
+                  ex.printStackTrace();
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR AL ELIMINAR PRODUCCIÓN");
+                noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();
+                noti.show();
+            }
+        }else{
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("OPERACIÓN CANCELADA");
+            noti.text("NO SE HA EDITADO LA PRODUCCIÓN");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+            
+        } 
+        
+        
+        
+    
+    }
+    
+
+    
 }

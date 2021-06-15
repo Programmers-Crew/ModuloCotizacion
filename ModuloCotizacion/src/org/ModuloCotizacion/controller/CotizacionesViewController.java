@@ -1307,6 +1307,7 @@ public class CotizacionesViewController implements Initializable {
                     txtDescripcion.setText(colDetalleDescripcion.getCellData(index));
                     txtCantidad.setText(colCantidadDetalle.getCellData(index).toString());
                     txtPrecioUCotizacion.setText(colPrecioDetalle.getCellData(index).toString());
+                    
                     activatTextBackup();
                 }catch(Exception e){
                     e.printStackTrace();

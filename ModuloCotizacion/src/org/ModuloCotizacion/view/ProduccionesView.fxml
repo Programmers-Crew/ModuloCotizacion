@@ -77,17 +77,12 @@
                                                 <Label layoutX="14.0" layoutY="23.0" text="FECHA DE ENTRADA:" />
                                                 <Label layoutX="14.0" layoutY="86.0" text="FECHA DE SALIDA:" />
                                                 <Label layoutX="15.0" layoutY="152.0" text="DÍAS RESTANTES:" />
-                                                <JFXButton fx:id="btnAgregar" buttonType="RAISED" layoutX="15.0" layoutY="301.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="AGREGAR" textFill="WHITE">
+                                                <JFXButton fx:id="bntEditar" buttonType="RAISED" layoutX="15.0" layoutY="301.0" onMouseClicked="#btnEditar" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="EDITAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
                                                 </JFXButton>
-                                                <JFXButton fx:id="bntEditar" buttonType="RAISED" layoutX="113.0" layoutY="301.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="EDITAR" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="11.0" />
-                                                   </font>
-                                                </JFXButton>
-                                                <JFXButton fx:id="btnEliminar" buttonType="RAISED" layoutX="209.0" layoutY="301.0" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="ELIMINAR" textFill="WHITE">
+                                                <JFXButton fx:id="btnEliminar" buttonType="RAISED" layoutX="108.0" layoutY="301.0" onMouseClicked="#btnEliminar" prefHeight="36.0" prefWidth="74.0" styleClass="boton" text="ELIMINAR" textFill="WHITE">
                                                    <font>
                                                       <Font size="11.0" />
                                                    </font>
@@ -131,6 +126,8 @@
                                           <TableColumn fx:id="colEntrada" prefWidth="154.4000244140625" text="FECHA DE ENTRADA" />
                                           <TableColumn fx:id="colDiasRestantes" prefWidth="136.800048828125" text="DÍAS RESTANTES" />
                                           <TableColumn fx:id="colEstado" prefWidth="75.0" text="ESTADO" />
+                                          <TableColumn fx:id="colOperador" prefWidth="75.0" text="OPERADOR" />
+                                          <TableColumn fx:id="colTotal" prefWidth="75.0" text="TOTAL" />
                                        </columns>
                                     </TableView>
                                     <TableView fx:id="tblCamposEspeciales" layoutX="15.0" layoutY="620.0" prefHeight="197.0" prefWidth="573.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="620.0">
@@ -151,7 +148,7 @@
                                     <AnchorPane layoutX="14.0" layoutY="838.0" prefHeight="68.0" prefWidth="212.0" styleClass="paneBienvenida">
                                        <children>
                                           <Label layoutX="43.0" layoutY="5.0" text="TOTAL DE COTIZACIÓN" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="43.0" AnchorPane.topAnchor="5.0" />
-                                          <JFXTextField fx:id="txtTotalFactura" editable="false" layoutX="17.0" layoutY="23.0" prefHeight="20.0" prefWidth="182.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="13.0">
+                                          <JFXTextField fx:id="txtTotalCotizacion" editable="false" layoutX="17.0" layoutY="23.0" prefHeight="20.0" prefWidth="182.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="13.0">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
