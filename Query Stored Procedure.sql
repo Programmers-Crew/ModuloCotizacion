@@ -508,6 +508,24 @@ DELIMITER $$
 		 end $$
 DELIMITER ;
 
+
+
+DELIMITER $$
+	create procedure Sp_SearchProduccion(codigo int(5))
+		begin 
+			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, p.produccionCotizacion ,
+                e.estadoProduccionDesc, u. usuarioNombre, c.cotizacionTotal
+				from Produccion as p
+				inner join Estadoproduccion as e
+					on p.produccionEstado = e.estadoProduccionId
+				inner join Usuarios as u
+					on p.produccionOperador = usuarioId
+				inner join cotizacion as c
+					on c.cotizacionId = produccionCotizacion
+				where produccionCotizacion = codigo;
+		 end $$
+DELIMITER ;
+
 -- Pendiente de Fac
 DELIMITER $$
 	create procedure Sp_AddPendienteFacturar(produccion int(5), modoPago int(5), abonado double, pendiente double)

@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,7 +55,9 @@ public class ProduccionesViewController implements Initializable {
     private ComboBox<String> cmbEstadoProduccion;
     @FXML
     private JFXTextField txtTotalCotizacion;
-    
+    @FXML
+    private ComboBox<String> cmbBuscarProd;
+
 
 
 
@@ -68,13 +71,14 @@ public class ProduccionesViewController implements Initializable {
     ObservableList<String> listaEstadoProduccion;
     ObservableList<String> listaOperador;
     ObservableList<String> listaCodigoCotizaciones;
+    
     int codigoCotizacion=0;
     int codigoProduccion=0;
     ObservableList<Cotizaciones> listaCotizaciones;
     ObservableList<cotizacionBackup> listaDetalle;
     ObservableList<CamposEspeciales> listaCamposEspeciales;
     ObservableList<Produccion> listaProduccion;
-
+    
     
     CambioScene cambioScene = new CambioScene();
     Image imgError = new Image("org/ModuloCotizacion/img/error.png");
@@ -321,7 +325,7 @@ public class ProduccionesViewController implements Initializable {
                     rs.getString("estadoProduccionDesc"),
                     rs.getDouble("cotizacionTotal")
                 ));                
-                listaCodigo.add(x, rs.getString("produccionId"));
+                listaCodigo.add(x, rs.getString("produccionCotizacion"));
                 x++;
             }
         }catch(SQLException ex){
@@ -338,6 +342,7 @@ public class ProduccionesViewController implements Initializable {
         }
         
         listaCodigoCotizaciones = FXCollections.observableList(listaCodigo);
+        cmbBuscarProd.setItems(listaCodigoCotizaciones);
         return listaProduccion = FXCollections.observableList(listaP);
     }
         
@@ -654,7 +659,7 @@ public class ProduccionesViewController implements Initializable {
     
     public void buscarCodigo(String name){
         String sql = "{call Sp_SearchEstadoProduccionName('"+name+"')}";
-        
+        System.out.println(sql);
         try {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs =  ps.executeQuery();
@@ -867,6 +872,65 @@ public class ProduccionesViewController implements Initializable {
     
     }
     
+    
 
+
+    @FXML
+    private void btnBuscar(MouseEvent event) {
+        String sql = "{call Sp_SearchProduccion('"+cmbBuscarProd.getValue()+"')}";
+        System.out.println(sql);
+        
+        try {
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                
+                codigoProduccion =  rs.getInt("produccionId");
+                codigoCotizacion = rs.getInt("produccionCotizacion");
+                txtCodigoPr.setText(rs.getString("produccionId"));
+                cmbCotizacion.setValue(rs.getString("produccionCotizacion"));
+
+               
+                txtInicio.setValue(LocalDate.parse(rs.getDate("produccionFechaEntrada").toString()));
+                txtfinal.setValue(LocalDate.parse(rs.getDate("produccionFechaSalida").toString()));
+                Date fechaEntrada = rs.getDate("produccionFechaEntrada");
+                Date fechaSalida = rs.getDate("produccionFechaSalida");
+                int resta = fechaSalida.getDate()-fechaEntrada.getDate();
+                txtDiasRestantes.setText(String.valueOf(resta));
+                cargarDatosCotizacionesDetalle();
+                cargarDatosCamposEspeciales();
+                buscarCotizacion();
+                txtTotalCotizacion.setText(rs.getString("cotizacionTotal"));
+                buscarCodigo(rs.getString("estadoProduccionDesc"));
+                buscarOperador(rs.getString("usuarioNombre"));
+                bntEditar.setDisable(false);
+                btnEliminar.setDisable(false);
+            }
+            
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgCorrecto));
+            noti.title("OPERACIÓN EXITOSA");
+            noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+            limpiarText();
+            cargarDatosCotizaciones();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL BUSCAR PRODUCCIÓN");
+            noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+    
+    }
+    
     
 }

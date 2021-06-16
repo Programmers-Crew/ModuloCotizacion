@@ -139,8 +139,8 @@
                                           <TableColumn fx:id="colCampoPrecio" prefWidth="75.0" text="PRECIO" />
                                        </columns>
                                     </TableView>
-                                    <ComboBox editable="true" layoutX="15.0" layoutY="23.0" prefHeight="26.0" prefWidth="444.0" />
-                                    <JFXButton fx:id="btnBuscar" buttonType="RAISED" layoutX="474.0" layoutY="18.0" prefHeight="36.0" prefWidth="113.0" styleClass="boton" text="BUSCAR" textFill="WHITE">
+                                    <ComboBox fx:id="cmbBuscarProd" editable="true" layoutX="15.0" layoutY="23.0" prefHeight="26.0" prefWidth="444.0" />
+                                    <JFXButton fx:id="btnBuscar" buttonType="RAISED" layoutX="474.0" layoutY="18.0" onMouseClicked="#btnBuscar" prefHeight="36.0" prefWidth="113.0" styleClass="boton" text="BUSCAR" textFill="WHITE">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
