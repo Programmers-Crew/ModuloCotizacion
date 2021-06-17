@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
@@ -29,6 +30,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -38,6 +41,7 @@ import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
 import org.ModuloCotizacion.bean.CamposEspeciales;
 import org.ModuloCotizacion.bean.Cotizaciones;
+import org.ModuloCotizacion.bean.EstadoProduccion;
 import org.ModuloCotizacion.bean.Produccion;
 import org.ModuloCotizacion.bean.ValidarStyle;
 import org.ModuloCotizacion.bean.cotizacionBackup;
@@ -48,8 +52,6 @@ import org.controlsfx.control.Notifications;
 public class ProduccionesViewController implements Initializable {
 
     @FXML
-    private JFXButton btnEditar;
-    @FXML
     private AnchorPane anchor;
     @FXML
     private ComboBox<String> cmbEstadoProduccion;
@@ -57,6 +59,33 @@ public class ProduccionesViewController implements Initializable {
     private JFXTextField txtTotalCotizacion;
     @FXML
     private ComboBox<String> cmbBuscarProd;
+    
+    @FXML
+    private JFXTextField txtCodigoEP;
+    @FXML
+    private JFXTextField txtDescripcionEP;
+    @FXML
+    private Button btnAgregarEP;
+    @FXML
+    private Button btnEditarEP;
+    @FXML
+    private Button btnEliminarEP;
+    @FXML
+    private TableColumn<EstadoProduccion, Integer> colCodigoEP;
+    @FXML
+    private TableColumn<EstadoProduccion, String> colDescEP;
+    @FXML
+    private ComboBox<String> cmbBusquedaEP;
+    @FXML
+    private Button btnBuscarEP;
+    @FXML
+    private ComboBox<String> cmbBusquedaEP1;
+    @FXML
+    private TableView<EstadoProduccion> tblEstadoProduccionEP;
+    @FXML
+    private AnchorPane ancor3;
+    @FXML
+    private AnchorPane ancor4;
 
 
 
@@ -65,6 +94,7 @@ public class ProduccionesViewController implements Initializable {
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
     public Operacion cancelar = Operacion.NINGUNO;
     public Operacion tipoOperacion = Operacion.NINGUNO;
+    public Operacion tipoOperacionEP = Operacion.NINGUNO;
     
 
     ObservableList<String> listaTipoCliente;
@@ -91,13 +121,12 @@ public class ProduccionesViewController implements Initializable {
     Animations animacion = new Animations();
     
     int codigo=0;
+    int codigoEP=0;
     
     @FXML
     private AnchorPane anchor1;
     @FXML
     private AnchorPane anchor2;
-    @FXML
-    private AnchorPane anchor11;
     
     //TBL PRODUCCION
     @FXML
@@ -559,8 +588,7 @@ public class ProduccionesViewController implements Initializable {
                         tipoOperacion = Operacion.CANCELAR;
                         accion();
                     }
-                }else{
-                    
+                }else{                    
                     noti.graphic(new ImageView(imgError));
                     noti.title("OPERACIÓN CANCELADA");
                     noti.text("NO SE HA ACTUALIZAR EL REGISTRO");
@@ -932,5 +960,556 @@ public class ProduccionesViewController implements Initializable {
     
     }
     
+ /*estado produccion */
+    public void limpiarTextEP(){
+          txtCodigoEP.setText("");
+          txtDescripcionEP.setText("");
+          cmbBusquedaEP.setValue("");
+          cmbBusquedaEP1.setValue("");
+    }
+    
+    public void desactivarControlesEP(){        
+        btnEditarEP.setDisable(true);
+        btnEliminarEP.setDisable(true);
+    }
+    
+    public void activarControlesEP(){
+        
+        btnEditarEP.setDisable(false);
+        btnEliminarEP.setDisable(false);
+    }
+    
+    public void desactivarTextEP(){
+        txtCodigoEP.setEditable(false);
+        txtDescripcionEP.setEditable(false);
+        
+    }
+    
+    public void activarTextEP(){
+        txtCodigoEP.setEditable(true);
+        txtDescripcionEP.setEditable(true);
+        
+    }
+    
+    ObservableList<EstadoProduccion> listaProduccionEP;
+    ObservableList<String> listaCodigoProduccionEP;
+    ObservableList<String> listaBuscarEP;
+    ObservableList<String> listaFiltroEP;
+
+
+    
+    public ObservableList<EstadoProduccion> getEstadoProduccion(){
+        ArrayList<EstadoProduccion> lista = new ArrayList();
+        ArrayList<String> listaCodigo = new ArrayList();
+        String sql= "{call Sp_ListEstadoProduccion()}";
+            int x =0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                lista.add(new EstadoProduccion(
+                              rs.getInt("estadoProduccionId"),
+                              rs.getString("estadoProduccionDesc")
+                ));
+                
+                listaCodigo.add(x, rs.getString("estadoProduccionId"));
+                x++;
+            }
+            
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+         
+        listaCodigoProduccionEP = FXCollections.observableList(listaCodigo);
+        return listaProduccionEP = FXCollections.observableList(lista);
+    
+    }
+    
+    public void cargarDatosEP(){
+        try{
+            
+            System.out.println("cargadatps");
+        tblEstadoProduccionEP.setItems(getEstadoProduccion());
+        System.out.println(listaProduccionEP);
+        colCodigoEP.setCellValueFactory(new PropertyValueFactory("estadoProduccionId"));
+        colDescEP.setCellValueFactory(new PropertyValueFactory("estadoProduccionDesc"));
+        limpiarTextEP();
+        desactivarControlesEP();
+        desactivarTextEP();
+        tipoOperacionEP = Operacion.CANCELAR;
+        accionEP();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void cargarEP(Event event) {
+        try{
+            System.out.println("aqui");
+        cargarDatosEP();
+        cargarComboEP();
+        new AutoCompleteComboBoxListener(cmbBusquedaEP);
+        new AutoCompleteComboBoxListener(cmbBusquedaEP1);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+@FXML
+    private void seleccionarElementos(MouseEvent event) {
+        int index = tblEstadoProduccionEP.getSelectionModel().getSelectedIndex();
+        try{
+            txtCodigoEP.setText(colCodigoEP.getCellData(index).toString());
+            txtDescripcionEP.setText(colDescEP.getCellData(index));
+            btnEliminarEP.setDisable(false);
+            btnEditarEP.setDisable(false);
+            
+            codigo = colCodigoEP.getCellData(index);
+            activarTextEP();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+@FXML
+    private void atajosEP(KeyEvent event) {
+        if(cmbBusquedaEP.isFocused()){
+            if(event.getCode() == KeyCode.ENTER){
+                buscarEP();
+            }
+        }
+    }
+
+    public void accionEP(){
+        switch(tipoOperacionEP){
+            case AGREGAR:
+                tipoOperacionEP = Operacion.GUARDAR;
+                cancelar = Operacion.CANCELAR;
+                desactivarControlesEP();
+                btnAgregarEP.setText("GUARDAR");
+                btnEliminarEP.setText("CANCELAR");
+                btnEliminarEP.setDisable(false);
+                activarTextEP();
+                cmbBusquedaEP.setDisable(true);
+                btnBuscarEP.setDisable(true);
+                limpiarTextEP();
+                break;
+            case CANCELAR:
+                tipoOperacionEP = Operacion.NINGUNO;
+                desactivarControlesEP();
+                desactivarTextEP();
+                btnAgregarEP.setText("AGREGAR");
+                btnEliminarEP.setText("ELIMINAR");
+                limpiarTextEP();
+                cmbBusquedaEP.setDisable(false);
+                btnBuscarEP.setDisable(false);
+                cancelar = Operacion.NINGUNO;
+                break;
+        }
+        
+    
+    }
+    
+    public void accionEP(String sql){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        PreparedStatement ps;
+        ResultSet rs;
+        Notifications noti = Notifications.create();
+        ButtonType buttonTypeSi = new ButtonType("Si");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        switch(tipoOperacionEP){
+            
+            case GUARDAR:
+                alert.setTitle("AGREGAR REGISTRO");
+                alert.setHeaderText("AGREGAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea guardar este registro?");
+                
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get() == buttonTypeSi ){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA AGREGADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                        cargarDatosEP();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL AGREGAR");
+                        noti.text("HA OCURRIDO UN ERROR AL GUARDAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                    }
+                }else{
+                    
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA AGREGADO EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionEP = Operacion.CANCELAR;
+                    accionEP();
+                }
+                
+                break;
+            case ELIMINAR:
+                 alert.setTitle("ELIMINAR REGISTRO");
+                alert.setHeaderText("ELIMINAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea Eliminar este registro?");
+               
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> resultEliminar = alert.showAndWait();
+                
+                if(resultEliminar.get() == buttonTypeSi){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA ELIMINADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        cargarDatosEP();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        
+                        
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL ELIMINAR");
+                        noti.text("HA OCURRIDO UN ERROR AL ELIMINAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                    }
+                }else{
+                     noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA ELIMINADO EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionEP = Operacion.CANCELAR;
+                    accionEP();
+                }
+                break;
+            case ACTUALIZAR:
+                alert.setTitle("ACTUALIZAR REGISTRO");
+                alert.setHeaderText("ACTUALIZAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea Actualizar este registro?");
+               
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> resultactualizar = alert.showAndWait();
+                if(resultactualizar.get() == buttonTypeSi ){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA ACTUALIZADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                        cargarDatosEP();
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL ACTUALIZAR");
+                        noti.text("HA OCURRIDO UN ERROR AL ACTUALIZAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                    }
+                }else{
+                    
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA ACTUALIZAR EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionEP = Operacion.CANCELAR;
+                    accionEP();
+                }
+                break;
+            case BUSCAR:
+                 try{
+                    ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                    rs = ps.executeQuery();
+                    
+                    while(rs.next()){
+                        txtCodigoEP.setText(rs.getString("estadoProduccionId"));
+                        txtDescripcionEP.setText(rs.getString("estadoProduccionDesc"));
+                        codigo = rs.getInt("estadoProduccionId");
+                        
+                    }                    
+                    if(rs.first()){
+                        for(int i=0; i<tblEstadoProduccionEP.getItems().size(); i++){
+                            if(colCodigoEP.getCellData(i) == codigo){
+                                tblEstadoProduccionEP.getSelectionModel().select(i);
+                                break;
+                            }
+                        }
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        btnEditarEP.setDisable(false);
+                        btnEliminarEP.setDisable(false);
+                        activarTextEP();
+                    }else{
+                         
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL BUSCAR");
+                        noti.text("NO SE HA ENCONTRADO EN LA BASE DE DATOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionEP = Operacion.CANCELAR;
+                        accionEP();
+                    }
+                }catch(SQLException ex){
+                    ex.printStackTrace();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR AL BUSCAR");
+                    noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionEP = Operacion.CANCELAR;
+                    accionEP();
+                }
+                break;
+        }
+        
+    }
+    
+    @FXML
+    private void btnAgregarEP(MouseEvent event) {
+        if(tipoOperacionEP == Operacion.GUARDAR){
+            if(txtCodigoEP.getText().isEmpty() || txtDescripcionEP.getText().isEmpty()){
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("HAY CAMPOS VACÍOS");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();   
+                noti.show();
+            }else{
+                if(txtDescripcionEP.getText().length()<50){
+                    
+                    if(txtCodigoEP.getText().length()<7){
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR");
+                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MENOR A 7 DÍGITOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                        tipoOperacionEP = Operacion.GUARDAR;
+                    }else if(txtCodigoEP.getText().length()>7){
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR");
+                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MAYOR A 7 DÍGITOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                        tipoOperacionEP = Operacion.GUARDAR;
+                    }else{                  
+                    EstadoProduccion nuevaEP = new EstadoProduccion();
+                    nuevaEP.setEstadoProduccionId(Integer.parseInt(txtCodigoEP.getText()));
+                    nuevaEP.setEstadoProduccionDesc(txtDescripcionEP.getText());
+                    String sql = "{call Sp_AddEstadoProduccion('"+nuevaEP.getEstadoProduccionId()+"','"+nuevaEP.getEstadoProduccionDesc()+"')}";
+                    accionEP(sql);
+                    }
+                }else{
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR");
+                    noti.text("NOMBRE DE LA CATEGORÍA NO TIENEN UNA LONGITUD ADECUADA (DEBE SER MENOR DE 50 CARACTERES)");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();
+                }
+            }
+        }else{
+             tipoOperacionEP = Operacion.AGREGAR;
+                accionEP();
+        }
+    }
+    
+    @FXML
+    private void btnEditarEP(MouseEvent event) {
+        
+       if(txtDescripcionEP.getText().length()<7){
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR");
+                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MENOR A 7 DÍGITOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                        tipoOperacionEP = Operacion.GUARDAR;
+                    }else if(txtCodigoEP.getText().length()>7){
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR");
+                        noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MAYOR A 7 DÍGITOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                        tipoOperacionEP = Operacion.GUARDAR;
+                    }else{  
+                            EstadoProduccion nuevaEP = new EstadoProduccion();
+                            nuevaEP.setEstadoProduccionId(Integer.parseInt(txtCodigoEP.getText()));
+                            nuevaEP.setEstadoProduccionDesc(txtDescripcionEP.getText());
+                            tipoOperacionEP = Operacion.ACTUALIZAR;
+                            String sql = "{call Sp_UpdateEstadoProduccion('"+codigo+"','"+nuevaEP.getEstadoProduccionDesc()+"')}";
+                            accionEP(sql);
+                    }
+    }
+    
+    @FXML
+    private void btnEliminarEP(MouseEvent event) {
+        if(tipoOperacionEP == Operacion.GUARDAR){
+            tipoOperacionEP = Operacion.CANCELAR;
+            accionEP();
+        }else{
+            String sql = "{call Sp_DeleteEstadoProduccion('"+codigo+"')}";
+            tipoOperacionEP = Operacion.ELIMINAR;
+            accionEP(sql);
+        }
+    }
+    
+    public void cargarComboEP(){
+        ArrayList<String>lista = new ArrayList();
+        
+        lista.add(0,"CÓDIGO");
+        lista.add(1,"NOMBRE");
+        
+        listaFiltroEP = FXCollections.observableList(lista);
+        cmbBusquedaEP.setItems(listaFiltroEP);
+    }
+    
+    @FXML
+    private void comboFiltroEP(ActionEvent event) {
+        btnBuscarEP.setDisable(false);
+        ArrayList<String> lista = new ArrayList();
+        String sql ="{call Sp_ListEstadoProduccion()}";
+        int x=0;
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                 if(cmbBusquedaEP.getValue().equals("CÓDIGO")){
+                     lista.add(x, rs.getString("estadoProduccionId"));
+                     
+                }else if(cmbBusquedaEP.getValue().equals("NOMBRE")){
+                    lista.add(x, rs.getString("estadoProduccionDesc"));
+                }
+                 x++;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+       listaBuscarEP = FXCollections.observableList(lista);
+       cmbBusquedaEP1.setItems(listaBuscarEP);
+       new AutoCompleteComboBoxListener(cmbBusquedaEP1);
+    }
+    
+    
+    public void buscarEP(){
+        if(cmbBusquedaEP1.getValue().equals("")){
+               System.out.println("hola");
+        }else{
+            if(cmbBusquedaEP.getValue().equals("CÓDIGO")){
+                tipoOperacionEP = Operacion.BUSCAR;
+                    String sql = "{ call Sp_SearchEstadoProduccion('"+cmbBusquedaEP1.getValue()+"')}";
+                    accionEP(sql);
+            }else if(cmbBusquedaEP.getValue().equals("NOMBRE")){
+                    tipoOperacionEP = Operacion.BUSCAR;
+                    String sql = "{ call Sp_SearchEstadoProduccionName('"+cmbBusquedaEP1.getValue()+"')}";
+                    accionEP(sql);
+            }
+        }
+    }
+    
+    @FXML
+    private void cmbBuscarEP(ActionEvent event) {
+        buscarEP();
+    }
+    
+    @FXML
+    private void btnBuscarEP(MouseEvent event) {
+        buscarEP();
+    }
+    
+    @FXML
+    private void codigoBuscadoC(MouseEvent event) {
+        limpiarTextEP();
+        desactivarControlesEP();
+    }
+        
     
 }
