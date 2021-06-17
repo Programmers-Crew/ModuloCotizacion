@@ -47,6 +47,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.ModuloCotizacion.bean.Animations;
+import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
 import org.ModuloCotizacion.bean.CamposEspeciales;
 import org.ModuloCotizacion.bean.Cotizaciones;
@@ -70,6 +71,10 @@ public class CotizacionesViewController implements Initializable {
     private JFXButton btnGuardarCotizacion;
     @FXML
     private TextField txtTotalParcial;
+    @FXML
+    private JFXButton cargar;
+
+
 
   
 
@@ -95,6 +100,7 @@ public class CotizacionesViewController implements Initializable {
     ObservableList<String> listaNit;
     ObservableList<String> listaTipoCliente;
     ObservableList<String> listaVendedor;
+    ObservableList<String> listaEmpleado;
     ObservableList<String> listaFactorVenta;
     ObservableList<String> listaMolduraRef;
     ObservableList<String> listaCodigoCotizaciones;
@@ -234,8 +240,7 @@ public class CotizacionesViewController implements Initializable {
         txtPrecioUCotizacion.setText("0.00");
         txtTotalCotizacion.setText("0.00");
         txtDescripcion.setText("");
-        txtCantidad.setText("1");
-        txtDescuento.setText("0.00");        
+        txtCantidad.setText("1"); 
     }
     public void limpiarTextBack(){
         txtMolduraReferencia.setValue("");
@@ -243,8 +248,7 @@ public class CotizacionesViewController implements Initializable {
         txtLargo.setText("0.00");        
         txtAlto.setText("0.00");
         txtDescripcion.setText("");
-        txtCantidad.setText("1");
-        txtDescuento.setText("0.00");        
+        txtCantidad.setText("1");      
     }
     
     
@@ -340,14 +344,68 @@ public class CotizacionesViewController implements Initializable {
     
     
     public void cargarDatosCotizaciones(){
-       tblCotizacion.setItems(getCotizacion());
-       colCodigoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionId"));
-       colFechaCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionFecha"));
-       colClienteCotizacion.setCellValueFactory(new PropertyValueFactory("nit"));
-       colDescuentoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuento"));
-       colNetoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuentoNeto"));
-       colTotalCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionTotal"));
-       desactivarControles();
+        
+        tblCotizacion.setItems(getCotizacion());
+        colCodigoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionId"));
+        colFechaCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionFecha"));
+        colClienteCotizacion.setCellValueFactory(new PropertyValueFactory("nit"));
+        colDescuentoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuento"));
+        colNetoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuentoNeto"));
+        colTotalCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionTotal"));
+        desactivarControles();
+    }
+    
+    public ObservableList<Cotizaciones> getCotizacionName(int codigo){
+        ArrayList<Cotizaciones> lista = new ArrayList();
+        ArrayList<String> listaCodigo = new ArrayList();
+        String sql= "{call Sp_SearchCotizaciones('"+codigo+"')}";
+        int x =0;
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(new Cotizaciones(
+                    rs.getInt("cotizacionId"),
+                    rs.getString("clienteNombre"),
+                    rs.getString("tipoClienteDesc"),
+                    rs.getString("cotizacionImg"),
+                    rs.getString("usuarioNombre"),
+                    rs.getDate("cotizacionFecha"),
+                    rs.getDouble("cotizacionDescuento"),
+                    rs.getDouble("cotizacionDescuentoNeto"),
+                    rs.getDouble("cotizacionTotal")
+                ));                
+                listaCodigo.add(x, rs.getString("cotizacionId"));
+                x++;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        
+        listaCodigoCotizaciones = FXCollections.observableList(listaCodigo);
+        return listaCotizaciones = FXCollections.observableList(lista);
+    }
+    
+    
+    public void cargarDatosCotizacionesBuscada(int codigo){
+        
+        tblCotizacion.setItems(getCotizacionName(codigo));
+        colCodigoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionId"));
+        colFechaCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionFecha"));
+        colClienteCotizacion.setCellValueFactory(new PropertyValueFactory("nit"));
+        colDescuentoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuento"));
+        colNetoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuentoNeto"));
+        colTotalCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionTotal"));
+        desactivarControles();
     }
     
     
@@ -387,6 +445,7 @@ public class CotizacionesViewController implements Initializable {
     
     
     public void cargarDatosCotizacionesBack(){
+        tblCotizacionDetalle.getItems().clear();
        tblCotizacionDetalle.setItems(getCotizacionBack());
        colCodigoDetalle.setCellValueFactory(new PropertyValueFactory("backupId"));
        colCantidadDetalle.setCellValueFactory(new PropertyValueFactory("cotizacionCantida"));
@@ -403,6 +462,8 @@ public class CotizacionesViewController implements Initializable {
     public void accion(){
         switch(tipoOperacion){
             case AGREGAR:
+                codigoCotizacion = 0;
+                disableButtonsSeleccion();
                 tipoOperacion = Operacion.GUARDAR;
                 cancelar = Operacion.CANCELAR;
                 desactivarControles();
@@ -412,7 +473,7 @@ public class CotizacionesViewController implements Initializable {
                 activarText();
                 btnBuscar.setDisable(true);
                 limpiarTextBack();
-                tblCotizacionDetalle.getItems().clear();
+                
                 break;
             case CANCELAR:
                 tipoOperacion = Operacion.NINGUNO;
@@ -446,8 +507,24 @@ public class CotizacionesViewController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if(result.get() == buttonTypeSi ){
                     try {
-                        Double valorTotal = Double.parseDouble(txtTotalCotizacion.getText())+Double.parseDouble(txtTotalParcial.getText());
-                        txtTotalCotizacion.setText(String.valueOf(valorTotal));
+                        
+                        double total = Double.parseDouble(txtTotalCotizacion.getText())+Double.parseDouble(txtDescuentoCotizacion.getText());
+                        double descuento = Double.parseDouble(txtDescuento.getText());
+                        double descuentoTotal = Double.parseDouble(txtDescuentoCotizacion.getText());
+                        
+                        
+                        total = total+ (Double.parseDouble(txtCantidad.getText())*Double.parseDouble(txtTotalParcial.getText()));
+                        
+                        descuentoTotal = total*descuento;
+                        
+                        total = total - descuentoTotal;
+                        
+                        cargar.setDisable(true);
+                        txtTotalCotizacion.setText(String.valueOf(total));
+                        txtDescuentoCotizacion.setText(String.valueOf(descuentoTotal));
+                        
+                        
+                        
                         ps = Conexion.getIntance().getConexion().prepareCall(sql);
                         ps.execute();
                         
@@ -734,22 +811,19 @@ public class CotizacionesViewController implements Initializable {
             ResultSet rs = ps.executeQuery();
             
             while(rs.next()){
-                double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
+               
                 
                 txtDescuento.setText(rs.getString("tipoClienteDescuento"));
                 
-                double cantidad = Double.parseDouble(txtCantidad.getText());
-        
-        
-                double valor = (ancho * largo * alto * 0.0005 * cantidad)+Double.parseDouble(txtTotalCotizacion.getText());
-              
-                double descuentoTexto = Double.parseDouble(txtDescuento.getText())*valor;
+                double descuento = Double.parseDouble(txtDescuento.getText());
+                double total = Double.parseDouble(txtTotalCotizacion.getText());
                 
-                valor = valor-descuentoTexto;
-                double precioUnitario1 = valor/Double.parseDouble(txtCantidad.getText());
-        
-                txtPrecioUCotizacion.setText(String.valueOf(precioUnitario1));
-                txtDescuentoCotizacion.setText(String.valueOf(descuentoTexto));
+                double descuentoNeto = total* descuento;
+                
+                total = total- descuentoNeto;
+                
+                txtDescuentoCotizacion.setText(String.valueOf(descuentoNeto));
+                txtTotalCotizacion.setText(String.valueOf(total));
                 
             }
             
@@ -805,6 +879,8 @@ public class CotizacionesViewController implements Initializable {
         }
         listaTipoCliente = FXCollections.observableList(lista);
         txtTipoCliente.setItems(listaTipoCliente);
+        
+        new AutoCompleteComboBoxListener(txtTipoCliente);
     }    
        
          
@@ -835,6 +911,7 @@ public class CotizacionesViewController implements Initializable {
         }
         listaVendedor = FXCollections.observableList(lista);
         txtVendedor.setItems(listaVendedor);
+        new AutoCompleteComboBoxListener(txtVendedor);
     }    
    
     
@@ -865,6 +942,8 @@ public class CotizacionesViewController implements Initializable {
         }
         listaNit = FXCollections.observableList(lista);
         txtNIT.setItems(listaNit);
+        
+        new AutoCompleteComboBoxListener(txtNIT);
     }   
 
      @FXML
@@ -1003,9 +1082,6 @@ public class CotizacionesViewController implements Initializable {
             
         }else{
             double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-            double descuentoTexto = Double.parseDouble(txtDescuento.getText())*((ancho * largo * alto )* 0.0005);
-            
-            txtDescuentoCotizacion.setText(String.valueOf(descuentoTexto));
             
             
             double valor = (((ancho * largo * alto )* 0.0005));
@@ -1223,6 +1299,7 @@ public class CotizacionesViewController implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == buttonTypeSi){
                 try{     
+                    btnAgregar.setDisable(true);
                      int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
                     txtAncho.setText(colAnchoDetalle.getCellData(index).toString());
                     txtLargo.setText(colLargoDetalle.getCellData(index).toString());
@@ -1230,6 +1307,7 @@ public class CotizacionesViewController implements Initializable {
                     txtDescripcion.setText(colDetalleDescripcion.getCellData(index));
                     txtCantidad.setText(colCantidadDetalle.getCellData(index).toString());
                     txtPrecioUCotizacion.setText(colPrecioDetalle.getCellData(index).toString());
+                    
                     activatTextBackup();
                 }catch(Exception e){
                     e.printStackTrace();
@@ -1254,9 +1332,26 @@ public class CotizacionesViewController implements Initializable {
         txtDescuentoCotizacion.setText(colNetoCotizacion.getCellData(index).toString());
         txtTotalCotizacion.setText(colTotalCotizacion.getCellData(index).toString());
         codigoCotizacion =colCodigoCotizacion.getCellData(index);
-        
+        cargarMore();
         cargarDatosCamposEspeciales();
         cargarDatosCotizacionesDetalle();
+    }
+    
+    
+    public void cargarMore(){
+          String sql="{call Sp_SearchCotizaciones('"+codigoCotizacion+"')}";
+        
+        try {
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                txtImagen.setText(rs.getString("cotizacionImg"));
+                txtVendedor.setValue(rs.getString("usuarioNombre")+ " |"+rs.getString("usuarioId"));
+            }
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
     
     public ObservableList<cotizacionBackup> getCotizaciondetalle(){
@@ -1345,8 +1440,8 @@ public class CotizacionesViewController implements Initializable {
                 try{
                     PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
                     ps.execute();
-                    double descuentoNeto = (Double.parseDouble(txtTotalCotizacion.getText())+Double.parseDouble(precio.getText()))*Double.parseDouble(txtDescuento.getText());
-                    double valor = (Double.parseDouble(txtTotalCotizacion.getText())+Double.parseDouble(precio.getText()))-descuentoNeto;
+                    double descuentoNeto = (Double.parseDouble(txtTotalCotizacion.getText())+Double.parseDouble(precio.getText())+Double.parseDouble(txtDescuentoCotizacion.getText()))*Double.parseDouble(txtDescuento.getText());
+                    double valor = (Double.parseDouble(txtTotalCotizacion.getText()) +Double.parseDouble(txtDescuentoCotizacion.getText())+Double.parseDouble(precio.getText()) ) -descuentoNeto;
                     String sql1 = "{call Sp_UpdateCotizacionTotal('"+codigoCotizacion+"','"+valor+"','"+descuentoNeto+"')}";
                     PreparedStatement ps1 = Conexion.getIntance().getConexion().prepareCall(sql1);
                     ps1.execute();
@@ -1533,12 +1628,13 @@ public class CotizacionesViewController implements Initializable {
                     PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
                     ps.execute();
                     transferir();
-                    
+                    txtDescuento.setText("0.00");
                     System.out.println(txtImagen.getText());
                     if(!txtImagen.getText().equals("Seleccione el archivo...")){
                         Files.copy(orig, dest, REPLACE_EXISTING);
                     }
-
+                    
+                    tblCotizacionDetalle.getItems().clear();
                     Notifications noti = Notifications.create();
                     noti.graphic(new ImageView(imgCorrecto));
                     noti.title("REGISTRO GUARDADO");
@@ -1547,9 +1643,10 @@ public class CotizacionesViewController implements Initializable {
                     noti.hideAfter(Duration.seconds(4));
                     noti.darkStyle();   
                     noti.show();
-                    cargarDatosCotizaciones();
-
-
+                    cargarDatosCotizacionesBuscada(Integer.parseInt(txtCodigo.getText()));
+                    limpiarText();
+                    limpiarTextBack();
+                    cargar.setDisable(false);
                 }catch(SQLException ex){
                     ex.printStackTrace();
                     Notifications noti = Notifications.create();
@@ -1592,7 +1689,7 @@ public class CotizacionesViewController implements Initializable {
     private void btnGenerarWord(MouseEvent event) {
         generarCotizacion generar = new generarCotizacion();
         
-        generar.generar(listaCamposEsp2, listaCotizacionesBack, Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtImagen.getText(), anchor, Integer.parseInt(txtCodigo.getText()), txtNIT.getValue(), txtNombre.getText(), txtDireccion.getText(), Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()));
+        generar.generar(listaCamposEsp2, listaCotizacionesBack, Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtImagen.getText(), anchor, Integer.parseInt(txtCodigo.getText()), txtNIT.getValue(), txtNombre.getText(), txtDireccion.getText(), Double.parseDouble(txtDescuentoCotizacion.getText()), Double.parseDouble(txtTotalCotizacion.getText()), txtFecha.getValue().toString());
         
     }
     
@@ -1620,8 +1717,13 @@ public class CotizacionesViewController implements Initializable {
             nuevoDetalle.setCotizacionDesc(txtDescripcion.getText());
             nuevoDetalle.setCotizacionPrecioU(Double.parseDouble(txtPrecioUCotizacion.getText()));
             nuevoDetalle.setCotizacionTotalParcial(Double.parseDouble(txtCantidad.getText())*Double.parseDouble(txtPrecioUCotizacion.getText()));                                    
-            
-           String sql = "{call Sp_UpdateBackUpCotizacion('"+nuevoDetalle.getBackupId()+"','"+nuevoDetalle.getCotizacionCantida()+"','"+nuevoDetalle.getCotizacionDesc()+"','"+nuevoDetalle.getCotizacionAlto()+"','"+nuevoDetalle.getCotizacionLargo()+"','"+nuevoDetalle.getCotizacionAncho()+"','"+nuevoDetalle.getCotizacionPrecioU()+"','"+nuevoDetalle.getCotizacionTotalParcial()+"')}";
+            String sql="";
+            if(codigoCotizacion != 0 || codigoCotizacion >0){
+                sql = "{call Sp_UpdateDetalleCotizacion('"+nuevoDetalle.getBackupId()+"','"+nuevoDetalle.getCotizacionCantida()+"','"+nuevoDetalle.getCotizacionDesc()+"','"+nuevoDetalle.getCotizacionAlto()+"','"+nuevoDetalle.getCotizacionLargo()+"','"+nuevoDetalle.getCotizacionAncho()+"','"+nuevoDetalle.getCotizacionPrecioU()+"','"+nuevoDetalle.getCotizacionTotalParcial()+"','"+txtCodigo.getText()+"')}";
+            }else{
+                sql = "{call Sp_UpdateBackUpCotizacion('"+nuevoDetalle.getBackupId()+"','"+nuevoDetalle.getCotizacionCantida()+"','"+nuevoDetalle.getCotizacionDesc()+"','"+nuevoDetalle.getCotizacionAlto()+"','"+nuevoDetalle.getCotizacionLargo()+"','"+nuevoDetalle.getCotizacionAncho()+"','"+nuevoDetalle.getCotizacionPrecioU()+"','"+nuevoDetalle.getCotizacionTotalParcial()+"')}";
+            }   
+           
            try{
                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
                ps.execute();
@@ -1634,6 +1736,7 @@ public class CotizacionesViewController implements Initializable {
                 noti.darkStyle();
                 noti.show();
                 tipoOperacion = Operacion.NINGUNO;
+                cargarDatosCotizaciones();
                 cargarDatosCotizacionesBack();
                 btnEditar.setDisable(true);
                 btnEliminar.setDisable(true);
@@ -1657,7 +1760,13 @@ public class CotizacionesViewController implements Initializable {
             cotizacionBackup nuevoDetalle = new cotizacionBackup();
             nuevoDetalle.setBackupId(colCodigoDetalle.getCellData(index));
             
-            String sql = "{call SpEliminarBackuCo('"+nuevoDetalle.getBackupId()+"')}";
+            String sql="";
+            if(codigoCotizacion != 0 || codigoCotizacion >0){
+                sql = "{call SpEliminarDetalleBack('"+nuevoDetalle.getBackupId()+"')}";
+            }else{
+                sql = "{call SpEliminarBackuCo('"+nuevoDetalle.getBackupId()+"')}";
+            }   
+            
             
             try{
                 PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
@@ -1687,6 +1796,38 @@ public class CotizacionesViewController implements Initializable {
             }
     }
     
+    
+             
+    public ObservableList<String> llenarEmpleado(){
+        ArrayList<String> lista = new ArrayList();
+        String sql= "{call Sp_ListUsuarioEmpleado()}";
+            int x =0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(x, rs.getString("usuarioNombre")+ " |"+rs.getString("usuarioId"));
+                x++;
+            }
+            
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS CMB");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        return listaEmpleado = FXCollections.observableList(lista);
+    }    
+    
+   
+    
     @FXML
     public void btnProduccion(){
     Dialog dialog = new Dialog();
@@ -1698,9 +1839,22 @@ public class CotizacionesViewController implements Initializable {
         JFXDatePicker fechaFinal= new JFXDatePicker();
         GridPane grid = new GridPane();
         
+        
+        Label label2 = new Label("Operador:");
+        ComboBox<String> text = new ComboBox();
+        
+        text.setItems(llenarEmpleado());
+        
+        
+        new AutoCompleteComboBoxListener(text);
+        
+        
+        
         grid.add(label1, 1, 1);
         grid.add(fechaFinal, 2, 1);
         
+        grid.add(label2, 1, 4);
+        grid.add(text, 2, 4);
         
         dialog.getDialogPane().setContent(grid);
 
@@ -1718,34 +1872,56 @@ public class CotizacionesViewController implements Initializable {
         int codigoC = Integer.parseInt(txtCodigo.getText());
         int estado = 1;
         
-            
+        
+        int codigo1=0;   
         if(result.get() == buttonTypeOk){
-                String sql = "{call Sp_TransferirCotizacion('"+codigoC+"','"+estado+"','"+date1+"','"+date2+"')}";
-            try {
-                PreparedStatement psProdccion = Conexion.getIntance().getConexion().prepareCall(sql);
-                
-                psProdccion.execute();
-                
-                Notifications noti = Notifications.create();
-                noti.graphic(new ImageView(imgCorrecto));
-                noti.title("TRANSFERENCIA GUARDADA");
-                noti.text("Se ha trasnferido la cotización exitosamente");
-                noti.position(Pos.BOTTOM_RIGHT);
-                noti.hideAfter(Duration.seconds(4));
-                noti.darkStyle();   
-                noti.show();
-                limpiarText();
-                limpiarTextBack();
-            } catch (SQLException ex) {
-                 Notifications noti = Notifications.create();
-                noti.graphic(new ImageView(imgError));
-                noti.title("ERROR");
-                noti.text("hubo un error en la base de datos"+ex);
-                ex.printStackTrace();
-                noti.position(Pos.BOTTOM_RIGHT);
-                noti.hideAfter(Duration.seconds(10));
-                noti.darkStyle();   
-                noti.show();
+            if(!text.getValue().isEmpty()){
+                 int busqueda = text.getValue().indexOf("|");
+                String valor1 = text.getValue().substring(busqueda+1, text.getValue().length());
+                codigo1 = Integer.parseInt(valor1);
+                String sql = "{call Sp_TransferirCotizacion('"+codigoC+"','"+estado+"','"+date1+"','"+date2+"','"+codigo1+"')}";
+                try {
+                    PreparedStatement psProdccion = Conexion.getIntance().getConexion().prepareCall(sql);
+
+                    psProdccion.execute();
+
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgCorrecto));
+                    noti.title("TRANSFERENCIA GUARDADA");
+                    noti.text("Se ha trasnferido la cotización exitosamente");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();
+                    limpiarText();
+                    limpiarTextBack();
+                } catch (SQLException ex) {
+
+                    if(ex.getErrorCode() == 1062){
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR COTIZACIÓN DUPLICADA");
+                        noti.text("Ya existe esta cotización en producción");
+                        ex.printStackTrace();
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(10));
+                        noti.darkStyle();   
+                        noti.show();
+                    }else{
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR");
+                        noti.text("hubo un error en la base de datos"+ex);
+                        ex.printStackTrace();
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(10));
+                        noti.darkStyle();   
+                        noti.show();
+                    }
+
+
+                }
+        
             }
         }else{
             Notifications noti = Notifications.create();
@@ -1757,9 +1933,32 @@ public class CotizacionesViewController implements Initializable {
             noti.darkStyle();   
             noti.show();
         }
-
-
+            
         
-        }
+    }
+    
+    
+    @FXML
+    private void cargar(MouseEvent event) {
+        llenarComboNit();
+        llenarComboVendedor();
+        desactivarTextBack();
+        llenarComboTipoC();
+        limpiarText();
+        disableButtonsSeleccion();
+        cargarDatosCotizaciones();
+        
+        llenarMolduras();
+        cargarDatosCotizacionesBack();
+        txtDescuentoCotizacion.setText("0.00");
+        txtAncho.setText("0.00");
+        txtLargo.setText("0.00");
+        txtAlto.setText("0.00");
+        txtCantidad.setText("1");
+        txtDescuento.setText("0.00");
+        calcularprecio();
+        validarTabla();
+        codigoCotizacion = 0;
+    }
 }
 

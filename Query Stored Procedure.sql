@@ -247,7 +247,6 @@ DELIMITER $$
 DELIMITER ;
 
 
-
 DELIMITER $$
 	create procedure Sp_SearchCotizaciones( codigo int)
 		begin 
@@ -255,6 +254,7 @@ DELIMITER $$
 					c.cotizacionDescuento , c.cotizacionTotal, c.cotizacionDescuentoNeto,
 				   c.cotizacionCliente,
                    cl.clienteNombre,
+                   cl.clienteDireccion,
                    tc.tipoClienteDesc,
                    tc.tipoClienteDescuento,
                    u.usuarioNombre, u.usuarioId
@@ -319,6 +319,13 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+DELIMITER $$
+	create procedure SpEliminarDetalleBack(idBuscado int(5))
+		begin
+			delete from cotizaciondetalle
+				where detalleId = idBuscado;
+        end $$
+DELIMITER ;
 
 DELIMITER $$
 	create procedure Sp_ListCotizacionDetalle(codigo int)
@@ -348,6 +355,26 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+DELIMITER $$
+	create procedure Sp_UpdateDetalleCotizacion(idBuscado int(10), cantidad double, desccrip varchar(100), alto double, largo double, ancho double, precioU double, totalP double, cotizacion int)
+		begin 
+			update cotizaciondetalle as cb
+				set cotizacionCantida = cantidad,
+					cotizacionDesc = desccrip,
+                    cotizacionAlto = alto,
+                    cotizacionLargo = largo,
+                    cotizacionAncho = ancho,
+                    cotizacionPrecioU = precioU,
+                    cotizacionTotalParcial = totalP
+					where detalleId = idBuscado;
+                    
+				UPDATE cotizacion as c
+                set cotizacionDescuentoNeto = ((select sum(cotizacionTotalParcial) from cotizaciondetalle where cotizacionid = cotizacion)+ (select campoPrecio from camposespeciales where campoCotizacion = cotizacion))*cotizacionDescuento,
+                 cotizacionTotal = (select sum(cotizacionTotalParcial) from cotizaciondetalle where cotizacionid = cotizacion)+ (select campoPrecio from camposespeciales where campoCotizacion = cotizacion)-cotizacionDescuentoNeto
+                 where cotizacionId = cotizacion;
+                
+        end $$
+DELIMITER ;
 
 -- Modo Pago 
 DELIMITER $$
@@ -418,6 +445,22 @@ DELIMITER $$
 DELIMITER ;
 
 
+DELIMITER $$
+	create procedure  Sp_SearchEstadoProduccionName(name1 varchar(20))
+		begin
+			select ep.estadoProduccionId  , ep.estadoProduccionDesc 
+				from EstadoProduccion as ep where name1 = ep.estadoProduccionDesc ;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure  Sp_SearchEstadoProduccion(codigo int(5))
+		begin
+			select ep.estadoProduccionId  , ep.estadoProduccionDesc 
+				from EstadoProduccion as ep where codigo = ep.estadoProduccionId ;
+        end $$
+DELIMITER ;
+
 -- Produccion
 DELIMITER $$
 	create procedure Sp_AddProduccion(cotizacion int(5), estado int(5), operador int(5), entrada date, salida date, restantes int)
@@ -427,15 +470,17 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+
 DELIMITER $$	
-	create procedure Sp_UpdateProduccion(idBuscado int(5),estado int(5),entrada date, salida date, restantes int)
+	create procedure Sp_UpdateProduccion(idBuscado int(5),estado int(5),entrada date, salida date, restantes int, operador int)
 		begin
 			update Produccion
 				set 
 					produccionEstado = estado,
                     produccionDiasRestantes = restantes,
                     produccionFechaEntrada = entrada,
-                    produccionFechaSalida = salida
+                    produccionFechaSalida = salida,
+                    produccionOperador = operador
 				where produccionId = idBuscado;
         end $$
 DELIMITER ;
@@ -452,12 +497,32 @@ DELIMITER $$
 	create procedure Sp_ListProduccion()
 		begin 
 			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, p.produccionCotizacion ,
-                e.estadoProduccionDesc, u. usuarioNombre
+                e.estadoProduccionDesc, u. usuarioNombre, c.cotizacionTotal
 				from Produccion as p
 				inner join Estadoproduccion as e
 					on p.produccionEstado = e.estadoProduccionId
 				inner join Usuarios as u
-					on p.produccionOperador = usuarioId;
+					on p.produccionOperador = usuarioId
+				inner join cotizacion as c
+					on c.cotizacionId = produccionCotizacion;
+		 end $$
+DELIMITER ;
+
+
+
+DELIMITER $$
+	create procedure Sp_SearchProduccion(codigo int(5))
+		begin 
+			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, p.produccionCotizacion ,
+                e.estadoProduccionDesc, u. usuarioNombre, c.cotizacionTotal
+				from Produccion as p
+				inner join Estadoproduccion as e
+					on p.produccionEstado = e.estadoProduccionId
+				inner join Usuarios as u
+					on p.produccionOperador = usuarioId
+				inner join cotizacion as c
+					on c.cotizacionId = produccionCotizacion
+				where produccionCotizacion = codigo;
 		 end $$
 DELIMITER ;
 
@@ -975,6 +1040,7 @@ DELIMITER $$
         END $$
 DELIMITER ;
 
+
 -- CAMBIO #1
 DELIMITER $$
 	create procedure Sp_ListUsuarioVendedor()
@@ -982,7 +1048,19 @@ DELIMITER $$
 			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
 				from Usuarios, tipousuario 
 					where Usuarios.tipoUsuarioId = tipousuario.tipoUsuarioId 
-					and  Usuarios.tipoUsuarioId = 3
+					and  (Usuarios.tipoUsuarioId = 2 or Usuarios.tipoUsuarioId = 3)
+						order by usuarioId ASC;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure Sp_ListUsuarioEmpleado()
+		BEGIN 
+			select usuarioId, usuarioNombre, usuarioPassword, tipoUsuario
+				from Usuarios, tipousuario 
+					where Usuarios.tipoUsuarioId = tipousuario.tipoUsuarioId 
+					and  (Usuarios.tipoUsuarioId = 2 or Usuarios.tipoUsuarioId = 3)
 						order by usuarioId ASC;
         END $$
 DELIMITER ;
@@ -991,7 +1069,7 @@ DELIMITER ;
 DELIMITER $$
 	create procedure Sp_ListUsuarioC(username varchar(20))
 		BEGIN 
-			select usuarioId
+			select usuarioId, usuarioNombre
 				from Usuarios
 					where Usuarios.usuarioNombre = username
                     order by usuarioId ASC;
@@ -1281,10 +1359,10 @@ DELIMITER ;
 
 
 DELIMITER $$
-	create procedure Sp_TransferirCotizacion(cotizacion int(5), estado int(5), entrada date, salida date)
+	create procedure Sp_TransferirCotizacion(cotizacion int(5), estado int(5), entrada date, salida date, operador int)
 		begin
-			insert into produccion(produccionCotizacion,produccionEstado,produccionFechaEntrada,produccionFechaSalida)
-				values(cotizacion, estado, entrada, salida);
+			insert into produccion(produccionCotizacion,produccionEstado,produccionFechaEntrada,produccionFechaSalida, produccionOperador)
+				values(cotizacion, estado, entrada, salida, operador);
         end $$
 DELIMITER ;
 

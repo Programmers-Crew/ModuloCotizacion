@@ -388,7 +388,6 @@
                   <MenuItem fx:id="itemInventario" mnemonicParsing="false" onAction="#inventarioView" text="Modulo de Inventario                       F3" />
                   <MenuItem mnemonicParsing="false" onAction="#Clientesview" text="Modulo de clientes                           F4" />
                   <MenuItem mnemonicParsing="false" onAction="#proveedoresView" text="Modulo de proveedores                   F5" />
-                  <MenuItem mnemonicParsing="false" onAction="#promedioProveedores" text="Modulo de Promedios                      F6" />
                   <MenuItem mnemonicParsing="false" onAction="#parametrosView" text="Modulo de Parametros                     F7" />
                   <MenuItem mnemonicParsing="false" onAction="#cotizacionView" text="Modulo de Cotizaciones                   F8" />
                   <MenuItem mnemonicParsing="false" onAction="#produccionView" text="Modulo de Producción                     F9" />
