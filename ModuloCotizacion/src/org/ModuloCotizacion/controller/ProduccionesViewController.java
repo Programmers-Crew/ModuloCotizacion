@@ -10,13 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -628,6 +626,7 @@ public class ProduccionesViewController implements Initializable {
                 break;
         }
     }
+    
     
     public void buscarCotizacion(){
         String sql = "{call Sp_SearchCotizaciones('"+codigoCotizacion+"')}";

@@ -1,16 +1,13 @@
 package org.ModuloCotizacion.controller;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +45,7 @@ import org.controlsfx.control.Notifications;
 import org.ModuloCotizacion.bean.Animations;
 import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
+import org.ModuloCotizacion.bean.CategoriaProducto;
 import org.ModuloCotizacion.bean.EstadoProductos;
 import org.ModuloCotizacion.bean.GenerarExcel;
 import org.ModuloCotizacion.bean.InventarioProductos;
@@ -62,8 +60,6 @@ public class InventarioViewController implements Initializable {
     Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     @FXML
     private Pane btnProveedores;
-    @FXML
-    private Pane btnProductos;
     @FXML
     private Pane btnInicio;
     
@@ -90,8 +86,26 @@ public class InventarioViewController implements Initializable {
     private JFXTextField txtCostoNuevo;
     @FXML
     private JFXButton generarExcel;
-
-
+    @FXML
+    private JFXTextField txtCodigoCategoria;
+    @FXML
+    private JFXTextField txtDescripcionCategoria;
+    @FXML
+    private JFXButton btnAgregarCategoria;
+    @FXML
+    private JFXButton btnEliminarCategoria;
+    @FXML
+    private JFXButton btnEditarCategoria;
+    @FXML
+    private TableView<CategoriaProducto> tblCategoria;
+    @FXML
+    private TableColumn<CategoriaProducto, String> colCodigoCategoria;
+    @FXML
+    private TableColumn<CategoriaProducto, String> colDescCategoria;
+    @FXML
+    private JFXButton btnBuscarCategoria;
+    @FXML
+    private ComboBox<String> cmbCodigoCategoria;
 
 
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
@@ -118,7 +132,10 @@ public class InventarioViewController implements Initializable {
     public Operacion tipoOperacionEstado= Operacion.NINGUNO; 
    
     ObservableList<EstadoProductos> listaEstadoProductos;
+    ObservableList<CategoriaProducto> listaCategoria;
     ObservableList<String> listaCodigoEstadoProductos;
+    ObservableList<String> listaCategoriaProducto;
+    
     String codigoEstado = "";
     
     //Propiedades Inventario
@@ -156,8 +173,6 @@ public class InventarioViewController implements Initializable {
     private TableColumn<InventarioProductos, Double> colPrecioInventario;
     @FXML
     private JFXButton btnRestarInventario;
-    @FXML
-    private TableColumn<InventarioProductos, String> colTipoProducto;
     @FXML
     private JFXButton btnBuscarInventario;
     @FXML
@@ -201,7 +216,11 @@ public class InventarioViewController implements Initializable {
     String prodProveedor = "";
     String prodProducto = "";
     String passAction = "vacio";
-
+    
+    
+    //Categoria
+    public Operacion tipoOperacionCategoria = Operacion.NINGUNO; 
+    String codigoCategoria = "";
     //========================================== CODIGO PARA VISTA INVENTARIO =============================================================
         
     public void limpiarText(){
@@ -227,7 +246,7 @@ public class InventarioViewController implements Initializable {
     
         public void desactivarTextInventario(){
         cmbCodigoProductoInventario.setDisable(true);
-        txtProveedorInventario.setEditable(false);
+        txtProveedorInventario.setDisable(true);
         txtProductoInventario.setEditable(false);
         cmbNombreEstado.setDisable(true);
         btnEditarInventario.setDisable(false);
@@ -925,7 +944,7 @@ public class InventarioViewController implements Initializable {
                 nuevoInventario.setProductoId(cmbCodigoProductoInventario.getValue());
                 nuevoInventario.setProductoDesc(txtProductoInventario.getText());                
                 nuevoInventario.setProveedorNombre(txtProveedorInventario.getValue());                
-                nuevoInventario.setCategoriaNombre("PRODUCTO");
+                nuevoInventario.setCategoriaNombre(cmbNombreCategoria.getValue());
                 nuevoInventario.setProductoPrecio(Double.parseDouble(txtCostoNuevo.getText()));                                
                 nuevoInventario.setInventarioProductoCant(Integer.parseInt(txtCantidadInventario.getText()));                
                 nuevoInventario.setEstadoProductoDesc(cmbNombreEstado.getValue());
@@ -933,7 +952,7 @@ public class InventarioViewController implements Initializable {
                 proveedorName = txtProveedorInventario.getValue();
                    
                 String sql = "{call Sp_AddInventario('"+nuevoInventario.getProductoId()+"','"+nuevoInventario.getProductoDesc()+"','"+buscarCodigoProveedor(nuevoInventario.getProveedorNombre())+"','"+buscarCodigoCategoria(nuevoInventario.getCategoriaNombre())+"','"+nuevoInventario.getProductoPrecio()+"','"+nuevoInventario.getInventarioProductoCant()+"','"+buscarCodigoEstado(nuevoInventario.getEstadoProductoDesc())+"')}";
-                   
+                   System.out.println(sql);
                 tipoOperacionInventario = Operacion.GUARDAR;
                 accion(sql);     
                    
@@ -1507,7 +1526,7 @@ public class InventarioViewController implements Initializable {
             tipoOperacionEstado = Operacion.CANCELAR;
             accionEstado();
         }else{
-            String sql = "{call Sp_FindEstadoProducto('"+codigoEstado+"')}";
+            String sql = "{call Sp_EliminarEstadoProducto('"+codigoEstado+"')}";
             tipoOperacionEstado = Operacion.ELIMINAR;
             accionEstado(sql);
         }
@@ -1845,5 +1864,433 @@ public class InventarioViewController implements Initializable {
         }
     }
     
+   // ================================================== vista categoría
+    
+     //========================================== CODIGO PARA VISTA ESTADO PRODUCTO ========================================================
+
+    public void limpiarTextCategoria(){
+        txtCodigoCategoria.setText("");
+        txtDescripcionCategoria.setText("");
+    }
+    
+    public void desactivarControlesCategoria(){    
+        btnEliminarCategoria.setDisable(true);
+        btnEditarCategoria.setDisable(true);
+    }
+    
+    
+    public void desactivarTextCategoria(){
+        txtCodigoCategoria.setEditable(false);
+        txtDescripcionCategoria.setEditable(false);
+    }
+    
+    public void activarTextCategoria(){
+        txtCodigoCategoria.setEditable(true);
+        txtDescripcionCategoria.setEditable(true);
+    }
+    
+    
+     public ObservableList<CategoriaProducto> getCategorias(){
+        ArrayList<CategoriaProducto> lista = new ArrayList();
+        ArrayList<String> comboCodigoFiltro = new ArrayList();
+        String sql = "{call Sp_ListCategoriaProducto()}";
+        int x=0;
         
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(new CategoriaProducto(
+                            rs.getString("categoriaId"),
+                            rs.getString("categoriaNombre")
+                ));
+                comboCodigoFiltro.add(x, rs.getString("categoriaId"));
+                x++;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        
+        listaCategoriaProducto = FXCollections.observableList(comboCodigoFiltro);
+        cmbCodigoCategoria.setItems(listaCategoriaProducto);
+        
+        return listaCategoria = FXCollections.observableList(lista);
+    }
+    
+   
+    public void cargarDatosCategoria(){
+        tblCategoria.setItems(getCategorias());
+        colCodigoCategoria.setCellValueFactory(new PropertyValueFactory("categoriaId"));
+        colDescCategoria.setCellValueFactory(new PropertyValueFactory("categoriaNombre"));
+        limpiarTextCategoria();
+        new AutoCompleteComboBoxListener(cmbCodigoCategoria);
+        desactivarControlesCategoria();
+        desactivarTextCategoria();
+        tipoOperacionCategoria = Operacion.CANCELAR;
+        accionCategoria();
+    }
+        @FXML
+    private void seleccionarElementosCategoria(MouseEvent event) {
+        int index = tblCategoria.getSelectionModel().getSelectedIndex();
+        try{
+            txtCodigoCategoria.setText(colCodigoCategoria.getCellData(index));
+            txtDescripcionCategoria.setText(colDescCategoria.getCellData(index));
+            
+            
+            btnEliminarCategoria.setDisable(false);
+            btnEditarCategoria.setDisable(false);
+            
+            codigoCategoria = colCodigoCategoria.getCellData(index);
+            activarTextCategoria();
+        }catch(Exception e){
+        }
+    }
+
+
+    
+    
+    public void accionCategoria(){
+        switch(tipoOperacionCategoria){
+            case AGREGAR:
+                tipoOperacionCategoria = Operacion.GUARDAR;
+                cancelar = Operacion.CANCELAR;
+                desactivarControlesCategoria();
+                btnAgregarCategoria.setText("GUARDAR");
+                btnEliminarCategoria.setText("CANCELAR");
+                btnEliminarCategoria.setDisable(false);
+                activarTextCategoria();
+                cmbCodigoCategoria.setDisable(true);
+                btnBuscarCategoria.setDisable(true);
+                limpiarTextCategoria();
+                break;
+            case CANCELAR:
+                tipoOperacionCategoria = Operacion.NINGUNO;
+                desactivarControlesCategoria();
+                desactivarTextCategoria();
+                btnAgregarCategoria.setText("AGREGAR");
+                btnEliminarCategoria.setText("ELIMINAR");
+                limpiarTextCategoria();
+                cmbCodigoCategoria.setDisable(false);
+                btnBuscarCategoria.setDisable(false);
+                cancelar = Operacion.NINGUNO;
+                break;
+        }
+    }
+    
+    
+    public void accionCategoria(String sql){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        PreparedStatement ps;
+        ResultSet rs;
+        Notifications noti = Notifications.create();
+        ButtonType buttonTypeSi = new ButtonType("Si");
+        ButtonType buttonTypeNo = new ButtonType("No");
+        switch(tipoOperacionCategoria){
+            case GUARDAR:
+                alert.setTitle("AGREGAR REGISTRO");
+                alert.setHeaderText("AGREGAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea guardar este registro?");
+                
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get() == buttonTypeSi ){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA AGREGADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                        cargarDatosCategoria();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL AGREGAR");
+                        noti.text("HA OCURRIDO UN ERROR AL GUARDAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                    }
+                }else{
+                    
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA AGREGADO EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionCategoria = Operacion.CANCELAR;
+                    accionCategoria();
+                }
+                
+                break;
+            case ELIMINAR:
+                 alert.setTitle("ELIMINAR REGISTRO");
+                alert.setHeaderText("ELIMINAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea Eliminar este registro?");
+               
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> resultEliminar = alert.showAndWait();
+                
+                if(resultEliminar.get() == buttonTypeSi){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA ELIMINADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        cargarDatosCategoria();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                        
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        
+                        
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL ELIMINAR");
+                        noti.text("HA OCURRIDO UN ERROR AL ELIMINAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                    }
+                }else{
+                     noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA ELIMINADO EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionCategoria = Operacion.CANCELAR;
+                    accionCategoria();
+                }
+                break;
+            case ACTUALIZAR:
+                alert.setTitle("ACTUALIZAR REGISTRO");
+                alert.setHeaderText("ACTUALIZAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea Actualizar este registro?");
+               
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+                
+                Optional<ButtonType> resultactualizar = alert.showAndWait();
+                if(resultactualizar.get() == buttonTypeSi ){
+                    try {
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SE HA ACTUALIZADO EXITOSAMENTE EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                        cargarDatosCategoria();
+                    }catch (SQLException ex) {
+                        ex.printStackTrace();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL ACTUALIZAR");
+                        noti.text("HA OCURRIDO UN ERROR AL ACTUALIZAR EL REGISTRO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                    }
+                }else{
+                    
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("OPERACIÓN CANCELADA");
+                    noti.text("NO SE HA ACTUALIZAR EL REGISTRO");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionCategoria = Operacion.CANCELAR;
+                    accionCategoria();
+                }
+                break;
+            case BUSCAR:
+                 try{
+                    ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                    rs = ps.executeQuery();
+                    
+                    while(rs.next()){
+                        txtCodigoCategoria.setText(rs.getString("categoriaId"));
+                        txtDescripcionCategoria.setText(rs.getString("categoriaNombre"));
+                        codigoCategoria = rs.getString("categoriaId");
+                        
+                    }                    
+                    if(rs.first()){
+                        for(int i=0; i<tblCategoria.getItems().size(); i++){
+                            if(colCodigoCategoria.getCellData(i) == codigoCategoria){
+                                tblCategoria.getSelectionModel().select(i);
+                                break;
+                            }
+                        }
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("OPERACIÓN EXITOSA");
+                        noti.text("SU OPERACIÓN SE HA REALIZADO CON EXITO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        btnEditarCategoria.setDisable(false);
+                        btnEliminarCategoria.setDisable(false);
+                        activarTextCategoria();
+                    }else{
+                         
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL BUSCAR");
+                        noti.text("NO SE HA ENCONTRADO EN LA BASE DE DATOS");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();
+                        noti.show();
+                        tipoOperacionCategoria = Operacion.CANCELAR;
+                        accionCategoria();
+                    }
+                }catch(SQLException ex){
+                    ex.printStackTrace();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR AL BUSCAR");
+                    noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                    tipoOperacionCategoria = Operacion.CANCELAR;
+                    accionCategoria();
+                }
+                break;
+        }
+    }
+    
+        @FXML
+    private void btnAgregarCategoria(MouseEvent event) {
+        if(tipoOperacionCategoria == Operacion.GUARDAR){
+            if(txtCodigoCategoria.getText().isEmpty() || txtDescripcionCategoria.getText().isEmpty()){
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("HAY CAMPOS VACÍOS");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();   
+                noti.show();
+            
+            }else{
+                if(txtDescEstadoProducto.getText().length()<50){
+                    CategoriaProducto nuevaCategoria = new CategoriaProducto();
+                    nuevaCategoria.setCategoriaId(txtCodigoCategoria.getText());
+                    nuevaCategoria.setCategoriaNombre(txtDescripcionCategoria.getText());
+                    String sql = "{call SpAddCategoriaProducto('"+nuevaCategoria.getCategoriaId()+"','"+nuevaCategoria.getCategoriaNombre()+"')}";
+                    accionCategoria(sql);
+                }else{
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR");
+                    noti.text("NOMBRE DE LA CATEGORÍA NO TIENEN UNA LONGITUD ADECUADA (DEBE SER MENOR DE 50 CARACTERES)");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();
+                }
+            }
+        
+        }else{
+             tipoOperacionCategoria = Operacion.AGREGAR;
+                accionCategoria();
+        }
+    }
+
+    @FXML
+    private void btnEliminarCategoria(MouseEvent event) {
+        if(tipoOperacionCategoria == Operacion.GUARDAR){
+            tipoOperacionCategoria = Operacion.CANCELAR;
+            accionCategoria();
+        }else{
+            String sql = "{call Sp_DeleteCategoriaProducto('"+codigoCategoria+"')}";
+            tipoOperacionCategoria = Operacion.ELIMINAR;
+            accionCategoria(sql);
+        }
+    }
+
+    @FXML
+    private void btnEditarCategoria(MouseEvent event) {
+          CategoriaProducto nuevaCategoria = new CategoriaProducto();
+        nuevaCategoria.setCategoriaId(txtCodigoCategoria.getText());
+        nuevaCategoria.setCategoriaNombre(txtDescripcionCategoria.getText());
+        
+        tipoOperacionCategoria = Operacion.ACTUALIZAR;
+        String sql = "{call Sp_UpdateCategoriaProducto('"+codigoCategoria+"','"+nuevaCategoria.getCategoriaId()+"','"+nuevaCategoria.getCategoriaNombre()+"')}";
+        accionCategoria(sql);
+    }
+
+
+    
+    public void buscarCategoria(){
+        if(cmbCodigoCategoria.getValue().equals("")){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR");
+            noti.text("El CAMPO DE CÓDIGO ESTA VACÍO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }else{
+            tipoOperacionCategoria = Operacion.BUSCAR;
+            String sql = "{ call Sp_FindCategoriaProducto('"+cmbCodigoCategoria.getValue()+"')}";
+            accionCategoria(sql);
+        }
+    }
+    
+    @FXML
+    private void btnBuscarCategoria(MouseEvent event) {
+        buscarCategoria();
+    }
+
+    
+    @FXML
+    private void cargarCategoria(Event event) {
+        cargarDatosCategoria();
+        animacion.animacion(anchor3, anchor4);
+    }
+    
+    private void atajosCategoria(KeyEvent event) {
+        if(cmbCodigoCategoria.isFocused()){
+            if(event.getCode() == KeyCode.ENTER){
+                buscarCategoria();
+            }
+        }
+    }
+    
+    
+    
 }
