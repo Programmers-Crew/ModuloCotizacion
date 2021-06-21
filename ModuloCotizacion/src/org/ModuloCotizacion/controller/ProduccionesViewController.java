@@ -911,27 +911,43 @@ public class ProduccionesViewController implements Initializable {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
+                String codigoP = String.valueOf(rs.getInt("produccionId"));
+                String codigoC = rs.getString("produccionCotizacion");
                 
                 codigoProduccion =  rs.getInt("produccionId");
                 codigoCotizacion = rs.getInt("produccionCotizacion");
-                txtCodigoPr.setText(rs.getString("produccionId"));
-                cmbCotizacion.setValue(rs.getString("produccionCotizacion"));
+                 
+
+                cmbCotizacion.setValue(codigoC);
 
                
                 txtInicio.setValue(LocalDate.parse(rs.getDate("produccionFechaEntrada").toString()));
                 txtfinal.setValue(LocalDate.parse(rs.getDate("produccionFechaSalida").toString()));
+                
+                txtNit.setText(rs.getString("clienteNit"));
+                
                 Date fechaEntrada = rs.getDate("produccionFechaEntrada");
                 Date fechaSalida = rs.getDate("produccionFechaSalida");
                 int resta = fechaSalida.getDate()-fechaEntrada.getDate();
                 txtDiasRestantes.setText(String.valueOf(resta));
+                
                 cargarDatosCotizacionesDetalle();
                 cargarDatosCamposEspeciales();
                 buscarCotizacion();
+                
                 txtTotalCotizacion.setText(rs.getString("cotizacionTotal"));
                 buscarCodigo(rs.getString("estadoProduccionDesc"));
                 buscarOperador(rs.getString("usuarioNombre"));
+                
                 bntEditar.setDisable(false);
                 btnEliminar.setDisable(false);
+                
+                System.out.println(rs.getString("estadoProduccionDesc"));
+                System.out.println(rs.getString("usuarioNombre"));
+                System.out.println(rs.getString("cotizacionTotal"));
+                System.out.println(rs.getString("produccionId"));
+                System.out.println(codigoProduccion);
+                System.out.println(codigoCotizacion);
             }
             
             

@@ -257,7 +257,8 @@ DELIMITER $$
                    cl.clienteDireccion,
                    tc.tipoClienteDesc,
                    tc.tipoClienteDescuento,
-                   u.usuarioNombre, u.usuarioId
+                   u.usuarioNombre, u.usuarioId,
+                   cli.clienteNit, cli.clienteNombre, cli.clienteDireccion
 				from Cotizacion as c
 				inner join Clientes as cl
 					on c.cotizacionCliente = cl.clienteNit
@@ -265,6 +266,8 @@ DELIMITER $$
 					on c.cotizacionTipoClienteId = tc.tipoClienteId
 				inner join Usuarios as u
 					on c.cotizacionMensajero = u.usuarioId
+				inner join clientes as cli
+					on cli.clienteNit = c.cotizacionCliente
 				where c.cotizacionId=codigo;
         end $$
 DELIMITER ;
@@ -493,19 +496,20 @@ DELIMITER $$
 				where produccionId = idBuscado;
         end $$
 DELIMITER ;
+drop procedure Sp_ListProduccion
+call Sp_ListProduccion()
 
 DELIMITER $$
 	create procedure Sp_ListProduccion()
 		begin 
-			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, p.produccionCotizacion ,
-                e.estadoProduccionDesc, u. usuarioNombre, c.cotizacionTotal
-				from Produccion as p
-				inner join Estadoproduccion as e
-					on p.produccionEstado = e.estadoProduccionId
-				inner join Usuarios as u
-					on p.produccionOperador = usuarioId
+			select p.produccionId, p.produccionCotizacion, ep.estadoProduccionDesc, u.usuarioNombre, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, c.cotizacionTotal
+				from produccion as p
 				inner join cotizacion as c
-					on c.cotizacionId = produccionCotizacion;
+					on c.cotizacionId = p.produccionCotizacion
+				inner join estadoproduccion as ep
+					on ep.estadoProduccionId = p.produccionEstado
+				inner join usuarios as u
+					on u.usuarioId = p.produccionOperador;
 		 end $$
 DELIMITER ;
 
@@ -515,7 +519,8 @@ DELIMITER $$
 	create procedure Sp_SearchProduccion(codigo int(5))
 		begin 
 			select p.produccionId, p.produccionFechaEntrada, p.produccionFechaSalida, p.produccionDiasRestantes, p.produccionCotizacion ,
-                e.estadoProduccionDesc, u. usuarioNombre, c.cotizacionTotal
+                e.estadoProduccionDesc, u. usuarioNombre, c.cotizacionTotal,
+                cli.clienteNit, cli.clienteNombre, cli.clienteDireccion
 				from Produccion as p
 				inner join Estadoproduccion as e
 					on p.produccionEstado = e.estadoProduccionId
@@ -523,6 +528,8 @@ DELIMITER $$
 					on p.produccionOperador = usuarioId
 				inner join cotizacion as c
 					on c.cotizacionId = produccionCotizacion
+			    inner join clientes as cli
+					on cli.clienteNit = c.cotizacionCliente
 				where produccionCotizacion = codigo;
 		 end $$
 DELIMITER ;
@@ -1070,9 +1077,9 @@ DELIMITER ;
 DELIMITER $$
 	create procedure Sp_ListUsuarioC(username varchar(20))
 		BEGIN 
-			select usuarioId, usuarioNombre
-				from Usuarios
-					where Usuarios.usuarioNombre = username
+			select u.usuarioId  , u.usuarioNombre
+				from Usuarios as u
+					where u.usuarioNombre = 'empleado'
                     order by usuarioId ASC;
         END $$
 DELIMITER ;
