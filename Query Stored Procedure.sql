@@ -411,11 +411,12 @@ DELIMITER $$
 DELIMITER ;
 
 -- EstadoProduccion
+
 DELIMITER $$
-	create procedure Sp_AddEstadoProduccion(descript varchar(20))
+	create procedure Sp_AddEstadoProduccion(codigo int(5),descript varchar(20))
 		begin
-			insert into EstadoProduccion(estadoProduccionDesc)
-				values (descript);
+			insert into EstadoProduccion(estadoProduccionId,estadoProduccionDesc)
+				values (codigo,descript);
         end $$
 DELIMITER ;
 
@@ -427,7 +428,7 @@ DELIMITER $$
 					where estadoProduccionId  = idBuscado;
         end $$
 DELIMITER ;
-
+call Sp_ListEstadoProduccion()
 DELIMITER $$
 	create procedure Sp_DeleteEstadoProduccion(idBuscado int(5))
 		begin 
