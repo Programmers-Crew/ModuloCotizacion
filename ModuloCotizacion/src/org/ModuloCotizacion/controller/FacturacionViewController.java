@@ -114,8 +114,6 @@ public class FacturacionViewController implements Initializable {
     @FXML
      JFXButton btnReporteVentas;
     @FXML
-     ComboBox<String> cmbTipoFactura;
-    @FXML
      JFXButton btnMarcarDevolucion;
     @FXML
      JFXButton btnImprimirRespaldo;
@@ -334,7 +332,7 @@ public class FacturacionViewController implements Initializable {
     @FXML
     private JFXButton btnActualizar;
 
-
+    
     
     private void cargarEstado(Event event) {
         animacion.animacion(anchor3, anchor4);
@@ -520,7 +518,6 @@ public class FacturacionViewController implements Initializable {
          validar.validarView(menu.prefs.get("dark", "root"), anchor);
         llenarComboNit();
         llenarComboProdcutos();
-        llenarComboTipoFactura();
         cargarDatos();
         btnEditar.setDisable(true);
         btneliminar.setDisable(true);
@@ -610,7 +607,6 @@ public class FacturacionViewController implements Initializable {
         txtNitCliente.setValue("");
         txtNombreCliente.setText("");
         txtDireccionCliente.setText("");
-            cmbTipoFactura.setValue("");
     }
     public void limpiarTextEfectivo(){
         txtNombreCliente.setText("");
@@ -813,36 +809,6 @@ public class FacturacionViewController implements Initializable {
     
     
     
-    public void llenarComboTipoFactura(){
-        ArrayList<String> lista = new ArrayList();
-        String sql= "{call Sp_ListarTipo()}";
-            int x =0;
-        
-        try{
-            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                lista.add(x, rs.getString("tipoFacturaDesc"));
-                x++;
-            }
-            
-        }catch(SQLException ex){
-            ex.printStackTrace();
-            
-            Notifications noti = Notifications.create();
-            noti.graphic(new ImageView(imgError));
-            noti.title("ERROR AL CARGAR DATOS CMB");
-            noti.text("Error al cargar la base de datos");
-            noti.position(Pos.BOTTOM_RIGHT);
-            noti.hideAfter(Duration.seconds(4));
-            noti.darkStyle();
-            noti.show();
-        }
-
-        listaComboTipo = FXCollections.observableList(lista);
-        cmbTipoFactura.setItems(listaComboTipo);
-        new AutoCompleteComboBoxListener(cmbTipoFactura);
-    }
 
     public String buscarCodigoProducto(String precioProductos){    
         
@@ -1166,31 +1132,11 @@ public class FacturacionViewController implements Initializable {
                    nuevoBackUp.setProductoDesc(cmbNombreProducto.getValue());
                    nuevoBackUp.setCantidadBackup(Double.parseDouble(txtCantidadProducto.getText()));
                    nuevoBackUp.setTotalParcialBackup(Double.parseDouble(txtPrecioProducto.getText())*Double.parseDouble(txtCantidadProducto.getText()));
-                   
-                   if(cmbTipoFactura.getValue().equals("FACTURA")){
-                       documento = 1;
-                   }else if(cmbTipoFactura.getValue().equals("ORDEN DE COMPRA")){
-                        documento = 2;
-                   }
-                   
-                    String sqlCardex = "{call SpAgregarCardexFac('"+date2+"','"+buscarNombreProducto(cmbNombreProducto.getValue())+"','"+idFac+"','"+tipo+"','"+txtCantidadProducto.getText()+"','"+documento+"')}";  
-                    System.out.println(sqlCardex);
-                    
+                  
                    String sql = "{call SpAgregarBackup('"+buscarCodigoProducto(nuevoBackUp.getProductoDesc())+"','"+ nuevoBackUp.getCantidadBackup()+"','"+nuevoBackUp.getTotalParcialBackup()+"')}";
                    tipoOperacionFacturacion = Operacion.AGREGAR;
                    accionEstado(sql);  
                    txtLetrasPrecio.setText(letras.Convertir(twoDForm.format(Double.parseDouble(txtTotalFactura.getText())), true));
-                   
-
-                   
-
-                   try{
-                        PreparedStatement psCardex = Conexion.getIntance().getConexion().prepareCall(sqlCardex);
-                        psCardex.execute();
-                   }catch(Exception e){
-                       e.printStackTrace();
-                   }
-
                    
                 }else{
                     Notifications noti = Notifications.create();
@@ -1278,21 +1224,11 @@ public class FacturacionViewController implements Initializable {
        double totalIva = totalNeto*0.12;
        int tipo = 0;
        boolean validacion= false;
-       if(cmbTipoFactura.getValue().equals("FACTURA")){
-           tipo = 1;
-       }else{
-             tipo = 2;
-        }
-       
+
        String sql = "{call SpTransferirBackup()}";
        String sqlEliminar = "{call SpEliminarBackup()}";
        int tipoFactura=0;
-       if(cmbTipoFactura.getValue().equals("FACTURA")){
-           tipoFactura=1;
-       }else{
-           tipoFactura=2;
-       } 
-       
+
        String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+tipoFactura+"')}";
        String sqlTipo = "{call SpAgregarTipoDocumento('"+txtFacturaId.getText()+"','"+tipo+"')}";
        actualizarCliente();
@@ -1347,24 +1283,18 @@ public class FacturacionViewController implements Initializable {
         DecimalFormat df = new DecimalFormat("#.00");
         double total = Double.parseDouble( txtTotalFactura.getText());
         String st =String.valueOf(df.format(total));
-        if(cmbTipoFactura.getValue().equals("FACTURA")){
-            if(txtSerieId.getText().charAt(0) == 'A' || txtSerieId.getText().charAt(0) == 'a'){
-                impA.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
-                impA.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
-            }else{
-                
-                imprimir.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
-                imprimir.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
-            }
-            
+        if(txtSerieId.getText().charAt(0) == 'A' || txtSerieId.getText().charAt(0) == 'a'){
+            impA.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
+            impA.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
         }else{
-            imprimirOrden.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(),st);
+
+            imprimir.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
+            imprimir.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
         }
-        
     }
     
     
-        @FXML
+    @FXML
     private void btnImprimir(MouseEvent event) {
        if(txtNitCliente.getValue().equals("") || txtNombreCliente.getText().isEmpty() || txtFacturaId.getText().isEmpty()){
              Notifications noti = Notifications.create();
@@ -1649,7 +1579,7 @@ public class FacturacionViewController implements Initializable {
     
  
   public void llenarBackup(){
-        String sql="{call AgregarBackupFacturacionF('"+txtFacturaId.getText()+"','"+txtSerieId.getText()+"','"+cmbTipoFactura.getValue()+"')}";
+        String sql="{call AgregarBackupFacturacionF('"+txtFacturaId.getText()+"','"+txtSerieId.getText()+"')}";
         String sqlCliente="{call SpAgregarBackupFacturacionC('"+txtNitCliente.getValue()+"','"+txtNombreCliente.getText()+"','"+txtDireccionCliente.getText()+"')}";
         String sqlProducto="{call SpAgregarBackupFacturacionP('"+cmbNombreProducto.getValue()+"','"+txtPrecioProducto.getText()+"','"+txtExistencias.getText()+"','"+txtProveedor.getText()+"','"+txtCantidadProducto.getText()+"')}";
       
@@ -1763,8 +1693,6 @@ public class FacturacionViewController implements Initializable {
     public void SetDatosBackUp(){    
         txtFacturaId.setText(numeroFac);
         txtSerieId.setText(serieFac);
-        cmbTipoFactura.setValue(numeroFacB);
-        
         //Clientes
         txtNitCliente.setValue(nitCliente);
         txtNombreCliente.setText(nombreCliente);
@@ -1784,7 +1712,6 @@ public class FacturacionViewController implements Initializable {
        
         txtFacturaId.setText("");
         txtSerieId.setText("");
-        cmbTipoFactura.setValue("");
         txtNitCliente.setValue("");
         txtNombreCliente.setText("");
         txtDireccionCliente.setText("");
@@ -2814,9 +2741,6 @@ public class FacturacionViewController implements Initializable {
         menu.cifras.put("9T", nueveBT.getText());
         menu.cifras.put("10T", diezBT.getText());
         
-        
-        
-        
     }
 
     @FXML
@@ -2834,8 +2758,6 @@ public class FacturacionViewController implements Initializable {
         menu.cifras.put("8AT", ochoAT.getText());
         menu.cifras.put("9AT", nueveAT.getText());
         menu.cifras.put("10AT", diezAT.getText());
-        
-        
         
     }
 
@@ -2880,7 +2802,6 @@ public class FacturacionViewController implements Initializable {
             grid.add(label2, 1, 3);
             grid.add(tamañoDireccion, 2, 3);
 
-
             dialog.getDialogPane().setContent(grid);
 
             ButtonType buttonTypeOk = new ButtonType("GUARDAR", ButtonBar.ButtonData.OK_DONE);
@@ -2916,8 +2837,6 @@ public class FacturacionViewController implements Initializable {
         menu.letra.put("longitudProducto", longitudProducto.getText());
         menu.letra.put("longitudDireccion", logintudDireccion.getText());
         menu.letra.put("longitudNombre", logintudNombre.getText());
-        
-        
     }
 
 }

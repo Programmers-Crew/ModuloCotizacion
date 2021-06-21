@@ -878,7 +878,7 @@ DELIMITER $$
 	create procedure Sp_EliminarEstadoProducto(idBuscado tinyint(1))
 		BEGIN
 			delete from EstadoProductos
-				where estadoProductoId = idBuscado;
+				where estadoProductoId = idBuscado and (idBuscado != 1 or idBuscado !=2);
         END $$
 DELIMITER ;
 
@@ -1371,8 +1371,14 @@ DELIMITER ;
 
 insert into EstadoProduccion values(1, 'PENDIENTE'),(2, 'PRODUCCION'), (3, 'FINALIZADO'), (4, 'PAUSA')
 
-
-
+DELIMITER $$
+CREATE PROCEDURE SpDesactivarProd()
+	BEGIN
+		UPDATE inventarioProductos
+        set estadoProductoId = 2
+        where inventarioProductoCant=0;
+    END $$
+DELIMITER ;
 
 
 

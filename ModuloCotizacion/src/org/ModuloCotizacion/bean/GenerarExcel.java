@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
+import javafx.stage.FileChooser;
 import javax.swing.JFileChooser;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -111,24 +112,22 @@ public class GenerarExcel {
         
 
         // Ahora guardaremos el archivo
-        JFileChooser fileChooser = new JFileChooser();   
-           int option = fileChooser.showSaveDialog(fileChooser);
-            if(option == JFileChooser.APPROVE_OPTION){
-                if(fileChooser.getSelectedFile()!=null){
-                    FileOutputStream salida = new FileOutputStream(fileChooser.getSelectedFile()+nombreArchivo);
-                    File ruta = new File(fileChooser.getSelectedFile()+nombreArchivo);
-                    workbook.write(salida);
+        FileChooser fileChooser = new FileChooser();     
+        fileChooser.setTitle("Guardar Cotización");
+        File option = fileChooser.showSaveDialog(null);
+           
+            if(!option.exists()){
+                FileOutputStream word = new FileOutputStream(option.getAbsolutePath()+".xlsx");
+                
+                workbook.write(word);
 
-                    workbook.close();
-
-                    try {
-                        Desktop.getDesktop().open(ruta);
-                    } catch (IOException ex) {
-                        Logger.getLogger(GenerarExcel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                }
+                workbook.close();
+                File ruta = new File(option.getAbsolutePath()+".xlsx");
+                Desktop.getDesktop().open(ruta);
+                System.out.println("si se pudo");
             }
+            
+     
     }
 
 }
