@@ -1142,7 +1142,7 @@ DELIMITER ;
 
 
 
-
+drop procedure SpBuscarProductosFac;
 
 DELIMITER $$
 	create procedure SpBuscarProductosFac(idBuscado varchar(7))
@@ -1153,12 +1153,10 @@ DELIMITER $$
                 p.proveedorNombre,
                 p.proveedorId,
                 cp.categoriaNombre,
-                pr.precioCosto,
                 pr.productoPrecio,
-                tp.tipoProdDesc,
-                ip.inventarioProductoCant
+                pr.inventarioProductoCant
 			from 
-				Productos as pr
+				inventarioproductos as pr
 			inner join
 				Proveedores as p
 			on 
@@ -1167,11 +1165,7 @@ DELIMITER $$
 				CategoriaProductos as cp
 			on
 				pr.categoriaId = cp.categoriaId 
-			inner join
-				inventarioproductos as ip
-			on pr.productoId = ip.productoId
-            
-			where pr.productoId = idBuscado and ip.estadoProductoId = 1 
+			where pr.productoId = idBuscado and pr.estadoProductoId = 1 
 			order by pr.productoId ASC;
         END $$
 DELIMITER ;
@@ -1181,30 +1175,25 @@ DELIMITER $$
 	create procedure SpListarProductosFac()
 		BEGIN
 			select 
-				pr.productoId,
-                pr.productoDesc,
+				ip.productoId,
+                ip.productoDesc,
                 p.proveedorNombre,
                 cp.categoriaNombre,
-                pr.precioCosto,
-                pr.productoPrecio,
-                tp.tipoProdDesc,
+                ip.productoPrecio,
                 ip.inventarioProductoCant
 			from 
-				Productos as pr
+				inventarioproductos as ip
 			inner join
 				Proveedores as p
 			on 
-				pr.proveedorId = p.proveedorId
+				ip.proveedorId = p.proveedorId
 			inner join 
 				CategoriaProductos as cp
 			on
-				pr.categoriaId = cp.categoriaId 
-			inner join
-				inventarioproductos as ip
-			on pr.productoId = ip.productoId
+				ip.categoriaId = cp.categoriaId 
             where ip.inventarioProductoCant > 0
 			order by
-				pr.productoId ASC;
+				ip.productoId ASC;
         END $$
 DELIMITER ;
 
@@ -1220,6 +1209,17 @@ DELIMITER $$
 				from facturadetallebackup as fdb
 							inner join inventarioproductos as p
 								on fdb.productoIdBackup = p.productoId;
+        END $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure SpListarBackupCot(userName varchar(30))
+		BEGIN
+			select fdb.facturaDetalleIdBackup, c.cotizacionId , c.cotizacionTotal , fdb.totalParcialBackup, fdb.cantidadBackup
+				from facturadetallebackup as fdb
+							inner join cotizacion as c
+								on fdb.cotizacionIdFactura = c.cotizacionId;
         END $$
 DELIMITER ;
 
@@ -1369,8 +1369,6 @@ DELIMITER ;
 
 
 
-insert into EstadoProduccion values(1, 'PENDIENTE'),(2, 'PRODUCCION'), (3, 'FINALIZADO'), (4, 'PAUSA')
-
 DELIMITER $$
 CREATE PROCEDURE SpDesactivarProd()
 	BEGIN
@@ -1381,4 +1379,6 @@ CREATE PROCEDURE SpDesactivarProd()
 DELIMITER ;
 
 
+
+insert into EstadoProduccion values(1, 'PENDIENTE'),(2, 'PRODUCCION'), (3, 'FINALIZADO'), (4, 'PAUSA')
 

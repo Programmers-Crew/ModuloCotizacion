@@ -85,11 +85,10 @@ public class ProduccionesViewController implements Initializable {
     private AnchorPane ancor3;
     @FXML
     private AnchorPane ancor4;
-
     @FXML
-    private void cmbBuscarEP(ActionEvent event) {
-    }
+    private JFXButton btnAgregarFacturacion;
 
+ 
 
 
 
@@ -1497,11 +1496,12 @@ public class ProduccionesViewController implements Initializable {
             }
         }
     }
-    
-    private void cmbBuscarEP(MouseEvent event) {
-        buscarEP();
+       @FXML
+    private void cmbBuscarEP(ActionEvent event) {
+         buscarEP();
     }
-    
+
+
     @FXML
     private void btnBuscarEP(MouseEvent event) {
         buscarEP();
@@ -1511,6 +1511,32 @@ public class ProduccionesViewController implements Initializable {
         limpiarTextEP();
         desactivarControlesEP();
     }
-        
+    
+    @FXML
+    private void btnAgregarFacturacion(MouseEvent event) {
+        String sql = "{call SpAgregarBackupCotizacion('"+codigoCotizacion+"','1','"+txtTotalCotizacion.getText()+"')}";
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ps.execute();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgCorrecto));
+            noti.title("OPERACIÓN EXITOSA");
+            noti.text("SE HA MANDADO A FACTURACIÓN CON EXITO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }catch(SQLException ex){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR EN LA DB");
+            noti.text("ERROR AL MANDAR FACTURACIÓN"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }
+    }
+
     
 }

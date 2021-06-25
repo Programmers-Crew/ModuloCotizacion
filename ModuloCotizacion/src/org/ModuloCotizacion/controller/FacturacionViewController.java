@@ -527,8 +527,7 @@ public class FacturacionViewController implements Initializable {
         txtSerieId.setText("");
         txtSerieId.setEditable(true);
         date2 = LocalDate.now();
-        SetDatosBackUp();
-        
+        btnImprimir.setDisable(true);
     }    
 
     @FXML
@@ -857,14 +856,34 @@ public class FacturacionViewController implements Initializable {
         new AutoCompleteComboBoxListener(cmbNombreProducto);
     }
     
+
     
     public ObservableList<FacturacionDetalleBackup> getBackUp(){
         String user = login.prefsUsuario.get("usuario", "root");
         ArrayList<FacturacionDetalleBackup> lista = new ArrayList();
         String sql = "{call SpListarBackup('"+user+"')}";
-        int x=0;
-        double totalParcial=0;
         
+        double totalParcial=0;
+        String sql2 = "{call SpListarBackupCot('"+user+"')}";
+        
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql2);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(new FacturacionDetalleBackup(
+                    rs.getInt("facturaDetalleIdBackup"),
+                    "COTIZACIÓN NO. "+rs.getString("cotizacionId"),
+                    rs.getDouble("cantidadBackup"),
+                    rs.getDouble("cotizacionTotal"),
+                    rs.getDouble("totalParcialBackup"),
+                    rs.getString("cotizacionId")
+                ));
+                totalParcial = rs.getDouble("totalParcialBackup");
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        } 
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
@@ -1221,10 +1240,9 @@ public class FacturacionViewController implements Initializable {
 
        String sql = "{call SpTransferirBackup()}";
        String sqlEliminar = "{call SpEliminarBackup()}";
-       int tipoFactura=0;
+       int tipoFactura=1;
 
        String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+tipoFactura+"')}";
-       String sqlTipo = "{call SpAgregarTipoDocumento('"+txtFacturaId.getText()+"','"+tipo+"')}";
        actualizarCliente();
        try{
            
@@ -1235,9 +1253,6 @@ public class FacturacionViewController implements Initializable {
                psFactura.execute();
 
            PreparedStatement psEliminar = Conexion.getIntance().getConexion().prepareCall(sqlEliminar);
-
-           PreparedStatement psTipo = Conexion.getIntance().getConexion().prepareCall(sqlTipo);
-               psTipo.execute();
 
                
                validacion = true;
@@ -1582,22 +1597,6 @@ public class FacturacionViewController implements Initializable {
 
     
 
-    public void SetDatosBackUp(){    
-        txtFacturaId.setText(numeroFac);
-        txtSerieId.setText(serieFac);
-        //Clientes
-        txtNitCliente.setValue(nitCliente);
-        txtNombreCliente.setText(nombreCliente);
-        txtDireccionCliente.setText(direccionCliente);
-        
-        //Productos
-        cmbNombreProducto.setValue(nombreProducto);
-        txtPrecioProducto.setText(precioProducto);
-        txtExistencias.setText(existenciasProducto);
-        txtProveedor.setText(proveedorProducto);
-        txtCantidadProducto.setText(cantidadProducto);
-    }
-    
     
     @FXML
     private void actualizarDatos(MouseEvent event) throws IOException {
@@ -1809,7 +1808,8 @@ public class FacturacionViewController implements Initializable {
         ArrayList<ProductoBuscado> listaProducto = new ArrayList();
         
         String sql = "{call SpBuscarClienteFacturaFecha('"+txtSerieIdBuscado.getText()+"','"+txtBusquedaCodigoFac.getValue()+"')}";
-        
+        String sql2 = "{call SpBuscarClienteFacturaFechaCot('"+txtSerieIdBuscado.getText()+"','"+txtBusquedaCodigoFac.getValue()+"')}";
+       
         try{
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
@@ -1818,6 +1818,15 @@ public class FacturacionViewController implements Initializable {
                             rs.getString("productoDesc"),
                             rs.getDouble("cantidad"),
                             rs.getDouble("productoPrecio")
+                ));
+            }
+            PreparedStatement ps1 = Conexion.getIntance().getConexion().prepareCall(sql2);
+            ResultSet rs1 = ps1.executeQuery();
+            while(rs1.next()){
+                listaProducto.add(new ProductoBuscado(
+                           "COTIZACIÓN NO: "+ rs1.getString("cotizacionId"),
+                            rs1.getDouble("cantidad"),
+                            rs1.getDouble("cotizacionTotal")
                 ));
             }
         }catch(SQLException ex){
@@ -2115,6 +2124,8 @@ public class FacturacionViewController implements Initializable {
     
     public void buscarProducto(){
             String sql = "{call SpBuscarClienteFacturaFecha('"+txtSerieIdBuscado.getText()+"','"+txtBusquedaCodigoFac.getValue()+"')}";     
+            String sql2 = "{call SpBuscarClienteFacturaFechaCot('"+txtSerieIdBuscado.getText()+"','"+txtBusquedaCodigoFac.getValue()+"')}";     
+            System.out.println(sql);
             accion(sql);
             
             PreparedStatement ps;
@@ -2123,8 +2134,6 @@ public class FacturacionViewController implements Initializable {
             try{
                     ps = Conexion.getIntance().getConexion().prepareCall(sql);
                     rs = ps.executeQuery();
-                    int numero=0;
-                    
                     while(rs.next()){
                         txtResultadoNit.setText(rs.getString("clienteNit"));
                         txtResultadoNombre.setText(rs.getString("clienteNombre"));
@@ -2144,14 +2153,16 @@ public class FacturacionViewController implements Initializable {
                         }
                        
                     }else{
-                        noti.graphic(new ImageView(imgError));
-                        noti.title("ERROR AL BUSCAR");
-                        noti.text("NO SE HA ENCONTRADO EN LA BASE DE DATOS");
-                        noti.position(Pos.BOTTOM_RIGHT);
-                        noti.hideAfter(Duration.seconds(4));
-                        noti.darkStyle();
-                        noti.show();
-                        tipoOperacionBusquedaFacturas = Operacion.CANCELAR;
+                        ps = Conexion.getIntance().getConexion().prepareCall(sql2);
+                        rs = ps.executeQuery();
+                        while(rs.next()){
+                            txtResultadoNit.setText(rs.getString("clienteNit"));
+                            txtResultadoNombre.setText(rs.getString("clienteNombre"));
+                            txtResultadodDireccion.setText(rs.getString("clienteDireccion"));
+
+                            clienteNit = rs.getString("clienteNit");
+
+                        }
                     }
                 }catch(SQLException ex){
                     ex.printStackTrace();

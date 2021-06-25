@@ -204,22 +204,22 @@
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <JFXButton fx:id="btnAgregarCampoEspecial" buttonType="RAISED" layoutX="25.0" layoutY="795.0" onMouseClicked="#btnAgregarCampoEspecial" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="AGREGAR CAMPO ESPECIAL" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="25.0">
+                                    <JFXButton fx:id="btnAgregarCampoEspecial" buttonType="RAISED" layoutX="25.0" layoutY="795.0" onMouseClicked="#btnAgregarCampoEspecial" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="AGREGAR CAMPO ESPECIAL" textFill="WHITE" AnchorPane.bottomAnchor="131.39999999999998" AnchorPane.leftAnchor="25.0">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <JFXButton fx:id="btnGenerarWord" buttonType="RAISED" layoutX="379.0" layoutY="795.0" onMouseClicked="#btnGenerarWord" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="GENERAR WORD" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="379.0">
+                                    <JFXButton fx:id="btnGenerarWord" buttonType="RAISED" layoutX="203.0" layoutY="795.0" onMouseClicked="#btnGenerarWord" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="GENERAR WORD" textFill="WHITE" AnchorPane.bottomAnchor="131.39999999999998" AnchorPane.leftAnchor="203.0">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <JFXButton fx:id="btnMandarProduccion" buttonType="RAISED" layoutX="204.0" layoutY="795.0" onMouseClicked="#btnProduccion" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="MANDAR A PRODUCCIÓN" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="204.0">
+                                    <JFXButton fx:id="btnMandarProduccion" buttonType="RAISED" layoutX="552.0" layoutY="795.0" onMouseClicked="#btnProduccion" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="MANDAR A PRODUCCIÓN" textFill="WHITE" AnchorPane.bottomAnchor="131.39999999999998" AnchorPane.leftAnchor="552.0">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <JFXButton fx:id="verImagen" buttonType="RAISED" layoutX="556.0" layoutY="795.0" onMouseClicked="#verImagen" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="VER IMAGEN" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="556.0">
+                                    <JFXButton fx:id="verImagen" buttonType="RAISED" layoutX="724.0" layoutY="795.0" onMouseClicked="#verImagen" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="VER IMAGEN" textFill="WHITE" AnchorPane.bottomAnchor="131.39999999999998" AnchorPane.leftAnchor="724.0">
                                        <font>
                                           <Font size="11.0" />
                                        </font>
@@ -244,7 +244,7 @@
                                           <Font size="11.0" />
                                        </font>
                                     </JFXButton>
-                                    <JFXButton fx:id="cargar" buttonType="RAISED" layoutX="733.0" layoutY="795.0" onMouseClicked="#cargar" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="REFRESCAR" textFill="WHITE" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="733.0">
+                                    <JFXButton fx:id="cargar" buttonType="RAISED" layoutX="376.0" layoutY="795.0" onMouseClicked="#cargar" prefHeight="36.0" prefWidth="158.0" styleClass="boton" text="REFRESCAR" textFill="WHITE" AnchorPane.bottomAnchor="131.39999999999998" AnchorPane.leftAnchor="376.0">
                                        <font>
                                           <Font size="11.0" />
                                        </font>

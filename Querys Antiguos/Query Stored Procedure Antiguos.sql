@@ -20,7 +20,7 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE SpAgregarClientesSinDireccion(nit varchar(19), nombre varchar(25))
+CREATE PROCEDURE SpAgregarClientesSinDireccion(nit varchar(19), nombre varchar(150))
 		BEGIN
 			insert into Clientes(clienteNit, clienteNombre)
 				value(nit, nombre);
@@ -263,8 +263,6 @@ DELIMITER $$
         END $$
 DELIMITER ;
 
-
-
 #-------------------------- Entidad de productos
 DELIMITER $$
 	create procedure SpListarProductos()
@@ -274,11 +272,9 @@ DELIMITER $$
                 pr.productoDesc,
                 p.proveedorNombre,
                 cp.categoriaNombre,
-                pr.precioCosto,
-                pr.productoPrecio,
-                tp.tipoProdDesc
+                pr.productoPrecio
 			from 
-				Productos as pr
+				InventarioProductos as pr
 			inner join
 				Proveedores as p
 			on 
@@ -287,11 +283,14 @@ DELIMITER $$
 				CategoriaProductos as cp
 			on
 				pr.categoriaId = cp.categoriaId 
+			
 			order by
 				pr.productoId ASC
 										;
         END $$
 DELIMITER ;
+
+
 
 DELIMITER $$
 	create procedure SpListarProductosPorProveedor(proveedor varchar(50))
@@ -302,10 +301,9 @@ DELIMITER $$
                 p.proveedorNombre,
                 cp.categoriaNombre,
                 pr.precioCosto,
-                pr.productoPrecio,
-                tp.tipoProdDesc
+                pr.productoPrecio
 			from 
-				Productos as pr
+				inventarioproductos as pr
 			inner join
 				Proveedores as p
 			on 
@@ -320,88 +318,6 @@ DELIMITER $$
 DELIMITER ;
 
 
-DELIMITER $$
-	create procedure SpAgregarProductos(id varchar(7), descr varchar(50), provId varchar(7), catId varchar(7), costo decimal(10,2),precio decimal(10,2))
-		BEGIN
-			insert into Productos(productoId, productoDesc, proveedorId, categoriaId, precioCosto,productoPrecio)
-				values(id, descr, provId, catId, costo,precio);
-        END $$
-DELIMITER ;
-
-
-DELIMITER $$
-	create procedure SpActualizarProductos(idBuscado varchar(7),descr varchar(50), costo decimal(10,2),precio decimal(10,2))
-		BEGIN
-			update Productos
-				set
-					productoDesc = descr,
-					precioCosto = costo,
-					productoPrecio = precio
-					where productoId = idBuscado;
-		END $$
-DELIMITER ;
-
-
-DELIMITER $$
-	create procedure SpBuscarProductos(idBuscado varchar(7))
-		BEGIN
-select 
-				pr.productoId,
-                pr.productoDesc,
-                p.proveedorNombre,
-                p.proveedorId,
-                cp.categoriaNombre,
-                pr.precioCosto,
-                pr.productoPrecio,
-                tp.tipoProdDesc
-			from 
-				Productos as pr
-			inner join
-				Proveedores as p
-			on 
-				pr.proveedorId = p.proveedorId
-			inner join 
-				CategoriaProductos as cp
-			on
-				pr.categoriaId = cp.categoriaId 
-			where pr.productoId = idBuscado
-			order by pr.productoId ASC;
-        END $$
-DELIMITER ;
-
-DELIMITER $$
-create procedure SpBuscarProductosNombre(nombreProductos varchar(50))
-		BEGIN
-select 
-				pr.productoId,
-                pr.productoDesc,
-                p.proveedorNombre,
-                cp.categoriaNombre,
-                pr.precioCosto,
-                pr.productoPrecio,
-                tp.tipoProdDesc
-			from 
-				Productos as pr
-			inner join
-				Proveedores as p
-			on 
-				pr.proveedorId = p.proveedorId
-			inner join 
-				CategoriaProductos as cp
-			on
-				pr.categoriaId = cp.categoriaId 
-			where pr.productoDesc = nombreProductos
-			order by pr.productoId ASC;
-        END $$
-DELIMITER ;
-
-DELIMITER $$
-	create procedure SpEliminarProductos(idBuscado varchar(7))
-		BEGIN
-			delete from Productos 
-				where productoId = idBuscado;
-		END $$
-DELIMITER ;
 
 DELIMITER $$
 	CREATE PROCEDURE spVerificarCategoria(categoria varchar(50))
@@ -423,6 +339,7 @@ DELIMITER ;
 
 #----------------- Entidad Inventario de productos
 
+
 DELIMITER $$
 	create procedure SpListarInventarioProductos()
 		BEGIN
@@ -430,23 +347,18 @@ DELIMITER $$
 				p.productoId,
                 ip.inventarioProductoCant,
                 pr.proveedorNombre,
-                p.productoDesc,
-                ep.estadoProductoDesc,
-                P.costoAntiguo,
-                p.precioCosto,
-                tp.tipoProdDesc
+                ip.productoDesc,
+                ep.estadoProductoDesc
 		from
 			InventarioProductos as ip
-		inner join Productos as p
-			on ip.productoId = p.productoId
 		inner join EstadoProductos as ep
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
-			on p.proveedorId = pr.proveedorId
+			on ip.proveedorId = pr.proveedorId
         group by 
-         p.productoId
+         ip.productoId
 		order by         
-			p.productoId ASC;
+			ip.productoId ASC;
         END $$
 DELIMITER ;
 
@@ -470,6 +382,7 @@ DELIMITER $$
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
 			on p.proveedorId = pr.proveedorId
+		inner join tipoproducto as tp
         group by 
 			pr.proveedorNombre
 		order by         
@@ -495,28 +408,23 @@ DELIMITER $$
 DELIMITER ;
 
 
-
 DELIMITER $$
 	create procedure SpBuscarInventarioProductos(idBuscado varchar(7))
 		BEGIN
 			select
-				p.productoId,
+				ip.productoId,
                 ip.inventarioProductoCant,
                 pr.proveedorNombre,
-                p.productoDesc,
-                ep.estadoProductoDesc,
-                p.precioCosto,
-                tp.tipoProdDesc
+                ip.productoDesc,
+                ep.estadoProductoDesc
 		from
 			InventarioProductos as ip
-		inner join Productos as p
-			on ip.productoId = p.productoId
 		inner join EstadoProductos as ep
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
-			on p.proveedorId = pr.proveedorId
-		where p.productoId = idBuscado
-		order by p.productoId ASC;
+			on ip.proveedorId = pr.proveedorId
+		where ip.productoId = idBuscado
+		order by ip.productoId ASC;
         END $$
 DELIMITER ;
 
@@ -539,6 +447,8 @@ DELIMITER $$
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
 			on p.proveedorId = pr.proveedorId
+		inner join tipoproducto as tp
+			on p.tipoProductoId = tp.tipoProdId
 		where p.productoDesc = nombre
 		order by p.productoId ASC;
         END $$
@@ -563,6 +473,8 @@ DELIMITER $$
 			on ip.estadoProductoId = ep.estadoProductoId
 		inner join Proveedores as pr
 			on p.proveedorId = pr.proveedorId
+		inner join tipoproducto as tp
+			on p.tipoProductoId = tp.tipoProdId
 		where pr.proveedorNombre = proveedor
 		order by p.productoId ASC;
         END $$
@@ -664,7 +576,7 @@ DELIMITER $$
 						on  f.clienteId = c.clienteId
 							inner join Usuarios as u 
 								on f.usuarioId = u.usuarioId
-									inner join TipoFactua as tf
+									inner join TipoFactura as tf
 										on f.facturaTipo = tf.tipoFactura
 									order by f.facturaId asc;
         END $$
@@ -686,16 +598,16 @@ DELIMITER $$
         END $$
 DELIMITER ;
 
-
 DELIMITER $$
 	create procedure SpBuscarcodigoProducto(nombre varchar(50))
 			BEGIN
 				select productoId
-					from productos
+					from InventarioProductos
 						where productoDesc = nombre
 							order by productoId asc;
             END $$
 DELIMITER ;
+
 
 DELIMITER $$
 	create procedure SpBuscarFacturas(idBuscado int(100))
@@ -706,7 +618,7 @@ DELIMITER $$
 						on  f.clienteId = c.clienteId
 							inner join Usuarios as u 
 								on f.usuarioId = u.usuarioId
-									inner join TipoFactua as tf
+									inner join TipoFactura as tf
 										on f.facturaTipo = tf.tipoFactura
 											where f.facturaId = idBuscado
 											order by f.facturaId asc;
@@ -721,12 +633,14 @@ DELIMITER $$
         end$$
 DELIMITER ;
 
+
+
 DELIMITER $$
 	create procedure SpListarFacturaDetalle()
 		BEGIN
 			select fd.facturaDetalleId, p.productoId, fd.cantidad, fd.totalParcial
 				from FacturaDetalle as fd
-							inner join Productos as p
+							inner join InventarioProductos as p
 								on fd.productoId = p.productoId
 									order by fd.facturaDetalleId asc;
         END $$
@@ -750,7 +664,7 @@ DELIMITER $$
 				from FacturaDetalle as fd
 					inner join Facturas as f
 						on fd.facturaDetalleId = f.facturaDetalleId
-							inner join Productos as p
+							inner join InventarioProductos as p
 								on fd.productoId = p.productoId
 									where fd.facturaDetalleId = idBuscado
 										order by fd.facturaDetalleId asc;
@@ -880,13 +794,13 @@ DELIMITER ;
 
 
 #========== Facturas
-
+drop procedure SpBuscarDetalleFacturasFecha;
 DELIMITER $$
 	create procedure SpBuscarDetalleFacturasFecha(fechaInicio date, FechaFinal date)
 		BEGIN
 			select distinct f.facturaSerie, f.facturaId, f.facturaFecha, f.facturaTotalNeto, f.facturaTotalIva, f.facturaTotal, ft.tipoFacturaDesc
 				from facturas as f
-					inner join tipofactua as ft
+					inner join tipofactura as ft
 						on f.facturaTipo = ft.tipoFactura
 					where f.facturaFecha between fechaInicio and FechaFinal
 						order by f.facturaId asc;
@@ -902,31 +816,50 @@ DELIMITER $$
 						on c.clienteId = f.clienteId
 							inner join facturadetalle as fd
 								on f.facturaDetalleId = fd.facturaDetalleId
-									inner join productos as pr
+									inner join InventarioProductos as pr
 										on pr.productoId = fd.productoId
 											where facturaSerie = serie and f.facturaId = idBuscado
 												order by f.facturaId asc;
         END $$
 DELIMITER ;
 
+
+DELIMITER $$
+	create procedure SpBuscarClienteFacturaFechaCot(serie varchar(5),idBuscado int(5))
+		BEGIN	
+			select f.facturaId, c.clienteNit, c.clienteDireccion,c.clienteNombre, co.cotizacionId, fd.cantidad, co.cotizacionTotal
+				from facturas as f
+					inner join clientes as c
+						on c.clienteId = f.clienteId
+							inner join facturadetalle as fd
+								on f.facturaDetalleId = fd.facturaDetalleId
+									inner join cotizacion as co
+										on co.cotizacionId = fd.cotizacionIdFacturaDetalle
+											where facturaSerie = serie and f.facturaId = idBuscado
+												order by f.facturaId asc;
+        END $$
+DELIMITER ;
+
+
 DELIMITER $$
 	create procedure SpListarBusquedasFacturasPorId(serie varchar(5),idBuscado int(5))
 		BEGIN
 			select distinct f.facturaSerie ,f.facturaId, f.facturaTotalNeto, f.facturaTotalIva, f.facturaTotal, f.facturaFecha, ft.tipoFacturaDesc
 				from facturas as f
-                inner join tipofactua as ft
+                inner join tipofactura as ft
 						on f.facturaTipo = ft.tipoFactura
 					where f.facturaSerie = serie and f.facturaId = idBuscado
                      order by f.facturaId asc;
         END $$
 DELIMITER ;
 
+
 DELIMITER $$
 	create procedure SpListarBusquedasFacturas()
 		BEGIN
 			select distinct f.facturaSerie,f.facturaId, f.facturaTotalNeto, f.facturaTotalIva, f.facturaTotal, f.facturaFecha,ft.tipoFacturaDesc
 				from facturas as f
-					inner join tipofactua as ft
+					inner join tipofactura as ft
 						on f.facturaTipo = ft.tipoFactura
 					order by f.facturaId asc;
 		END $$
@@ -966,15 +899,6 @@ DELIMITER $$
 
 #====================================== Entidad de Backup
 
-DELIMITER $$
-	create procedure SpListarBackup(userName varchar(30))
-		BEGIN
-			select fdb.facturaDetalleIdBackup, p.productoDesc, fdb.cantidadBackup , p.productoPrecio ,fdb.totalParcialBackup
-				from facturadetallebackup as fdb
-							inner join Productos as p
-								on fdb.productoIdBackup = p.productoId;
-        END $$
-DELIMITER ;
 
 DELIMITER $$
 	create procedure spEditarBackup(idBuscado INT(5),prodId varchar(7), cantidad double, totalParcial decimal(10,2) )
@@ -993,6 +917,14 @@ DELIMITER $$
         END $$
 DELIMITER ;
 
+DELIMITER $$
+	create procedure SpAgregarBackupCotizacion(cotizacion int(10), cantidad double, totalParcial decimal(10,2))
+		BEGIN				
+                insert into facturadetallebackup(cotizacionIdFactura,cantidadBackup,totalParcialBackup)
+				values(cotizacion, cantidad, totalParcial);
+        END $$
+DELIMITER ;
+
 
 DELIMITER $$
 	create procedure SpBtnEliminar(idbuscado int(5), producto varchar(7))
@@ -1006,8 +938,8 @@ DELIMITER ;
 DELIMITER $$
 	create procedure SpTransferirBackup()
 		BEGIN 
-			insert into facturadetalle(facturaDetalleId,productoId,cantidad,totalParcial)
-				select facturaDetalleIdBackup,productoIdBackup,cantidadBackup,totalParcialBackup 
+			insert into facturadetalle(facturaDetalleId,productoId,cantidad,totalParcial, cotizacionIdFacturaDetalle)
+				select facturaDetalleIdBackup,productoIdBackup,cantidadBackup,totalParcialBackup, cotizacionIdFactura
 					from facturadetallebackup;
 		END $$
 DELIMITER ;
@@ -1026,17 +958,6 @@ DELIMITER $$
 				select serie,codigoFactura, fb.facturaDetalleIdBackup, clienteId, facturaFecha, usuarioId,facturaTotalNeto,facturaTotalIva,facturaTotal, tipo
 					from facturadetallebackup as fb;
 		END $$
-DELIMITER ;
-
-
-DELIMITER $$
-	create procedure SpAgregarTipoDocumento(idBuscado int,tipo int)
-		begin
-			update facturas
-				set facturaTipo = tipo
-                where 
-					facturaId = idBuscado;
-		end $$
 DELIMITER ;
 
 DELIMITER $$
@@ -1112,15 +1033,6 @@ DELIMITER $$
 DELIMITER ;
 
 DELIMITER $$
-	create procedure SpDesactivarProd()
-		begin
-			update inventarioproductos as ip
-				set estadoProductoId = 2
-					where inventarioProductoCant < 1;
-        end $$
-DELIMITER ;
-
-DELIMITER $$
 	create procedure SpRestarProductos(idBuscado varchar(7), cantidad double)
 		BEGIN 
 			update inventarioproductos as ip
@@ -1142,17 +1054,108 @@ DELIMITER $$
 DELIMITER ;
 
 
+-- ENTIDAD CHEQUE ENCABEZADO 
 
 
 
--- Tipo Documento
+
+
+
+
+-- Entidad Cheque
 
 DELIMITER $$
-	create procedure Sp_ListarTipo()
+	create procedure SpListarCheque()
 		begin
-			select*from TipoFactua;
+			select 
+				c.chequeNo,
+                c.chequeLugarYFecha,
+                c.chequePagoAlaOrdenDe,
+                c.chequeMonto,
+                c.chequeDetalleDesc,
+                u.usuarioNombre
+            from 
+				Cheque as c
+			inner join usuarios as u
+				on c.chequeUsuario = u.usuarioId
+					group by c.chequeNo;
         end $$
 DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarCheque(idBuscado int)
+		begin
+			select 
+				c.chequeNo,
+                c.chequeLugarYFecha,
+                c.chequePagoAlaOrdenDe,
+                c.chequeMonto,
+                c.chequeDetalleDesc,
+                u.usuarioNombre
+            from 
+				Cheque as c
+			inner join usuarios as u
+				on c.chequeUsuario = u.usuarioId
+			where 
+				c.chequeNo = idBuscado
+                group by c.chequeNo;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpEliminarCheque(idBuscado int)
+		begin
+			delete from cheque
+				where chequeNo = idBuscado;
+		end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpBuscarChequePorFecha(fechaInicio date, fechaFinal date)
+		begin
+			select 
+				c.chequeNo,
+                c.chequeLugarYFecha,
+                c.chequePagoAlaOrdenDe,
+                c.chequeMonto,
+                c.chequeDetalleDesc,
+                c.chequeUsuario
+            from 
+				Cheque as c
+			where 
+				c.chequeFecha between fechaInicio and fechaFinal
+                  group by c.chequeNo;
+        end $$
+DELIMITER ;
+
+
+
+DELIMITER $$
+	create procedure SpAgregarCheque(numero int, lugaryfecha varchar(100), ordenDe varchar(50), monto double, usuario int, descripcion varchar(100))
+		begin
+			insert into Cheque(chequeNo,chequeLugarYFecha,chequePagoAlaOrdenDe,chequeMonto,chequeUsuario,chequeDetalleDesc)  
+            value(numero,lugaryfecha,ordenDe,monto,usuario,descripcion);
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpEditarCheque( idBuscado int, numero int, lugarYfecha varchar(100),  ordenDe varchar(50), monto double, detalle varchar(25), usuario int)
+		begin
+			update
+				Cheque
+			set
+				chequeNo = numero,
+                chequeLugarYFecha = lugarYfecha,
+                chequePagoAlaOrdenDe = ordenDe,
+                chequeMonto = monto,
+                chequeDetalleDesc = detalle,
+                chequeUsuario = usuario
+			where
+				chequeNo = idBuscado;
+        end $$
+DELIMITER ;
+
+
 
 -- inserts obligatorios
 insert into tipofactura(tipoFactura,tipoFacturaDesc)
@@ -1166,9 +1169,11 @@ insert into tipousuario values(0,"Administrador"),(0,"Empleado"),(0,"Vendedor");
 insert into usuarios values(0,"admin", "admin", 1);
 INSERT INTO clientes(clienteNit,clienteNombre) values("C/F","C/F");
 
-insert into estadoproductos values(1,'EXISTENCIA'),(2,'AGOTADO');
 
 insert into TipoCliente values(1,'DEFAULT',0.00);
+insert into estadoproductos values(1,'EXISTENCIA'),(2,'AGOTADO');
+
+insert into EstadoProduccion values(1, 'PENDIENTE'),(2, 'PRODUCCION'), (3, 'FINALIZADO'), (4, 'PAUSA')
 
 DELIMITER $$
 	create procedure Sp_DevolucionProductos(serie varchar(5),idBuscado int)
@@ -1212,7 +1217,131 @@ DELIMITER $$
         end $$
 DELIMITER ;
 
+DELIMITER $$
+	create procedure SpBuscarDetalleCheque(idBuscado int)
+		begin
+			select cd.chequeDetalleCuenta, cd.chequeDetalleDesc, cd.chequeDetalleValor
+				from chequedetalle as cd
+					inner join Cheque as c
+						on c.chequeDetalle = cd.chequeDetalleNo
+							where c.chequeNo = idBuscado;
+        end $$
+DELIMITER ;
 
+
+ 
+DELIMITER $$
+	create procedure SpListarComboFiltro()
+    begin
+		select 
+			c.noFactura
+		from creditos as c
+			group by noFactura
+			;
+    end $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure SpListarComboFiltroProveedor()
+    begin
+		select 
+			pr.proveedorNombre
+		from creditodetalle as cd
+        inner join ip as p
+			on p.productoId = cd.productoId
+		inner join proveedores as pr
+			on p.proveedorId = pr.proveedorId
+            group by pr.proveedorNombre;
+    end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpMarcarPagado(idBuscado int)
+		begin
+			update Creditos as c
+				set creditoEstado = 2 
+					where c.noFactura = idBuscado;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpAgregarCredito(inicio date, final date, descripcion varchar(50),monto double, estado int, noFac varchar(10))
+		begin 
+			insert into Creditos(creaditoFechaInicio,creditoFechaFinal,creditoDesc,creditoMonto,creditoEstado, noFactura, creditoDetalle,creditoDiasRestantes)
+				select inicio, final,descripcion, monto, estado, noFac, cdb.idCreditoDetalle, (final-inicio)
+				from CreditoDetalleBackUp as cdb;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpActualizarCredito(idbuscado int,inicio date, final date, descripcion varchar(50), monto double)
+		begin
+			update Creditos
+				set creaditoFechaInicio = inicio,
+                creditoFechaFinal = final,
+                creditoDesc = descripcion,
+                creditoMonto = monto
+			where noFactura = idbuscado;
+        end $$
+DELIMITEr ;
+ 
+
+DELIMITER $$
+	create procedure SpEliminatCreditos(idBuscado int)
+		begin
+			delete from Creditos 
+				where noFactura = idbuscado;
+        end $$
+DELIMITER ;
+
+
+DELIMITER $$
+	create procedure SpValidarCredito( estado int)
+		begin
+			update creditos
+				set 
+					creditoEstado = estado
+                    where creditoDiasRestantes < 0;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpRestarDias(fechaActual date)
+		begin
+			update Creditos as c
+				set  c.creditoDiasRestantes = TIMESTAMPDIFF(DAY,fechaActual,c.creditoFechaFinal)
+                where c.idCredito>0;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpRestarDias2(fechaActual date)
+		begin
+			update Creditos as c
+				set  c.creditoDiasRestantes = TIMESTAMPDIFF(DAY,fechaActual,c.creditoFechaFinal)
+                where c.idCredito>0;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpRestarDias3(dias date)
+		begin
+			update Creditos as c
+				set  c.creditoDiasRestantes = dias;
+        end $$
+DELIMITER ;
+
+DELIMITER $$
+	create procedure SpListarEstado()
+		begin
+			select 
+				ec. estadoCreditoId,
+                ec.estadoCreditoDesc
+            from 
+				EstadoCredito as ec;
+        end $$
+DELIMITER ;
 
 DELIMITER $$
 create procedure SpBuscareProveedorNit(proveedor varchar(50))
@@ -1220,20 +1349,5 @@ create procedure SpBuscareProveedorNit(proveedor varchar(50))
 		select * from proveedores
 			where proveedorNombre = proveedor;
     end $$
-DELIMITER ;
-
-DELIMITER $$
-	create procedure Sp_UpdateBackUpCotizacion(idBuscado int(10), cantidad double, desccrip varchar(100), alto double, largo double, ancho double, precioU double, totalP double)
-		begin 
-			update cotizaciondetallebackup as cb
-				set cotizacionCantida = cantidad,
-					cotizacionDesc = desccrip,
-                    cotizacionAlto = alto,
-                    cotizacionLargo = largo,
-                    cotizacionAncho = ancho,
-                    cotizacionPrecioU = precioU,
-                    cotizacionTotalParcial = totalP
-					where backupId = idBuscado;
-        end $$
 DELIMITER ;
 

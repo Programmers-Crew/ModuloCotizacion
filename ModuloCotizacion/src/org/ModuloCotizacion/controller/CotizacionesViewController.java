@@ -74,10 +74,6 @@ public class CotizacionesViewController implements Initializable {
     @FXML
     private JFXButton cargar;
 
-
-
-  
-
     
     //Variables
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
@@ -725,66 +721,8 @@ public class CotizacionesViewController implements Initializable {
         }
     }
     
-    
-    @FXML
-    private void btnAgregar(MouseEvent event) {
-        if(tipoOperacion == Operacion.GUARDAR){
-            if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtVendedor.getValue().isEmpty() || 
-               txtAncho.getText().isEmpty() || txtAlto.getText().isEmpty() || txtLargo.getText().isEmpty() || txtDescripcion.getText().isEmpty() || txtCantidad.getText().isEmpty()){
-                Notifications noti = Notifications.create();
-                noti.graphic(new ImageView(imgError));
-                noti.title("ERROR");
-                noti.text("HAY CAMPOS VACÍOS");
-                noti.position(Pos.BOTTOM_RIGHT);
-                noti.hideAfter(Duration.seconds(4));
-                noti.darkStyle();   
-                noti.show();
-            }else{
-                
-                    cotizacionBackup cotBack = new cotizacionBackup();
-                    
-                    
-                    cotBack.setCotizacionAlto(Double.parseDouble(txtAlto.getText()));
-                    cotBack.setCotizacionAncho(Double.parseDouble(txtAncho.getText()));
-                    cotBack.setCotizacionLargo(Double.parseDouble(txtLargo.getText()));
-                    cotBack.setCotizacionDesc(txtDescripcion.getText());
-                    cotBack.setCotizacionCantida(Double.parseDouble(txtCantidad.getText()));
-                    Double precioUnit = Double.parseDouble(txtPrecioUCotizacion.getText());
-                    cotBack.setCotizacionPrecioU(precioUnit);
-                    
-                    
-                    Double TotalC = Double.parseDouble(txtCantidad.getText())*precioUnit;
-                    
-                    cotBack.setCotizacionTotalParcial(TotalC);
-                    
-                    
-                    
-                    if(tipoOperacion == Operacion.GUARDAR){            
-                        if(txtDescripcion.getText().length() > 100){
-                            Notifications noti = Notifications.create();
-                            noti.graphic(new ImageView(imgError));
-                            noti.title("ERROR");
-                            noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MAYOR A 100 CARACTERES");
-                            noti.position(Pos.BOTTOM_RIGHT);
-                            noti.hideAfter(Duration.seconds(4));
-                            noti.darkStyle();   
-                            noti.show();
-                            tipoOperacion = Operacion.GUARDAR;
-                        }else{
-                            String sql = "{call Sp_AddCotizacionBackup('"+cotBack.getCotizacionCantida()+"','"+cotBack.getCotizacionAlto()+"','"+cotBack.getCotizacionAncho()+"','"+cotBack.getCotizacionLargo()+"','"+cotBack.getCotizacionDesc()+"', '"+cotBack.getCotizacionPrecioU()+"','"+cotBack.getCotizacionTotalParcial()+"')}";
-                            
-                            accionProveedores(sql);
-                            
-                        }
-                    }
-                }
-        }else{
-            tipoOperacion = Operacion.AGREGAR;
-            accion();
-        }
-    }
-    
-   
+
+
         
     public int buscarCodigoTipoClienteDos(){    
         int codigoTC;
@@ -1937,6 +1875,65 @@ public class CotizacionesViewController implements Initializable {
         
     }
     
+  
+    
+    @FXML
+    private void btnAgregar(MouseEvent event) {
+        if(tipoOperacion == Operacion.GUARDAR){
+            if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtVendedor.getValue().isEmpty() || 
+               txtAncho.getText().isEmpty() || txtAlto.getText().isEmpty() || txtLargo.getText().isEmpty() || txtDescripcion.getText().isEmpty() || txtCantidad.getText().isEmpty()){
+                Notifications noti = Notifications.create();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR");
+                noti.text("HAY CAMPOS VACÍOS");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();   
+                noti.show();
+            }else{
+                
+                    cotizacionBackup cotBack = new cotizacionBackup();
+                    
+                    
+                    cotBack.setCotizacionAlto(Double.parseDouble(txtAlto.getText()));
+                    cotBack.setCotizacionAncho(Double.parseDouble(txtAncho.getText()));
+                    cotBack.setCotizacionLargo(Double.parseDouble(txtLargo.getText()));
+                    cotBack.setCotizacionDesc(txtDescripcion.getText());
+                    cotBack.setCotizacionCantida(Double.parseDouble(txtCantidad.getText()));
+                    Double precioUnit = Double.parseDouble(txtPrecioUCotizacion.getText());
+                    cotBack.setCotizacionPrecioU(precioUnit);
+                    
+                    
+                    Double TotalC = Double.parseDouble(txtCantidad.getText())*precioUnit;
+                    
+                    cotBack.setCotizacionTotalParcial(TotalC);
+                    
+                    
+                    
+                    if(tipoOperacion == Operacion.GUARDAR){            
+                        if(txtDescripcion.getText().length() > 100){
+                            Notifications noti = Notifications.create();
+                            noti.graphic(new ImageView(imgError));
+                            noti.title("ERROR");
+                            noti.text("El CAMPO DE CÓDIGO NO PUEDE SER MAYOR A 100 CARACTERES");
+                            noti.position(Pos.BOTTOM_RIGHT);
+                            noti.hideAfter(Duration.seconds(4));
+                            noti.darkStyle();   
+                            noti.show();
+                            tipoOperacion = Operacion.GUARDAR;
+                        }else{
+                            String sql = "{call Sp_AddCotizacionBackup('"+cotBack.getCotizacionCantida()+"','"+cotBack.getCotizacionAlto()+"','"+cotBack.getCotizacionAncho()+"','"+cotBack.getCotizacionLargo()+"','"+cotBack.getCotizacionDesc()+"', '"+cotBack.getCotizacionPrecioU()+"','"+cotBack.getCotizacionTotalParcial()+"')}";
+                            
+                            accionProveedores(sql);
+                            
+                        }
+                    }
+                }
+        }else{
+            tipoOperacion = Operacion.AGREGAR;
+            accion();
+        }
+    }
     
     @FXML
     private void cargar(MouseEvent event) {
