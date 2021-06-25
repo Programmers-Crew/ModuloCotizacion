@@ -527,22 +527,15 @@ public class FacturacionViewController implements Initializable {
         txtSerieId.setText("");
         txtSerieId.setEditable(true);
         date2 = LocalDate.now();
-        cargarBackUpF();
-        cargarBackUpC();
-        cargarBackUpP();
         SetDatosBackUp();
+        
     }    
 
     @FXML
     private void regresar(MouseEvent event) throws IOException {
-                try{
-            llenarBackup();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+      
         
-        
-         String menu = "org/ModuloCotizacion/view/menuPrincipal.fxml";
+        String menu = "org/ModuloCotizacion/view/menuPrincipal.fxml";
         cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
     
@@ -714,7 +707,6 @@ public class FacturacionViewController implements Initializable {
     private void buscarPrecio(ActionEvent event) {
         
         buscarPrecioMetodo();
-        llenarBackup();
     }
 
     public void buscarPrecioMetodo(){
@@ -857,7 +849,9 @@ public class FacturacionViewController implements Initializable {
             noti.darkStyle();
             noti.show();
         }
-
+        
+        String sql1 =  "";
+        
         listaComboProductos = FXCollections.observableList(lista);
         cmbNombreProducto.setItems(listaComboProductos);
         new AutoCompleteComboBoxListener(cmbNombreProducto);
@@ -1578,117 +1572,15 @@ public class FacturacionViewController implements Initializable {
     //BackUp de facturación, productos y clientes
     
  
-  public void llenarBackup(){
-        String sql="{call AgregarBackupFacturacionF('"+txtFacturaId.getText()+"','"+txtSerieId.getText()+"')}";
-        String sqlCliente="{call SpAgregarBackupFacturacionC('"+txtNitCliente.getValue()+"','"+txtNombreCliente.getText()+"','"+txtDireccionCliente.getText()+"')}";
-        String sqlProducto="{call SpAgregarBackupFacturacionP('"+cmbNombreProducto.getValue()+"','"+txtPrecioProducto.getText()+"','"+txtExistencias.getText()+"','"+txtProveedor.getText()+"','"+txtCantidadProducto.getText()+"')}";
-      
-        try{
-            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-            ps.execute();
-            
-            PreparedStatement psClientes = Conexion.getIntance().getConexion().prepareCall(sqlCliente);
-            psClientes.execute();
-
-            PreparedStatement psProductos = Conexion.getIntance().getConexion().prepareCall(sqlProducto);
-            psProductos.execute();
-            
-            System.out.println(sqlCliente);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-  }
 
   public void llenarBackupMetodo(KeyEvent event){
-      llenarBackup();
+      
   }
   
-    private void cargarBackUpF() {    
-        ArrayList<String> lista = new ArrayList();
-        String sql = "{call ListarBackupFacturacionF()}";                        
-        int x=0;
-            try{
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                lista.add(x, rs.getString("numeroFac")
-                );
-                lista.add(x, rs.getString("serieFac")
-                );
-                lista.add(x, rs.getString("tipoFac")
-                );                
-                numeroFac = rs.getString("numeroFac");
-                serieFac = rs.getString("serieFac");
-                numeroFacB = rs.getString("tipoFac");
-                 x++;
-            }
-            
-            
-        }catch(SQLException ex){
-            ex.printStackTrace();
-        }
-    }
-    
-    private void cargarBackUpC() {    
-        ArrayList<String> lista = new ArrayList();
-        String sql = "{call SpListarBackupFacturacionC()}";                        
-        int x=0;
-            try{
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                lista.add(x, rs.getString("nitCliente")
-                );
-                lista.add(x, rs.getString("nombreCliente")
-                );
-                lista.add(x, rs.getString("direccionCliente")
-                );
-                
-                nitCliente = rs.getString("nitCliente");
-                nombreCliente = rs.getString("nombreCliente");
-                direccionCliente = rs.getString("direccionCliente");
-                 x++;
-            }
-            
-            
-        }catch(SQLException ex){
-            ex.printStackTrace();
-        }
-    }
-    
-    private void cargarBackUpP() {    
-        ArrayList<String> lista = new ArrayList();
-        String sql = "{call SpListarBackupFacturacionP()}";                        
-        int x=0;
-            try{
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                lista.add(x, rs.getString("nombreProducto")
-                );
-                lista.add(x, rs.getString("precioProducto")
-                );
-                lista.add(x, rs.getString("existenciasProducto")
-                );
-                lista.add(x, rs.getString("proveedorProducto")
-                );
-                lista.add(x, rs.getString("cantidadProducto")
-                );
-                
-                nombreProducto = rs.getString("nombreProducto");
-                precioProducto = rs.getString("precioProducto");
-                existenciasProducto = rs.getString("existenciasProducto");
-                proveedorProducto = rs.getString("proveedorProducto");
-                cantidadProducto = rs.getString("cantidadProducto");
 
-                x++;
-            }
-            
-            
-        }catch(SQLException ex){
-            ex.printStackTrace();
-        }
-    }
+    
+
+    
 
     public void SetDatosBackUp(){    
         txtFacturaId.setText(numeroFac);

@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -84,6 +85,10 @@ public class ProduccionesViewController implements Initializable {
     private AnchorPane ancor3;
     @FXML
     private AnchorPane ancor4;
+
+    @FXML
+    private void cmbBuscarEP(ActionEvent event) {
+    }
 
 
 
@@ -1082,7 +1087,6 @@ public class ProduccionesViewController implements Initializable {
         }
     }
 
-@FXML
     private void atajosEP(KeyEvent event) {
         if(cmbBusquedaEP.isFocused()){
             if(event.getCode() == KeyCode.ENTER){
@@ -1494,8 +1498,7 @@ public class ProduccionesViewController implements Initializable {
         }
     }
     
-    @FXML
-    private void cmbBuscarEP(ActionEvent event) {
+    private void cmbBuscarEP(MouseEvent event) {
         buscarEP();
     }
     
@@ -1504,7 +1507,6 @@ public class ProduccionesViewController implements Initializable {
         buscarEP();
     }
     
-    @FXML
     private void codigoBuscadoC(MouseEvent event) {
         limpiarTextEP();
         desactivarControlesEP();

@@ -1218,7 +1218,7 @@ DELIMITER $$
 		BEGIN
 			select fdb.facturaDetalleIdBackup, p.productoId,p.productoDesc, fdb.cantidadBackup , p.productoPrecio ,fdb.totalParcialBackup
 				from facturadetallebackup as fdb
-							inner join Productos as p
+							inner join inventarioproductos as p
 								on fdb.productoIdBackup = p.productoId;
         END $$
 DELIMITER ;
