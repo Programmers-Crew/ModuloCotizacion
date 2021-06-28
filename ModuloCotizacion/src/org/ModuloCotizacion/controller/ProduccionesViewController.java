@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -84,7 +85,10 @@ public class ProduccionesViewController implements Initializable {
     private AnchorPane ancor3;
     @FXML
     private AnchorPane ancor4;
+    @FXML
+    private JFXButton btnAgregarFacturacion;
 
+ 
 
 
 
@@ -1098,7 +1102,6 @@ public class ProduccionesViewController implements Initializable {
         }
     }
 
-@FXML
     private void atajosEP(KeyEvent event) {
         if(cmbBusquedaEP.isFocused()){
             if(event.getCode() == KeyCode.ENTER){
@@ -1509,22 +1512,47 @@ public class ProduccionesViewController implements Initializable {
             }
         }
     }
-    
-    @FXML
+       @FXML
     private void cmbBuscarEP(ActionEvent event) {
-        buscarEP();
+         buscarEP();
     }
-    
+
+
     @FXML
     private void btnBuscarEP(MouseEvent event) {
         buscarEP();
     }
     
-    @FXML
     private void codigoBuscadoC(MouseEvent event) {
         limpiarTextEP();
         desactivarControlesEP();
     }
-        
+    
+    @FXML
+    private void btnAgregarFacturacion(MouseEvent event) {
+        String sql = "{call SpAgregarBackupCotizacion('"+codigoCotizacion+"','1','"+txtTotalCotizacion.getText()+"')}";
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ps.execute();
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgCorrecto));
+            noti.title("OPERACIÓN EXITOSA");
+            noti.text("SE HA MANDADO A FACTURACIÓN CON EXITO");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }catch(SQLException ex){
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR EN LA DB");
+            noti.text("ERROR AL MANDAR FACTURACIÓN"+ex);
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }
+    }
+
     
 }

@@ -489,6 +489,7 @@ public class MenuPrincipalContoller implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
         if(PfechaX.get("valor1","root").equals("root") || PfechaY.get("valor2","root").equals("root") || PordenX.get("valor3","root").equals("root") || PordenY.get("valor4","root").equals("root")
                 || PTotalX.get("valor5","root").equals("root") || PTotalY.get("valor6","root").equals("root") || PLetrasX.get("valor7","root").equals("root") ||
                  PLetrasY.get("valor8","root").equals("root") ){
@@ -536,6 +537,8 @@ public class MenuPrincipalContoller implements Initializable {
             letra.put("longitudProducto", "25");
             letra.put("longitudNombre", "45");
             letra.put("longitudDireccion", "35");
+            letra.put("tamañoDirecB", "65");
+
         }
         prefsRegresar.put("regresar", "menu");
         prefsRegresarProductos.put("regresarProducto", "menu");
@@ -553,7 +556,7 @@ public class MenuPrincipalContoller implements Initializable {
         }else{
                 checkBox.setSelected(false);
         }
-       
+        
         
         // caja de bienvenida
          FadeTransition ft = new FadeTransition();
