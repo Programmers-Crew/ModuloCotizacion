@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../resource/moduloStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ModuloCotizacion.controller.ParametrosViewController">
+<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../resource/moduloStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ModuloCotizacion.controller.ParametrosViewController">
    <children>
       <Pane layoutX="10.0" layoutY="11.0" prefHeight="36.0" prefWidth="600.0" styleClass="bar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -69,6 +69,7 @@
                                                 <Label layoutX="14.0" layoutY="40.0" text="CÓDIGO:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="130.6" AnchorPane.topAnchor="46.0" />
                                                 <Label layoutX="20.0" layoutY="110.0" prefHeight="18.0" prefWidth="61.0" text="NOMBRE:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="119.0" AnchorPane.topAnchor="110.0" />
                                                 <JFXTextField fx:id="txtCodigoEspecial" layoutX="14.0" layoutY="58.0" onKeyReleased="#validarNumeroProveedores" prefHeight="26.0" prefWidth="170.0" promptText="CÓDIGO SE LLENA EN AUTOMÁTICO" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0" />
+                                                <JFXTextField fx:id="txtNombreEspecial" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <JFXTextField fx:id="txtPrecioEspecial" layoutX="16.0" layoutY="225.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="200.0" />
                                                 <HBox alignment="CENTER" layoutX="-2.0" layoutY="312.0" prefHeight="27.0" prefWidth="431.0" AnchorPane.leftAnchor="-6.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="312.0">
                                                    <children>
@@ -99,7 +100,6 @@
                                                    </children>
                                                 </HBox>
                                                 <Label layoutX="20.0" layoutY="175.0" text="PRECIO:" AnchorPane.leftAnchor="15.0" />
-                                                <JFXTextField fx:id="txtNombreEspecial" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                              </children>
                                              <padding>
                                                 <Insets left="5.0" />
@@ -166,6 +166,7 @@
                                                 <Label layoutX="14.0" layoutY="40.0" text="CÓDIGO:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="130.6" AnchorPane.topAnchor="46.0" />
                                                 <Label layoutX="20.0" layoutY="110.0" prefHeight="18.0" prefWidth="61.0" text="DESCRIPCIÓN:" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="119.0" AnchorPane.topAnchor="110.0" />
                                                 <JFXTextField fx:id="txtCodigoTipoCliente" layoutX="14.0" layoutY="58.0" onKeyReleased="#validarNumeroProveedores" prefHeight="26.0" prefWidth="170.0" promptText="CÓDIGO SE LLENA EN ATOMÁTICO" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="70.0" />
+                                                <JFXTextField fx:id="txtDescripciónTipoCliente" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                                 <JFXTextField fx:id="txtDescuentoTipoCliente" layoutX="16.0" layoutY="225.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="200.0" />
                                                 <HBox alignment="CENTER" layoutX="-2.0" layoutY="312.0" prefHeight="27.0" prefWidth="431.0" AnchorPane.leftAnchor="-6.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="312.0">
                                                    <children>
@@ -205,7 +206,6 @@
                                                    </children>
                                                 </HBox>
                                                 <Label layoutX="20.0" layoutY="175.0" text="DESCUENTO:" AnchorPane.leftAnchor="15.0" />
-                                                <JFXTextField fx:id="txtDescripciónTipoCliente" layoutX="14.0" layoutY="129.0" onKeyReleased="#validarTelefono" prefHeight="31.0" prefWidth="283.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
                                              </children>
                                              <padding>
                                                 <Insets left="5.0" />
