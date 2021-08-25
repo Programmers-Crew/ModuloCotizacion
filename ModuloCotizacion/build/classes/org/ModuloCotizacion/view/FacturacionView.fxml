@@ -28,7 +28,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../resource/moduloStyle.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ModuloCotizacion.controller.FacturacionViewController">
+<AnchorPane id="AnchorPane" fx:id="anchor" prefHeight="800.0" prefWidth="1200.0" stylesheets="@../resource/moduloStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ModuloCotizacion.controller.FacturacionViewController">
    <children>
       <Pane layoutX="5.0" prefHeight="36.0" prefWidth="600.0" styleClass="bar" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -139,12 +139,13 @@
                                                    </children>
                                                 </HBox>
                                                 <ComboBox fx:id="cmbNombreProducto" editable="true" layoutX="26.0" layoutY="51.0" onAction="#buscarPrecio" prefHeight="26.0" prefWidth="256.0" styleClass="comboOscuro" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="55.0" />
+                                                <JFXTextField fx:id="txtPrecioProducto" editable="false" layoutX="33.0" layoutY="102.0" prefHeight="26.0" prefWidth="170.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="104.0" />
+                                                <JFXTextField fx:id="txtExistencias" layoutX="26.0" layoutY="149.0" onKeyTyped="#validarLetras" prefHeight="26.0" prefWidth="251.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="157.0" />
+                                                <JFXTextField fx:id="txtProveedor" layoutX="22.0" layoutY="189.0" prefHeight="26.0" prefWidth="246.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="211.0" />
                                                 <JFXTextField fx:id="txtCantidadProducto" layoutX="29.0" layoutY="252.0" onKeyTyped="#validarLetras" prefHeight="26.0" prefWidth="222.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="262.0" />
                                                 <Label layoutX="33.0" layoutY="48.0" text="PRODUCTO:" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="141.6" AnchorPane.topAnchor="35.0" />
                                                 <Label layoutX="33.0" layoutY="91.0" text="PRECIO:" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="141.6" AnchorPane.topAnchor="85.0" />
                                                 <Label layoutX="26.0" layoutY="236.0" text="CANTIDAD:" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="244.0" />
-                                                <JFXTextField fx:id="txtExistencias" layoutX="26.0" layoutY="149.0" onKeyTyped="#validarLetras" prefHeight="26.0" prefWidth="251.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="157.0" />
-                                                <JFXTextField fx:id="txtPrecioProducto" editable="false" layoutX="33.0" layoutY="102.0" prefHeight="26.0" prefWidth="170.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="104.0" />
                                                 <JFXButton fx:id="btnEditar" buttonType="RAISED" layoutX="111.0" layoutY="297.0" onMouseClicked="#btnEditar" prefHeight="36.0" prefWidth="72.0" styleClass="boton" text="EDITAR" textFill="WHITE" AnchorPane.leftAnchor="107.0" AnchorPane.topAnchor="306.0" />
                                                 <JFXButton fx:id="btnVender" buttonType="RAISED" layoutX="26.0" layoutY="300.0" onMouseClicked="#btnAgregarFacturaBackUp" prefHeight="36.0" prefWidth="72.0" styleClass="boton" text="VENDER" textFill="WHITE" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="305.0">
                                                    <font>
@@ -153,7 +154,6 @@
                                                 </JFXButton>
                                                 <JFXButton fx:id="btneliminar" buttonType="RAISED" layoutX="195.0" layoutY="294.0" onMouseClicked="#btnEliminar" prefHeight="36.0" prefWidth="72.0" styleClass="boton" text="ELIMINAR" textFill="WHITE" AnchorPane.topAnchor="306.0" />
                                                 <Label layoutX="26.0" layoutY="131.0" text="EXISTENCIAS:" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="137.0" />
-                                                <JFXTextField fx:id="txtProveedor" layoutX="22.0" layoutY="189.0" prefHeight="26.0" prefWidth="246.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="211.0" />
                                                 <Label layoutX="25.0" layoutY="184.0" text="PROVEEDOR:" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="190.0" />
                                                 <JFXButton fx:id="btnActualizar" buttonType="RAISED" layoutX="48.0" layoutY="339.0" onMouseClicked="#actualizarDatos" prefHeight="27.0" prefWidth="99.0" styleClass="boton" text="ACTUALIZAR" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="43.0">
                                                    <font>

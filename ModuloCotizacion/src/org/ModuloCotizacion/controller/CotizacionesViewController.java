@@ -1560,7 +1560,8 @@ public class CotizacionesViewController implements Initializable {
                 Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());            
                 cotizacion.setCotizacionTotal(TotalC);
                 String sql = "{call Sp_AddCotizacion('"+cotizacion.getCotizacionId()+"','"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+cotizacion.getCotizacionDescuento()+"','"+cotizacion.getCotizacionDescuentoNeto()+"','"+cotizacion.getCotizacionTotal()+"')}";
-
+                System.out.println(sql);
+                System.out.println("PROCEDURE");
                 try{
 
                     PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);

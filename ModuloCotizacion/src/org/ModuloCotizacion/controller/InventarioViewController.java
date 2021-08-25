@@ -226,6 +226,11 @@ public class InventarioViewController implements Initializable {
     public void limpiarText(){
         txtProveedorInventario.setValue("");
         cmbNombreEstado.setValue("");
+        cmbCodigoProductoInventario.setValue("");
+        cmbNombreCategoria.setValue("");
+        txtProductoInventario.setText("");
+        txtCostoNuevo.setText("");
+        txtCantidadInventario.setText("");
     }
     
     
@@ -1181,7 +1186,7 @@ public class InventarioViewController implements Initializable {
                             rs.getString("estadoProductoId"),
                             rs.getString("estadoProductoDesc")
                 ));
-                comboCodigoFiltro.add(x, rs.getString("estadoProductoId"));
+                comboCodigoFiltro.add(x, rs.getString("estadoProductoDesc"));
                 x++;
             }
         }catch(SQLException ex){
