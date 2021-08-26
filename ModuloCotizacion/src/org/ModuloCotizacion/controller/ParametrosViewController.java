@@ -78,10 +78,6 @@ public class ParametrosViewController implements Initializable {
     }
 
     @FXML
-    private void codigoBuscadoProveedores(MouseEvent event) {
-    }
-
-    @FXML
     private void atajosProveedores(KeyEvent event) {
     }
 
@@ -156,6 +152,7 @@ public class ParametrosViewController implements Initializable {
     
     int codigoEspecial=0;
     
+    ObservableList<String> listaBuscar;
     ObservableList<CamposEspeciales>listaCamposEspeciales;
     ObservableList<String>listaComboEspeciales;
     ObservableList<String>listaFiltroEspeciales;
@@ -535,8 +532,7 @@ public class ParametrosViewController implements Initializable {
                 
                 sql = "{call Sp_SearchCamposEspeciales('"+cmbBuscarEspecial.getValue()+"')}";
                 
-            }else{
-                
+            }else{                
                 sql = "{call Sp_SearchNameCamposEspeciales('"+cmbBuscarEspecial.getValue()+"')}";
             }
             
@@ -1109,44 +1105,30 @@ public class ParametrosViewController implements Initializable {
         cmbBuscarTipoCliente.setDisable(false);
         btnBuscarTipoCliente.setDisable(false);
         ArrayList<String> lista = new ArrayList();
-        String sql = "{call Sp_ListCamposEspeciales()}";
-        if(cmbFiltroTipoCliente.getValue().equals("CÓDIGO")){
-            try{
+        System.out.println("Entre tipo");
+        String sql = "{call Sp_ListTipoCliente()}";
                 
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                ResultSet rs = ps.executeQuery();
-                
-                while(rs.next()){
-                    
-                    lista.add(rs.getString("campoId"));
-                    
-                }
-            }catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }else{
-            if(cmbFiltroTipoCliente.getValue().equals("DESCRIPCIÓN")){
-                try{
-                
-                    PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                    ResultSet rs = ps.executeQuery();
+        try{  
+            System.out.println("Entre2");
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();     
 
-                    while(rs.next()){
-                        
-                        lista.add(rs.getString("campoNombre"));
-                        
-                    }
-                }catch(SQLException ex){
-                    ex.printStackTrace();
+            while(rs.next()){
+                if(cmbFiltroTipoCliente.getValue().equals("CÓDIGO")){
+                    System.out.println("1");
+                    lista.add(rs.getString("tipoClienteId"));                 
+                }else if(cmbFiltroTipoCliente.getValue().equals("DESCRIPCIÓN")){
+                    System.out.println("2");
+                    lista.add(rs.getString("tipoClienteDesc"));                    
                 }
             }
-            
+        }catch(SQLException ex){
+            ex.printStackTrace();
         }
-        
-        
+
         listaComboTipoCliente = FXCollections.observableList(lista);
         cmbBuscarTipoCliente.setItems(listaComboTipoCliente);
-        new AutoCompleteComboBoxListener(cmbBuscarTipoCliente);
+        new AutoCompleteComboBoxListener(cmbBuscarTipoCliente);        
     }
 
     @FXML
@@ -1648,11 +1630,11 @@ public class ParametrosViewController implements Initializable {
         }else{
             if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
                 
-                sql = "{call Sp_SearchModoPago('"+cmbBuscarTipoCliente.getValue()+"')}";
+                sql = "{call Sp_SearchModoPago('"+cmbBuscarModosPago.getValue()+"')}";
                 
             }else{
                 
-                sql = "{call Sp_SearchModoPagoName('"+cmbBuscarTipoCliente.getValue()+"')}";
+                sql = "{call Sp_SearchModoPagoName('"+cmbBuscarModosPago.getValue()+"')}";
             }
             
             accionModoPago(sql);
@@ -1662,41 +1644,30 @@ public class ParametrosViewController implements Initializable {
     
     @FXML
     private void comboFiltroModoPago(ActionEvent event) {
+        System.out.println("Entre");
         cmbBuscarModosPago.setDisable(false);
         btnBuscarModosPago.setDisable(false);
         ArrayList<String> lista = new ArrayList();
         String sql = "{call Sp_ListModoPago()}";
-        if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
-            try{
-                
-                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                ResultSet rs = ps.executeQuery();
-                
+            
+        try{  
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();     
+            
                 while(rs.next()){
-                    
-                    lista.add(rs.getString("modoPagoId"));
-                    
-                }
-            }catch(SQLException ex){
-                ex.printStackTrace();
-            }
-        }else{
-            if(cmbFiltroModosPagos.getValue().equals("DESCRIPCIÓN")){
-                try{
-                
-                    PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                    ResultSet rs = ps.executeQuery();
-
-                    while(rs.next()){
-                        
-                        lista.add(rs.getString("modoPagoDesc"));
-                        
+                    if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
+                        lista.add(rs.getString("modoPagoId"));                    
+                    }else if(cmbFiltroModosPagos.getValue().equals("DESCRIPCIÓN")){
+                        lista.add(rs.getString("modoPagoDesc"));                    
                     }
-                }catch(SQLException ex){
-                    ex.printStackTrace();
                 }
-            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
         }
+        
+        listaBuscar = FXCollections.observableList(lista);
+       cmbBuscarModosPago.setItems(listaBuscar);
+       new AutoCompleteComboBoxListener(cmbBuscarModosPago);
     }
 
     @FXML
@@ -1715,7 +1686,7 @@ public class ParametrosViewController implements Initializable {
 
     @FXML
     private void cmbBuscarModoPago(ActionEvent event) {
-            String sql = "";
+        String sql = "";
         tipoOperacionModoPago = OperacionModoPago.BUSCAR;
         if(cmbFiltroModosPagos.getValue().equals("")){
             Notifications noti = Notifications.create();
@@ -1727,16 +1698,26 @@ public class ParametrosViewController implements Initializable {
             noti.darkStyle();   
             noti.show();
         }else{
-            if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
-                
-                sql = "{call Sp_SearchModoPago('"+cmbBuscarTipoCliente.getValue()+"')}";
-                
-            }else{
-                
-                sql = "{call Sp_SearchModoPagoName('"+cmbBuscarTipoCliente.getValue()+"')}";
-            }
-            
-            accionModoPago(sql);
+            try{
+                if(cmbFiltroModosPagos.getValue().equals("CÓDIGO")){
+                    System.out.println(sql);
+                    sql = "{call Sp_SearchModoPago('"+cmbBuscarModosPago.getValue()+"')}";                
+                    System.out.println("1");
+                }else{
+                    System.out.println(sql);
+                    System.out.println("2");
+                    sql = "{call Sp_SearchModoPagoName('"+cmbBuscarModosPago.getValue()+"')}";
+                }        
+                System.out.println("3");
+                System.out.println(sql);
+                System.out.println(cmbBuscarTipoCliente.getValue());
+                accionModoPago(sql);
+            }catch(Exception e){
+                System.out.println("4");
+                System.out.println(sql);
+                System.out.println(cmbBuscarTipoCliente.getValue());
+                e.printStackTrace();
+            }            
         } 
     }
     
