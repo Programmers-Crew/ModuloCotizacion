@@ -1244,19 +1244,20 @@ public class FacturacionViewController implements Initializable {
 
        String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+tipoFactura+"')}";
        actualizarCliente();
+        System.out.println(sqlFactura);
        try{
            
            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
            ps.execute();
            
            PreparedStatement psFactura = Conexion.getIntance().getConexion().prepareCall(sqlFactura);
-               psFactura.execute();
+           psFactura.execute();
 
-           PreparedStatement psEliminar = Conexion.getIntance().getConexion().prepareCall(sqlEliminar);
+            PreparedStatement psEliminar = Conexion.getIntance().getConexion().prepareCall(sqlEliminar);
 
                
                validacion = true;
-           psEliminar.execute();
+            psEliminar.execute();
            
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgCorrecto));
@@ -1329,19 +1330,15 @@ public class FacturacionViewController implements Initializable {
                 txtLetrasPrecio.setText("");
                  imprimir();
                 String sql = "{call SpEliminarBackup()}"; 
-                String sqlBackUp = "{call SpElimarBackFCP()}"; 
                 if(guardarFactura()==true){
-                    limpiarTextCliente();
+                   limpiarTextCliente();
                    limpiarTextEfectivo();
                    totalFactura = 0;
                 }
                 
                  try{
                     PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);            
-                    ps.execute();
-                    
-                    PreparedStatement psBackUpFCP = Conexion.getIntance().getConexion().prepareCall(sqlBackUp);            
-                    psBackUpFCP.execute();
+                    ps.execute();                   
                  
                  }catch(Exception e){
                      e.printStackTrace();

@@ -1528,6 +1528,8 @@ public class ProduccionesViewController implements Initializable {
         desactivarControlesEP();
     }
     
+    
+    
     @FXML
     private void btnAgregarFacturacion(MouseEvent event) {
         String sql = "{call SpAgregarBackupCotizacion('"+codigoCotizacion+"','1','"+txtTotalCotizacion.getText()+"')}";

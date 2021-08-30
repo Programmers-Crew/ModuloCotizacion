@@ -19,8 +19,7 @@ public class Conexion {
                             e.printStackTrace();
                     }
 }
-
-
+  
     public static Conexion getIntance(){
         if(instancia == null){
                instancia = new Conexion();   
