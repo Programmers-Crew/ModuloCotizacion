@@ -496,6 +496,8 @@ public class MenuPrincipalContoller implements Initializable {
             resetarCamposCheque();
         }
         
+        resetarCamposCheque();
+        
         if(comprobante.get("nochequeX","root").equals("root") || comprobante.get("nochequeY","root").equals("root") || comprobante.get("fechaX","root").equals("root") || comprobante.get("fechaY","root").equals("root")
                 || comprobante.get("ordenX","root").equals("root") || comprobante.get("ordenY","root").equals("root") || comprobante.get("totalX","root").equals("root") ||
                  comprobante.get("totalY","root").equals("root") || comprobante.get("letrasX","root").equals("root") || comprobante.get("letrasY","root").equals("root") || 
@@ -503,31 +505,39 @@ public class MenuPrincipalContoller implements Initializable {
             resetarCamposComprobante();
             
         }
+        resetarCamposComprobante();
         if(cifras.get("4", "root").equals("root")){
             llenarCifrasTFac();
             llenarCifrasPFac();
         }
+        llenarCifrasTFac();
+        llenarCifrasPFac();
         if(cifras.get("4A", "root").equals("root")){
             llenarCifrasTFacA();
             llenarCifrasPFacA();
         }
+        llenarCifrasTFacA();
+        llenarCifrasPFacA();
         if(factura.get("totalfacy","root").equals("root")){
             resetearCamposFactura();
         }
-        
+        resetearCamposFactura();
         if(facA.get("totalfacy1","root").equals("root")){
             resetearCamposFacturaA();
         }
-         
+        resetearCamposFacturaA();
         if(orden.get("totalfacyorden","root").equals("root")){
             resetearCamposOrden();
         }
+        resetearCamposOrden();
         if(letra.get("tamaño","root").equals("root")){
             resetarLetra();
         }
+        resetarLetra();
         if(facA.get("tamaño1","root").equals("root")){
             resetarLetraA();
         }
+        resetarLetraA();
         letra.put("tamañoNombreB",letra.get("tamaño", "root") );
         letra.put("tamañoNombreA",letra.get("tamaño1", "root") );
         

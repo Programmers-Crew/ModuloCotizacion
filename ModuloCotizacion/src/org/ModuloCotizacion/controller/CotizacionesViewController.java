@@ -1526,96 +1526,110 @@ public class CotizacionesViewController implements Initializable {
             noti.darkStyle();   
             noti.show();
         }else{
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            ButtonType buttonTypeSi = new ButtonType("Si");
-            ButtonType buttonTypeNo = new ButtonType("No");
-            alert.setTitle("AGREGAR REGISTRO");
-            alert.setHeaderText("AGREGAR REGISTRO");
-            alert.setContentText("¿Está seguro que desea guardar este registro?");
-
-            alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.get() == buttonTypeSi ){
-                Cotizaciones cotizacion = new Cotizaciones();
-
-                cotizacion.setCotizacionId(Integer.parseInt(txtCodigo.getText()));
-                cotizacion.setNit(txtNIT.getValue());
-                int codigoTipo = buscarCodigoTipoClienteDos();
-
-                if(txtImagen.getText().equals("Seleccione el archivo...")){
-                    cotizacion.setCotizacionImg("default.png");
-                 
-                }else{
-                    cotizacion.setCotizacionImg(txtImagen.getText());
-                 
-                }
-
-                int codigoUsuario = buscarCodigoVendedor();
-
-                cotizacion.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
-                cotizacion.setCotizacionDescuento(Double.parseDouble(txtDescuento.getText()));
-                Double descuentoNeto =  Double.parseDouble(txtDescuentoCotizacion.getText());
-                cotizacion.setCotizacionDescuentoNeto(descuentoNeto);
-                Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());            
-                cotizacion.setCotizacionTotal(TotalC);
-                String sql = "{call Sp_AddCotizacion('"+cotizacion.getCotizacionId()+"','"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+cotizacion.getCotizacionDescuento()+"','"+cotizacion.getCotizacionDescuentoNeto()+"','"+cotizacion.getCotizacionTotal()+"')}";
-                System.out.println(sql);
-                System.out.println("PROCEDURE");
-                try{
-
-                    PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                    ps.execute();
-                    transferir();
-                    txtDescuento.setText("0.00");
-                    System.out.println(txtImagen.getText());
-                    if(!txtImagen.getText().equals("Seleccione el archivo...")){
-                        Files.copy(orig, dest, REPLACE_EXISTING);
-                    }
-                    
-                    tblCotizacionDetalle.getItems().clear();
-                    Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgCorrecto));
-                    noti.title("REGISTRO GUARDADO");
-                    noti.text("SE HA GUARDADO LA COTIZACIÓN CON ÉXITO");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-                    cargarDatosCotizacionesBuscada(Integer.parseInt(txtCodigo.getText()));
-                    limpiarText();
-                    limpiarTextBack();
-                    cargar.setDisable(false);
-                }catch(SQLException ex){
-                    ex.printStackTrace();
-                    Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR EN LA BASE DE DATOS");
-                    noti.text("NO SE HA GUARDADO EL REGISTRO, INTENTELO DE NUEVO"+ex);
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("ERROR AL CARGAR IMAGEN");
-                    noti.text("NO SE HA GUARDADO LA IMAGEN, INTENTELO DE NUEVO"+ex);
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
-                }
-            }else{
+            
+            if(txtTipoCliente.getValue().equals("")){
                 Notifications noti = Notifications.create();
-                    noti.graphic(new ImageView(imgError));
-                    noti.title("OPERACIÓN CANCELADA");
-                    noti.text("SE HA CANCELADO LA OPERACIÓN");
-                    noti.position(Pos.BOTTOM_RIGHT);
-                    noti.hideAfter(Duration.seconds(4));
-                    noti.darkStyle();   
-                    noti.show();
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR HAY CAMPOS VACÍOS");
+                noti.text("Por favor, selecciona un factor de venta");
+                noti.position(Pos.BOTTOM_RIGHT);
+                noti.hideAfter(Duration.seconds(4));
+                noti.darkStyle();   
+            noti.show();
+            }else{                        
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                ButtonType buttonTypeSi = new ButtonType("Si");
+                ButtonType buttonTypeNo = new ButtonType("No");
+                alert.setTitle("AGREGAR REGISTRO");
+                alert.setHeaderText("AGREGAR REGISTRO");
+                alert.setContentText("¿Está seguro que desea guardar este registro?");
+
+                alert.getButtonTypes().setAll(buttonTypeSi, buttonTypeNo);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.get() == buttonTypeSi ){
+                    Cotizaciones cotizacion = new Cotizaciones();
+
+                    cotizacion.setCotizacionId(Integer.parseInt(txtCodigo.getText()));
+                    cotizacion.setNit(txtNIT.getValue());
+                    int codigoTipo = buscarCodigoTipoClienteDos();
+
+                    if(txtImagen.getText().equals("Seleccione el archivo...")){
+                        cotizacion.setCotizacionImg("default.png");
+
+                    }else{
+                        cotizacion.setCotizacionImg(txtImagen.getText());
+
+                    }
+
+                    int codigoUsuario = buscarCodigoVendedor();
+
+                    cotizacion.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
+                    cotizacion.setCotizacionDescuento(Double.parseDouble(txtDescuento.getText()));
+                    Double descuentoNeto =  Double.parseDouble(txtDescuentoCotizacion.getText());
+                    cotizacion.setCotizacionDescuentoNeto(descuentoNeto);
+                    Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());            
+                    cotizacion.setCotizacionTotal(TotalC);
+                    String sql = "{call Sp_AddCotizacion('"+cotizacion.getCotizacionId()+"','"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+cotizacion.getCotizacionDescuento()+"','"+cotizacion.getCotizacionDescuentoNeto()+"','"+cotizacion.getCotizacionTotal()+"')}";
+                    System.out.println(sql);
+                    System.out.println("PROCEDURE");
+
+                    try{
+
+                        PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                        ps.execute();
+                        transferir();
+                        txtDescuento.setText("0.00");
+                        System.out.println(txtImagen.getText());
+                        if(!txtImagen.getText().equals("Seleccione el archivo...")){
+                            Files.copy(orig, dest, REPLACE_EXISTING);
+                        }
+
+                        tblCotizacionDetalle.getItems().clear();
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgCorrecto));
+                        noti.title("REGISTRO GUARDADO");
+                        noti.text("SE HA GUARDADO LA COTIZACIÓN CON ÉXITO");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                        cargarDatosCotizaciones();
+                        cargarDatosCotizacionesBuscada(Integer.parseInt(txtCodigo.getText()));
+                        limpiarText();
+                        limpiarTextBack();
+                        cargar.setDisable(false);
+                    }catch(SQLException ex){
+                        ex.printStackTrace();
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR EN LA BASE DE DATOS");
+                        noti.text("NO SE HA GUARDADO EL REGISTRO, INTENTELO DE NUEVO"+ex);
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("ERROR AL CARGAR IMAGEN");
+                        noti.text("NO SE HA GUARDADO LA IMAGEN, INTENTELO DE NUEVO"+ex);
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                    }
+                }else{
+                    Notifications noti = Notifications.create();
+                        noti.graphic(new ImageView(imgError));
+                        noti.title("OPERACIÓN CANCELADA");
+                        noti.text("SE HA CANCELADO LA OPERACIÓN");
+                        noti.position(Pos.BOTTOM_RIGHT);
+                        noti.hideAfter(Duration.seconds(4));
+                        noti.darkStyle();   
+                        noti.show();
+                }
             }
         }
         
