@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -1437,12 +1439,17 @@ public class CotizacionesViewController implements Initializable {
 
         // Mostar la imagen
         if (imgFile != null) {
+            FileTransfer filetransfer = new FileTransfer();
+            filetransfer.putResource(imgFile);
+            
             destino =  "C:/Program Files (x86)/ModuloCotizacion/img/"+imgFile.getName();
             dest = Paths.get(destino);
-            txtImagen.setText(imgFile.getName());
             origen =  imgFile.getPath();
             orig = Paths.get(origen);
+            
             txtImagen.setText(imgFile.getName());
+
+
         }
 
     }
