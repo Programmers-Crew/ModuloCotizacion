@@ -2,13 +2,13 @@
 <jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="ModuloCotizacion.jnlp">
   <information>
     <title>ModuloCotizacion</title>
-    <vendor>davis</vendor>
-    <description>null</description>
+    <vendor>Diego</vendor>
+    <description>Sistema de facturacion y generador de cotizaciones</description>
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="ModuloCotizacion.jar" size="7527802" download="eager" />
+    <jar href="ModuloCotizacion.jar" size="7528835" download="eager" />
     <jar href="lib\apache-commons-net.jar" size="460010" download="eager" />
     <jar href="lib\apache-logging-log4j.jar" size="481534" download="eager" />
     <jar href="lib\commons-collections-3.2.1.jar" size="575389" download="eager" />
@@ -21,7 +21,7 @@
     <jar href="lib\gson-2.7.jar" size="231952" download="eager" />
     <jar href="lib\jasperreports-5.6.0.jar" size="4989676" download="eager" />
     <jar href="lib\jfoenix-8.0.10.jar" size="2710207" download="eager" />
-    <jar href="lib\jsch-0.1.42.jar" size="185746" download="eager" />
+    <jar href="lib\jsch-0.1.52.jar" size="279913" download="eager" />
     <jar href="lib\lectorPDF.jar" size="1571256" download="eager" />
     <jar href="lib\logback-classic-0.9.jar" size="118982" download="eager" />
     <jar href="lib\mysql-connector-java-5.1.47.jar" size="1007502" download="eager" />

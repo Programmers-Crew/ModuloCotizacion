@@ -1472,8 +1472,11 @@ public class CotizacionesViewController implements Initializable {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             String file="";
-            while(rs.next()){
-                file = "C:/Program Files (x86)/ModuloCotizacion/img/"+rs.getString("cotizacionImg");
+            FileTransfer fileTransfer = new FileTransfer();
+            
+            while(rs.next()){                
+                fileTransfer.getResource(rs.getString("cotizacionImg"));
+                file = "C:/Program Files (x86)/ModuloCotizacion/ModuloCotizacion/img/"+rs.getString("cotizacionImg");
             }
             imageFile = new File(file);
             image = new Image(imageFile.toURI().toString());
