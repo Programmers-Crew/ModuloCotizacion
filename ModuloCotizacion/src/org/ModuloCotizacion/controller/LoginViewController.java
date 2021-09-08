@@ -176,7 +176,7 @@ public class LoginViewController implements Initializable {
                     primaryStage.setMinHeight(800);
                     primaryStage.setScene(scene);
                     primaryStage.setTitle("PROGRAMMERS BILLING");
-                    primaryStage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/LogoGrande.png").toExternalForm()));
+                    primaryStage.getIcons().add(new Image(getClass().getResource("/org/ModuloCotizacion/img/grupoAlcon.jpeg").toExternalForm()));
                     primaryStage.show();
                     Notifications noti = Notifications.create();
                     noti.graphic(new ImageView(imgCorrecto));

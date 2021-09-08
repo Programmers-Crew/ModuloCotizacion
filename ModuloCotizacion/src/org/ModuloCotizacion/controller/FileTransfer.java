@@ -6,14 +6,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ModuloCotizacion.bean.SFTPChannel;
 import org.ModuloCotizacion.bean.SFTPConstants;
-import org.apache.commons.compress.utils.IOUtils;
 import static org.apache.log4j.AsyncAppender.DEFAULT_BUFFER_SIZE;
 
 
@@ -66,7 +64,7 @@ public class FileTransfer {
         try {
             chSftp = channel.getChannel(sftpDetails, 60000);       
             String path = "public_html/files/resource";
-             chSftp.get(path + "/" + name, "img/");
+             chSftp.get(path + "/" + name, "C:/Program Files (x86)/ModuloCotizacion/ModuloCotizacion/img/");
 
             
         }catch(JSchException e){
