@@ -1042,7 +1042,7 @@ public class CotizacionesViewController implements Initializable {
     private void txtCantidadCambio(KeyEvent event) {
          
         double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-        double valor = (ancho * largo * alto * 0.0005* Double.parseDouble(txtCantidad.getText()));
+        double valor = (ancho * largo * alto * 0.3w0005* Double.parseDouble(txtCantidad.getText()));
         
         txtTotalParcial.setText(String.valueOf(valor));
     }
