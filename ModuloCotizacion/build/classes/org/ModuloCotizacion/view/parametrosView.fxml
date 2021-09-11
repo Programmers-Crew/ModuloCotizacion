@@ -224,7 +224,7 @@
                                        <columns>
                                           <TableColumn fx:id="colCodigoTipoCliente" prefWidth="76.00001525878906" text="CÓDIGO" />
                                           <TableColumn fx:id="colDescripcionTipoCliente" prefWidth="154.4000244140625" text="DESCRIPCIÓN" />
-                                          <TableColumn fx:id="colDescuentoTipoCliente" prefWidth="136.800048828125" text="DESCUENTO" />
+                                          <TableColumn fx:id="colDescuentoTipoCliente" prefWidth="136.800048828125" text="COSTO DE VENTA" />
                                        </columns>
                                     </TableView>
                                     <JFXButton fx:id="btnBuscarTipoCliente" buttonType="RAISED" layoutX="258.0" layoutY="25.0" onMouseClicked="#btnBuscarTipoCliente" prefHeight="66.0" prefWidth="73.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="25.0" />
