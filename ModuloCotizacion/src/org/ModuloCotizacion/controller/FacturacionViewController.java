@@ -386,6 +386,7 @@ public class FacturacionViewController implements Initializable {
     ObservableList<String> listaComboProductos;
     ObservableList<String> listaComboTipo;
     ObservableList<FacturacionDetalleBackup> listaBackUp;
+    ObservableList<String> listaPrecios;
 
     boolean comprobarCliente = false;
     Notifications noti = Notifications.create();
@@ -418,7 +419,7 @@ public class FacturacionViewController implements Initializable {
     @FXML
     private JFXTextField txtCantidadProducto;
     @FXML
-    private JFXTextField txtPrecioProducto;
+    private ComboBox<String> txtPrecioProducto;
     @FXML
     private ComboBox<String> cmbNombreProducto;
 
@@ -587,7 +588,7 @@ public class FacturacionViewController implements Initializable {
     // =================== CODIGO FACTURACION
     public void limpiarTextFacturacion(){
         cmbNombreProducto.setValue("");
-        txtPrecioProducto.setText("");
+        txtPrecioProducto.setValue("");
         txtCantidadProducto.setText("");
         txtExistencias.setText("");
         txtProveedor.setText("");
@@ -611,8 +612,11 @@ public class FacturacionViewController implements Initializable {
     private void buscarCliente(ActionEvent event) {
         buscarClienteMetodo();
     }
-
-
+        
+    @FXML
+    private void buscarClienteDos(ActionEvent event) {
+        buscarClienteMetodoDos();
+    }
     
     @FXML
     private void AtajoCliente(KeyEvent event) {
@@ -698,10 +702,48 @@ public class FacturacionViewController implements Initializable {
             }catch(SQLException ex){
                 System.out.println(ex);
             }
-        }
-       
-        
+        }               
     }
+    
+        public void buscarClienteMetodoDos(){
+        if(txtNitCliente.getValue().equals("")){
+            
+        }else{
+            
+            try{
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall("{call SpBuscarProductosFac(?,?)}");
+                ps.setString(1, txtNitCliente.getValue());
+                ps.setString(2, txtNombreCliente.getText());
+                
+                ResultSet rs = ps.executeQuery();
+                while(rs.next()){
+                        txtNombreCliente.setText(rs.getString("clienteNombre"));
+                        txtDireccionCliente.setText(rs.getString("clienteDireccion"));
+                    }
+                if(rs.first()){
+                    txtNombreCliente.setEditable(true);
+                    txtDireccionCliente.setEditable(true);
+                    comprobarCliente=false;
+                }else{
+                    comprobarCliente=true;
+                    txtNombreCliente.setText("");
+                    txtNombreCliente.setEditable(true);
+                    txtDireccionCliente.setEditable(true);
+                    noti.graphic(new ImageView(imgWarning));
+                    noti.title("USUARIO NO EXISTE");
+                    noti.text("DEBERÁ INGRESAR EL CAMPO NOMBRE");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+
+                }
+            }catch(SQLException ex){
+                System.out.println(ex);
+            }
+        }               
+    }
+    
          @FXML
     private void buscarPrecio(ActionEvent event) {
         
@@ -712,15 +754,22 @@ public class FacturacionViewController implements Initializable {
         if(cmbNombreProducto.getValue()!= ""){
                
                 try{
-                     PreparedStatement sp = Conexion.getIntance().getConexion().prepareCall("{call SpBuscarProductosFac(?)}");
+                    ArrayList<String> lista = new ArrayList();
+                    PreparedStatement sp = Conexion.getIntance().getConexion().prepareCall("{call SpBuscarProductosFac(?)}");
                     sp.setString(1, buscarCodigoProducto(cmbNombreProducto.getValue()));
-                    System.out.println(buscarCodigoProducto(cmbNombreProducto.getValue()));
-                     ResultSet resultado = sp.executeQuery(); 
-                        while(resultado.next()){
-                            txtPrecioProducto.setText(resultado.getString("productoPrecio"));
-                            txtExistencias.setText(resultado.getString("inventarioProductoCant"));
-                            txtProveedor.setText(resultado.getString("proveedorNombre"));
-                        }  
+
+                    ResultSet resultado = sp.executeQuery(); 
+                    int x =0;
+                    
+                      while(resultado.next()){
+                           lista.add(x, resultado.getString("productoPrecio"));
+                           lista.add(x, resultado.getString("productoPrecio2"));
+                           lista.add(x, resultado.getString("productoPrecio3"));
+                           lista.add(x, resultado.getString("productoPrecio4"));
+                          x++;
+                        } 
+                        listaPrecios = FXCollections.observableList(lista);
+                        txtPrecioProducto.setItems(listaPrecios);
                         if(resultado.first()){
                             txtPrecioProducto.setEditable(false);
                             if(tipoOperacionFacturacion == Operacion.ACTUALIZAR){
@@ -730,7 +779,7 @@ public class FacturacionViewController implements Initializable {
                             }
                            
                         }else{
-                            txtPrecioProducto.setText("");
+                            txtPrecioProducto.setValue("");
                             btnVender.setDisable(true);
                             noti.graphic(new ImageView(imgError));
                             noti.title("ESTE PRODUCTO NO EXISTE");
@@ -750,10 +799,11 @@ public class FacturacionViewController implements Initializable {
                     noti.hideAfter(Duration.seconds(4));
                     noti.darkStyle();
                     noti.show();
-
                 }
             }
     }
+    
+    
     
     public void comprobarClienteExistente(){
         if(comprobarCliente == false){
@@ -878,7 +928,7 @@ public class FacturacionViewController implements Initializable {
                     rs.getDouble("cotizacionTotal"),
                     rs.getDouble("totalParcialBackup"),
                     rs.getString("cotizacionId")
-                ));
+                )); 
                 totalParcial = rs.getDouble("totalParcialBackup");
             }
         }catch(SQLException ex){
@@ -892,7 +942,7 @@ public class FacturacionViewController implements Initializable {
                     rs.getInt("facturaDetalleIdBackup"),
                     rs.getString("productoDesc"),
                     rs.getDouble("cantidadBackup"),
-                    rs.getDouble("productoPrecio"),
+                    rs.getDouble("precioProducto"),
                     rs.getDouble("totalParcialBackup"),
                     rs.getString("productoId")
                 ));
@@ -912,7 +962,7 @@ public class FacturacionViewController implements Initializable {
         colCodigoFactura.setCellValueFactory(new PropertyValueFactory("facturaDetalleIdBackup"));
         colDesProductoBackUp.setCellValueFactory(new PropertyValueFactory("productoDesc"));
         colCantidadProductoBackUp.setCellValueFactory(new PropertyValueFactory("cantidadBackup"));  
-        colPrecioProductoBackUp.setCellValueFactory(new PropertyValueFactory("productoPrecio"));
+        colPrecioProductoBackUp.setCellValueFactory(new PropertyValueFactory("precioProducto"));
         colTotalParcialBackUp.setCellValueFactory(new PropertyValueFactory("totalParcialBackup"));
         codigoProductoColumn.setCellValueFactory(new PropertyValueFactory("productoId"));
         cmbNombreProducto.setValue("");
@@ -1128,7 +1178,7 @@ public class FacturacionViewController implements Initializable {
             noti.darkStyle();
             noti.show();
         }else{
-                if(cmbNombreProducto.getValue().equals("")|| txtPrecioProducto.getText().isEmpty() || txtCantidadProducto.getText().isEmpty() || txtNitCliente.getValue().equals("") || txtNombreCliente.getText().isEmpty() || txtFacturaId.getText().isEmpty() ){
+                if(cmbNombreProducto.getValue().equals("")|| txtPrecioProducto.getValue().isEmpty() || txtCantidadProducto.getText().isEmpty() || txtNitCliente.getValue().equals("") || txtNombreCliente.getText().isEmpty() || txtFacturaId.getText().isEmpty() ){
                 Notifications noti = Notifications.create();
                 noti.graphic(new ImageView(imgError));
                 noti.title("ERROR");
@@ -1144,9 +1194,10 @@ public class FacturacionViewController implements Initializable {
                     FacturacionDetalleBackup nuevoBackUp = new FacturacionDetalleBackup();
                    nuevoBackUp.setProductoDesc(cmbNombreProducto.getValue());
                    nuevoBackUp.setCantidadBackup(Double.parseDouble(txtCantidadProducto.getText()));
-                   nuevoBackUp.setTotalParcialBackup(Double.parseDouble(txtPrecioProducto.getText())*Double.parseDouble(txtCantidadProducto.getText()));
-                  
-                   String sql = "{call SpAgregarBackup('"+buscarCodigoProducto(nuevoBackUp.getProductoDesc())+"','"+ nuevoBackUp.getCantidadBackup()+"','"+nuevoBackUp.getTotalParcialBackup()+"')}";
+                   nuevoBackUp.setTotalParcialBackup(Double.parseDouble(txtPrecioProducto.getValue())*Double.parseDouble(txtCantidadProducto.getText()));
+                   
+                   
+                   String sql = "{call SpAgregarBackup('"+buscarCodigoProducto(nuevoBackUp.getProductoDesc())+"','"+ nuevoBackUp.getCantidadBackup()+"','"+nuevoBackUp.getTotalParcialBackup()+"','"+Double.parseDouble(txtPrecioProducto.getValue())+"')}";
                    tipoOperacionFacturacion = Operacion.AGREGAR;
                    accionEstado(sql);  
                    txtLetrasPrecio.setText(letras.Convertir(twoDForm.format(Double.parseDouble(txtTotalFactura.getText())), true));
@@ -1353,7 +1404,7 @@ public class FacturacionViewController implements Initializable {
 
       @FXML
     private void btnEditar(MouseEvent event) {
-        if(cmbNombreProducto.getValue().equals("") || txtPrecioProducto.getText().isEmpty() || txtCantidadProducto.getText().isEmpty()){
+        if(cmbNombreProducto.getValue().equals("") || txtPrecioProducto.getValue().isEmpty() || txtCantidadProducto.getText().isEmpty()){
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgError));
             noti.title("ERROR");
@@ -1368,11 +1419,11 @@ public class FacturacionViewController implements Initializable {
             nuevaFactura.setFacturaDetalleIdBackup(colCodigoFactura.getCellData(index));
             nuevaFactura.setProductoDesc(cmbNombreProducto.getValue());
             
-            nuevaFactura.setCantidadBackup(Double.parseDouble(txtCantidadProducto.getText()));
-            nuevaFactura.setTotalParcialBackup(Double.parseDouble(txtPrecioProducto.getText())*Double.parseDouble(txtCantidadProducto.getText()));
+            nuevaFactura.setCantidadBackup(Double.parseDouble(txtCantidadProducto.getText()));            
+            nuevaFactura.setTotalParcialBackup(Double.parseDouble(txtPrecioProducto.getValue())*Double.parseDouble(txtCantidadProducto.getText()));
             
             
-           String sql = "{call spEditarBackup('"+nuevaFactura.getFacturaDetalleIdBackup()+"','"+buscarCodigoProducto(nuevaFactura.getProductoDesc())+"','"+nuevaFactura.getCantidadBackup()+"','"+nuevaFactura.getTotalParcialBackup()+"')}";
+           String sql = "{call spEditarBackup('"+nuevaFactura.getFacturaDetalleIdBackup()+"','"+buscarCodigoProducto(nuevaFactura.getProductoDesc())+"','"+nuevaFactura.getCantidadBackup()+"','"+nuevaFactura.getTotalParcialBackup()+"','"+Double.parseDouble(txtPrecioProducto.getValue())+"')}";
            try{
                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
                ps.execute();
@@ -1604,7 +1655,7 @@ public class FacturacionViewController implements Initializable {
         txtNombreCliente.setText("");
         txtDireccionCliente.setText("");
         cmbNombreProducto.setValue("");
-        txtPrecioProducto.setText("");
+        txtPrecioProducto.setValue("");
         txtExistencias.setText("");
         txtProveedor.setText("");
         txtCantidadProducto.setText("");
@@ -1814,8 +1865,9 @@ public class FacturacionViewController implements Initializable {
                 listaProducto.add(new ProductoBuscado(
                             rs.getString("productoDesc"),
                             rs.getDouble("cantidad"),
-                            rs.getDouble("productoPrecio")
+                            rs.getDouble("precioProducto")
                 ));
+                System.out.println(rs.getDouble("precioProducto"));
             }
             PreparedStatement ps1 = Conexion.getIntance().getConexion().prepareCall(sql2);
             ResultSet rs1 = ps1.executeQuery();
@@ -1838,7 +1890,7 @@ public class FacturacionViewController implements Initializable {
         
         colProductoBuscado.setCellValueFactory(new PropertyValueFactory("productoDesc"));
         colCantidadBuscada.setCellValueFactory(new PropertyValueFactory("cantidad"));  
-        colPrecioUnitBuscado.setCellValueFactory(new PropertyValueFactory("productoPrecio"));
+        colPrecioUnitBuscado.setCellValueFactory(new PropertyValueFactory("precioProducto"));
     }  
     
 
