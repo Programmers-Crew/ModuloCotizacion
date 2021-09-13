@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="ModuloCotizacion.jar" size="7528209" download="eager" />
+    <jar href="ModuloCotizacion.jar" size="7529492" download="eager" />
     <jar href="lib\apache-commons-net.jar" size="460010" download="eager" />
     <jar href="lib\apache-logging-log4j.jar" size="481534" download="eager" />
     <jar href="lib\commons-collections-3.2.1.jar" size="575389" download="eager" />

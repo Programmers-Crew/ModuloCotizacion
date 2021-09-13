@@ -7,18 +7,24 @@ public class InventarioProductos {
     private String productoDesc;
     private String estadoProductoDesc;
     private double productoPrecio;
+    private double productoPrecio2;
+    private double productoPrecio3;
+    private double productoPrecio4;
     private String categoriaNombre;
     
     public InventarioProductos() {
     }
 
-    public InventarioProductos(String productoId, double inventarioProductoCant, String proveedorNombre, String productoDesc, String estadoProductoDesc, double productoPrecio, String categoriaNombre) {
+    public InventarioProductos(String productoId, double inventarioProductoCant, String proveedorNombre, String productoDesc, String estadoProductoDesc, double productoPrecio, double productoPrecio2, double productoPrecio3, double productoPrecio4, String categoriaNombre) {
         this.productoId = productoId;
         this.inventarioProductoCant = inventarioProductoCant;
         this.proveedorNombre = proveedorNombre;
         this.productoDesc = productoDesc;
         this.estadoProductoDesc = estadoProductoDesc;
         this.productoPrecio = productoPrecio;
+        this.productoPrecio2 = productoPrecio2;
+        this.productoPrecio3 = productoPrecio3;
+        this.productoPrecio4 = productoPrecio4;
         this.categoriaNombre = categoriaNombre;
     }
 
@@ -79,6 +85,27 @@ public class InventarioProductos {
         this.categoriaNombre = categoriaNombre;
     }
 
-    
-    
+    public double getProductoPrecio2() {
+        return productoPrecio2;
+    }
+
+    public void setProductoPrecio2(double productoPrecio2) {
+        this.productoPrecio2 = productoPrecio2;
+    }
+
+    public double getProductoPrecio3() {
+        return productoPrecio3;
+    }
+
+    public void setProductoPrecio3(double productoPrecio3) {
+        this.productoPrecio3 = productoPrecio3;
+    }
+
+    public double getProductoPrecio4() {
+        return productoPrecio4;
+    }
+
+    public void setProductoPrecio4(double productoPrecio4) {
+        this.productoPrecio4 = productoPrecio4;
+    }        
 }
