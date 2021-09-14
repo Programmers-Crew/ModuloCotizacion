@@ -156,22 +156,8 @@ public class LoginViewController implements Initializable {
                     Stage primaryStage= new Stage();
                     Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/menuPrincipal.fxml"));
                     Scene scene = new Scene(root);
-                       int primaryMon=0;
-                    Screen primary = Screen.getPrimary();
-                    for(int i = 0; i < Screen.getScreens().size(); i++){
-                        if(Screen.getScreens().get(i).equals(primary)){
-                            primaryMon = i;
-                            System.out.println("primary: " + i);
-                            break;
-                        }
-                    }
-                    Screen screen = Screen.getPrimary();
-                    Rectangle2D bounds = screen.getVisualBounds();
 
-                    primaryStage.setX(bounds.getMinX());
-                    primaryStage.setY(bounds.getMinY());
-                    primaryStage.setWidth(bounds.getWidth());
-                    primaryStage.setHeight(bounds.getHeight());
+
                     primaryStage.setMinWidth(1500);
                     primaryStage.setMinHeight(800);
                     primaryStage.setScene(scene);
