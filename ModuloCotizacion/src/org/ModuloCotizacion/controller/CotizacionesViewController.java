@@ -1541,7 +1541,7 @@ public class CotizacionesViewController implements Initializable {
                     cotizacion.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
                     Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());            
                     cotizacion.setCotizacionTotal(TotalC);
-                    String sql = "{call Sp_AddCotizacion('"+cotizacion.getCotizacionId()+"','"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+0+"','"+0+"','"+cotizacion.getCotizacionTotal()+"')}";
+                    String sql = "{call Sp_AddCotizacion('"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+0+"','"+0+"','"+cotizacion.getCotizacionTotal()+"')}";
                     System.out.println(sql);
 
                     try{

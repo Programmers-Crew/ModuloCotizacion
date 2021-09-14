@@ -752,7 +752,8 @@ public class FacturacionViewController implements Initializable {
 
     public void buscarPrecioMetodo(){
         if(cmbNombreProducto.getValue()!= ""){
-               
+               String existencia = "";
+               String proveedor = "";
                 try{
                     ArrayList<String> lista = new ArrayList();
                     PreparedStatement sp = Conexion.getIntance().getConexion().prepareCall("{call SpBuscarProductosFac(?)}");
@@ -766,8 +767,13 @@ public class FacturacionViewController implements Initializable {
                            lista.add(x, resultado.getString("productoPrecio2"));
                            lista.add(x, resultado.getString("productoPrecio3"));
                            lista.add(x, resultado.getString("productoPrecio4"));
+                           existencia = resultado.getString("inventarioProductoCant");
+                           proveedor = resultado.getString("proveedorNombre");
                           x++;
                         } 
+                      
+                        txtExistencias.setText(existencia);
+                        txtProveedor.setText(proveedor);
                         listaPrecios = FXCollections.observableList(lista);
                         txtPrecioProducto.setItems(listaPrecios);
                         if(resultado.first()){
