@@ -50,8 +50,6 @@ public class ClienteViewController implements Initializable {
     private AnchorPane anchor1;
     @FXML
     private TableColumn<Cliente, String> colDireccionCliente;
-    @FXML
-    private JFXTextField txtDireccionCliente;
 
   
    
@@ -86,11 +84,21 @@ public class ClienteViewController implements Initializable {
     @FXML
     private TableColumn<Cliente, String> colNombreCliente;
     @FXML
+    private TableColumn<Cliente, String> colTelefonoCliente;
+    @FXML
+    private TableColumn<Cliente, String> colCorreoCliente;
+    @FXML
     private JFXButton btnBuscar;
     @FXML
     private ComboBox<String> cmbFiltroCombo;
     @FXML
     private ComboBox<String> cmbCodigoBuscar;
+    @FXML
+    private JFXTextField txtDireccionCliente;
+    @FXML
+    private JFXTextField txtTelefonoCliente;
+    @FXML
+    private JFXTextField txtCorreoCliente;    
     MenuPrincipalContoller menu = new MenuPrincipalContoller();
     ValidarStyle validar = new ValidarStyle();
     Animations animacion = new Animations();
@@ -102,6 +110,8 @@ public class ClienteViewController implements Initializable {
         txtNombreCliente.setText("");
         cmbFiltroCombo.setValue("");
         txtDireccionCliente.setText("");
+        txtTelefonoCliente.setText("");
+        txtCorreoCliente.setText("");
     }
     public void desactivarControles(){
         btnEditar.setDisable(true);
@@ -116,12 +126,16 @@ public class ClienteViewController implements Initializable {
         txtNombreCliente.setEditable(true);
         txtNitCliente.setEditable(true);
         txtDireccionCliente.setEditable(true);
+        txtTelefonoCliente.setText("");
+        txtCorreoCliente.setText("");
     }
     
     public void desactivarText(){
         txtNombreCliente.setEditable(false);
         txtNitCliente.setEditable(false);
         txtDireccionCliente.setEditable(false);
+        txtTelefonoCliente.setText("");
+        txtCorreoCliente.setText("");
     }
     
     public ObservableList<Cliente> getCliente(){
@@ -135,7 +149,9 @@ public class ClienteViewController implements Initializable {
                         rs.getString("clienteId"),
                         rs.getString("clienteNit"),
                         rs.getString("clienteNombre"),
-                        rs.getString("clienteDireccion")
+                        rs.getString("clienteDireccion"),
+                        rs.getString("clienteTelefono"),
+                        rs.getString("clienteCorreo")
                 ));
             }
             
@@ -155,6 +171,8 @@ public class ClienteViewController implements Initializable {
         colNitCliente.setCellValueFactory(new PropertyValueFactory("clienteNit"));
         colNombreCliente.setCellValueFactory(new PropertyValueFactory("clienteNombre"));
         colDireccionCliente.setCellValueFactory(new PropertyValueFactory("clienteDireccion"));
+        colTelefonoCliente.setCellValueFactory(new PropertyValueFactory("clienteTelefono"));
+        colCorreoCliente.setCellValueFactory(new PropertyValueFactory("clienteCorreo"));
         limpiarText();
 
         desactivarControles();
@@ -246,10 +264,6 @@ public class ClienteViewController implements Initializable {
                 desactivarControles();
                 btnAgregar.setText("GUARDAR");
                 btnEliminar.setText("CANCELAR");
-                
-                
-                
-                
                 btnEliminar.setDisable(false);
                 activarText();
                 limpiarText();
@@ -578,6 +592,9 @@ public class ClienteViewController implements Initializable {
             txtNitCliente.setText(colNitCliente.getCellData(index));
             txtNombreCliente.setText(colNombreCliente.getCellData(index));
             txtDireccionCliente.setText(colDireccionCliente.getCellData(index));
+            txtTelefonoCliente.setText(colTelefonoCliente.getCellData(index));
+            txtCorreoCliente.setText(colCorreoCliente.getCellData(index)); 
+            
             codigo = colCodigoCliente.getCellData(index);
             activarControles();
             activarText();

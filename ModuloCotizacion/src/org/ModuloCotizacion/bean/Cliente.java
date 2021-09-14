@@ -5,16 +5,21 @@ public class Cliente {
     String clienteNit;
     String clienteNombre;
     String clienteDireccion;
+    String clienteTelefono;
+    String clienteCorreo;
     
     public Cliente() {
     }
 
-    public Cliente(String clienteId, String clienteNit, String clienteNombre, String clienteDireccion) {
+    public Cliente(String clienteId, String clienteNit, String clienteNombre, String clienteDireccion, String clienteTelefono, String clienteCorreo) {
         this.clienteId = clienteId;
         this.clienteNit = clienteNit;
         this.clienteNombre = clienteNombre;
         this.clienteDireccion = clienteDireccion;
+        this.clienteTelefono = clienteTelefono;
+        this.clienteCorreo = clienteCorreo;
     }
+
 
     public String getClienteId() {
         return clienteId;
@@ -47,6 +52,24 @@ public class Cliente {
     public void setClienteDireccion(String clienteDireccion) {
         this.clienteDireccion = clienteDireccion;
     }
+
+    public String getClienteTelefono() {
+        return clienteTelefono;
+    }
+
+    public void setClienteTelefono(String clienteTelefono) {
+        this.clienteTelefono = clienteTelefono;
+    }
+
+    public String getClienteCorreo() {
+        return clienteCorreo;
+    }
+
+    public void setClienteCorreo(String clienteCorreo) {
+        this.clienteCorreo = clienteCorreo;
+    }
+    
+    
 
     @Override
     public String toString() {
