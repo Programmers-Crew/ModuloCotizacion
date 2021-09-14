@@ -1,4 +1,3 @@
-
 package org.ModuloCotizacion.controller;
 
 import com.jfoenix.controls.JFXButton;
@@ -521,10 +520,13 @@ public class ClienteViewController implements Initializable {
                     nuevocliente.setClienteNit(txtNitCliente.getText());
                     nuevocliente.setClienteNombre(txtNombreCliente.getText());
                     nuevocliente.setClienteDireccion(txtDireccionCliente.getText());
+                    nuevocliente.setClienteTelefono(txtTelefonoCliente.getText());
+                    nuevocliente.setClienteCorreo(txtCorreoCliente.getText());
+                    
                     if(txtDireccionCliente.getText().isEmpty()){
-                         sql = "{call SpAgregarClientesSinDireccion('"+nuevocliente.getClienteNit()+"','"+nuevocliente.getClienteNombre()+"')}";                        
+                         sql = "{call SpAgregarClientesSinDireccion('"+nuevocliente.getClienteNit()+"','"+nuevocliente.getClienteNombre()+"','"+nuevocliente.getClienteTelefono()+"','"+nuevocliente.getClienteCorreo()+"')}";                        
                     }else{
-                        sql = "{call SpAgregarClientes('"+nuevocliente.getClienteNit()+"','"+nuevocliente.getClienteNombre()+"','"+nuevocliente.getClienteDireccion()+"')}";
+                        sql = "{call SpAgregarClientes('"+nuevocliente.getClienteNit()+"','"+nuevocliente.getClienteNombre()+"','"+nuevocliente.getClienteDireccion()+"','"+nuevocliente.getClienteTelefono()+"','"+nuevocliente.getClienteCorreo()+"')}";
                     }
                     
                     tipoOperacion = Operacion.GUARDAR;
@@ -563,7 +565,10 @@ public class ClienteViewController implements Initializable {
                     nuevocliente.setClienteNit(txtNitCliente.getText());
                     nuevocliente.setClienteNombre(txtNombreCliente.getText());
                     nuevocliente.setClienteDireccion(txtDireccionCliente.getText());
-                    String sql = "{call SpActualizarClientes('"+codigo+"','"+nuevocliente.getClienteNit()+"','"+nuevocliente.getClienteNombre()+"','"+nuevocliente.getClienteDireccion()+"')}";
+                    nuevocliente.setClienteTelefono(txtTelefonoCliente.getText());
+                    nuevocliente.setClienteCorreo(txtCorreoCliente.getText());
+                    
+                    String sql = "{call SpActualizarClientes('"+codigo+"','"+nuevocliente.getClienteNit()+"','"+nuevocliente.getClienteNombre()+"','"+nuevocliente.getClienteDireccion()+"','"+nuevocliente.getClienteTelefono()+"','"+nuevocliente.getClienteCorreo()+"')}";
                     tipoOperacion = Operacion.ACTUALIZAR;
                     accion(sql);
                 }
@@ -581,8 +586,7 @@ public class ClienteViewController implements Initializable {
             String sql = "{call SpEliminarClientes('"+codigo+"')}";
             tipoOperacion = Operacion.ELIMINAR;
             accion(sql);
-        }
-        
+        }        
     }
 
     @FXML
@@ -593,8 +597,7 @@ public class ClienteViewController implements Initializable {
             txtNombreCliente.setText(colNombreCliente.getCellData(index));
             txtDireccionCliente.setText(colDireccionCliente.getCellData(index));
             txtTelefonoCliente.setText(colTelefonoCliente.getCellData(index));
-            txtCorreoCliente.setText(colCorreoCliente.getCellData(index)); 
-            
+            txtCorreoCliente.setText(colCorreoCliente.getCellData(index));             
             codigo = colCodigoCliente.getCellData(index);
             activarControles();
             activarText();
