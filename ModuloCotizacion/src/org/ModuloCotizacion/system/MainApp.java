@@ -57,8 +57,6 @@ public class MainApp extends Application {
                     break;
                 }
             }
-            stage.setWidth(primary.getVisualBounds().getWidth());
-            stage.setHeight(primary.getVisualBounds().getHeight());
             stage.setMinWidth(1500);
             stage.setMinHeight(800);
             stage.setScene(scene);
