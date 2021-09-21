@@ -14,6 +14,7 @@ import java.util.prefs.Preferences;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -31,6 +33,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -56,6 +59,9 @@ public class LoginViewController implements Initializable {
     private JFXButton btnIngresar;
     public Preferences prefsLogin = Preferences.userRoot().node(this.getClass().getName());
     public Preferences prefsUsuario = Preferences.userRoot().node(this.getClass().getName());
+    private ProgressIndicator progress;
+    @FXML
+    private VBox vboxProgress;
     
    
     
@@ -78,7 +84,6 @@ public class LoginViewController implements Initializable {
        tt.setNode(panelTransicion);
        tt.setCycleCount(1);
        tt.play();
-       
        
        
     }    
@@ -130,6 +135,7 @@ public class LoginViewController implements Initializable {
     }
     
     public void login() throws IOException{
+      
        Image imgError= new Image("org/ModuloCotizacion/img/error.png");
        Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
        if(txtUsuario.getText().equals("") && txtContraseña.getText().equals("")){
@@ -157,7 +163,22 @@ public class LoginViewController implements Initializable {
                     Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("org/ModuloCotizacion/view/menuPrincipal.fxml"));
                     Scene scene = new Scene(root);
 
+     int primaryMon=0;
+                    Screen primary = Screen.getPrimary();
+                    for(int i = 0; i < Screen.getScreens().size(); i++){
+                        if(Screen.getScreens().get(i).equals(primary)){
+                            primaryMon = i;
+                            System.out.println("primary: " + i);
+                            break;
+                        }
+                    }
+                    Screen screen = Screen.getPrimary();
+                    Rectangle2D bounds = screen.getVisualBounds();
 
+                    primaryStage.setX(bounds.getMinX());
+                    primaryStage.setY(bounds.getMinY());
+                    primaryStage.setWidth(bounds.getWidth());
+                    primaryStage.setHeight(bounds.getHeight());
                     primaryStage.setMinWidth(1500);
                     primaryStage.setMinHeight(800);
                     primaryStage.setScene(scene);
@@ -208,7 +229,9 @@ public class LoginViewController implements Initializable {
 
     @FXML
     private void atajosLogin(KeyEvent event) throws IOException {
+          
         if(event.getCode() == KeyCode.ENTER){
+          
             login();
         }else{
             if(event.getCode() == KeyCode.ESCAPE){
