@@ -10,10 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -77,6 +74,8 @@ public class CotizacionesViewController implements Initializable {
     
     //Variables
     public double factorVenta = 0;
+    @FXML
+    private JFXTextField txtCodigo;
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
     public Operacion cancelar = Operacion.NINGUNO;
     public Operacion tipoOperacion = Operacion.NINGUNO;
@@ -117,9 +116,6 @@ public class CotizacionesViewController implements Initializable {
     @FXML
     private AnchorPane anchor2;
     
-    //TextField
-    @FXML
-    private JFXTextField txtCodigo;
     @FXML
     private JFXTextField txtNombre;
     @FXML
@@ -219,7 +215,6 @@ public class CotizacionesViewController implements Initializable {
     private JFXTextField txtTotalCotizacion;
    
     public void limpiarText(){
-        txtCodigo.setText("");
         txtNIT.setValue("");
         txtNombre.setText("");
         txtDireccion.setText("");        
@@ -1041,9 +1036,7 @@ public class CotizacionesViewController implements Initializable {
     @FXML
     private void txtCantidadCambio(KeyEvent event) {
          
-        double  ancho = Double.parseDouble(txtAncho.getText()),largo = Double.parseDouble(txtLargo.getText()), alto = Double.parseDouble(txtAlto.getText());
-        double valor = (ancho * largo * alto * 0.0005* Double.parseDouble(txtCantidad.getText()));
-        
+       double valor = Double.parseDouble(txtPrecioUCotizacion.getText())*Double.parseDouble(txtCantidad.getText());
         txtTotalParcial.setText(String.valueOf(valor));
     }
 
@@ -1070,7 +1063,7 @@ public class CotizacionesViewController implements Initializable {
                 double alto = rs.getDouble("cotizacionAlto");
                 double ancho = rs.getDouble("cotizacionAncho");
                 double largo = rs.getDouble("cotizacionLargo");
-                double valor= (alto*ancho*largo*0.0005);
+                double valor= (alto*ancho*largo*factorVenta);
                 txtAncho.setText(String.valueOf(ancho));
                 txtLargo.setText(String.valueOf(largo));
                 txtAlto.setText(String.valueOf(alto));
@@ -1466,8 +1459,8 @@ public class CotizacionesViewController implements Initializable {
     }
 
     
-    public void transferir(){
-        String sql = "{call SpTransferirBackupCotizacion('"+txtCodigo.getText()+"')}";
+    public void transferir(int codigo){
+        String sql = "{call SpTransferirBackupCotizacion('"+codigo+"')}";
         
         try {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
@@ -1489,7 +1482,7 @@ public class CotizacionesViewController implements Initializable {
     
     @FXML
     private void btnGuardarCotizacion(MouseEvent event) {
-        if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || 
+        if(txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || 
             txtVendedor.getValue().isEmpty() || txtFecha.getValue().equals("")){
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgError));
@@ -1524,7 +1517,6 @@ public class CotizacionesViewController implements Initializable {
                 if(result.get() == buttonTypeSi ){
                     Cotizaciones cotizacion = new Cotizaciones();
 
-                    cotizacion.setCotizacionId(Integer.parseInt(txtCodigo.getText()));
                     cotizacion.setNit(txtNIT.getValue());
                     int codigoTipo = buscarCodigoTipoClienteDos();
 
@@ -1541,14 +1533,24 @@ public class CotizacionesViewController implements Initializable {
                     cotizacion.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
                     Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());            
                     cotizacion.setCotizacionTotal(TotalC);
-                    String sql = "{call Sp_AddCotizacion('"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+0+"','"+0+"','"+cotizacion.getCotizacionTotal()+"')}";
-                    System.out.println(sql);
-
+                    String sql = "insert into Cotizacion(cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha,   cotizacionDescuento, cotizacionDescuentoNeto, cotizacionTotal )\n" +
+"				values('"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+0+"','"+0+"','"+cotizacion.getCotizacionTotal()+"');";
                     try{
 
-                        PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-                        ps.execute();
-                        transferir();
+                        Statement ps = Conexion.getIntance().getConexion().createStatement();
+                         ps.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
+                            
+                        ResultSet rs = ps.getGeneratedKeys();
+                        int rest=0;
+                        
+                        if (rs.next()){
+                            rest=rs.getInt(1);
+
+                        }
+                        
+                        System.out.println("VALOR DE EL NÚMERO DE ID "+rest);
+
+                        transferir(rest);
                         System.out.println(txtImagen.getText());
                         
 
@@ -1562,7 +1564,7 @@ public class CotizacionesViewController implements Initializable {
                         noti.darkStyle();   
                         noti.show();
                         cargarDatosCotizaciones();
-                        cargarDatosCotizacionesBuscada(Integer.parseInt(txtCodigo.getText()));
+                        cargarDatosCotizacionesBuscada(rest);
                         limpiarText();
                         limpiarTextBack();
                         cargar.setDisable(false);
@@ -1858,7 +1860,7 @@ public class CotizacionesViewController implements Initializable {
     @FXML
     private void btnAgregar(MouseEvent event) {
         if(tipoOperacion == Operacion.GUARDAR){
-            if(txtCodigo.getText().isEmpty() || txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtVendedor.getValue().isEmpty() || 
+            if( txtNIT.getValue().isEmpty() || txtNombre.getText().isEmpty() || txtDireccion.getText().isEmpty() || txtVendedor.getValue().isEmpty() || 
                txtAncho.getText().isEmpty() || txtAlto.getText().isEmpty() || txtLargo.getText().isEmpty() || txtDescripcion.getText().isEmpty() || txtCantidad.getText().isEmpty()){
                 Notifications noti = Notifications.create();
                 noti.graphic(new ImageView(imgError));

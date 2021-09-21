@@ -40,6 +40,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
@@ -53,6 +54,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -86,7 +88,6 @@ public class MenuPrincipalContoller implements Initializable {
     private JFXButton btnAtras;
     @FXML
     private JFXButton btnSiguiente;
-
     
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO};
     public Operacion tipoOperacion= Operacion.NINGUNO;
@@ -661,7 +662,6 @@ public class MenuPrincipalContoller implements Initializable {
        ttFacturas.setNode(cajaFactura);
        ttFacturas.setCycleCount(1);
        ttFacturas.play();
-       
     }    
 
         //pestaña de ajustes
@@ -842,7 +842,6 @@ public class MenuPrincipalContoller implements Initializable {
         cambioScene.Cambio(inventarioUrl,(Stage) anchor.getScene().getWindow());
     }
     
-     @FXML
     private void produccionAtajo(MouseEvent event) throws IOException {
         produccion();
     }

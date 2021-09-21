@@ -21,7 +21,6 @@ public class CambioScene {
       
         System.out.println(url);
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource(url));
-        
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
