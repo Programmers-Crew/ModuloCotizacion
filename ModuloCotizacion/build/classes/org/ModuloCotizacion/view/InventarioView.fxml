@@ -55,9 +55,9 @@
                                  <children>
                                     <VBox alignment="CENTER" layoutY="-1.0" prefHeight="386.0" prefWidth="197.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                                        <children>
-                                          <AnchorPane fx:id="anchor1" prefHeight="742.0" prefWidth="345.0">
+                                          <AnchorPane fx:id="anchor1" prefHeight="761.0" prefWidth="348.0">
                                              <children>
-                                                <HBox alignment="CENTER" layoutX="10.0" layoutY="23.0" prefHeight="27.0" prefWidth="198.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="23.0">
+                                                <HBox alignment="CENTER" layoutX="17.0" layoutY="14.0" prefHeight="27.0" prefWidth="198.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="14.0">
                                                    <children>
                                                       <Label text="INVENTARIO">
                                                          <font>
@@ -66,18 +66,18 @@
                                                       </Label>
                                                    </children>
                                                 </HBox>
-                                                <ComboBox fx:id="cmbCodigoProductoInventario" editable="true" layoutX="21.0" layoutY="96.0" onKeyTyped="#validarCodigoInventario" prefHeight="27.0" prefWidth="220.0" styleClass="comboOscuro" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="96.0" />
-                                                <ComboBox fx:id="txtProveedorInventario" editable="true" layoutX="27.0" layoutY="161.0" onKeyTyped="#validarCodigoInventario" prefHeight="27.0" prefWidth="220.0" styleClass="comboOscuro" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="23.0" />
-                                                <JFXTextField fx:id="txtProductoInventario" layoutX="29.0" layoutY="229.0" prefHeight="27.0" prefWidth="210.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="229.0" />
-                                                <JFXTextField fx:id="txtCantidadInventario" layoutX="32.0" layoutY="295.0" onKeyTyped="#validarCantidadProducto" prefHeight="31.0" prefWidth="213.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="295.0" />
-                                                <Label layoutX="22.0" layoutY="75.0" prefHeight="18.0" prefWidth="55.0" text="CÓDIGO:" AnchorPane.leftAnchor="22.0" AnchorPane.rightAnchor="157.0" AnchorPane.topAnchor="75.0" />
-                                                <ComboBox fx:id="cmbNombreEstado" editable="true" layoutX="33.0" layoutY="367.0" prefHeight="31.0" prefWidth="219.0" styleClass="comboOscuro" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="367.0" />
-                                                <ComboBox fx:id="cmbNombreCategoria" editable="true" layoutX="36.0" layoutY="439.0" prefHeight="31.0" prefWidth="313.0" styleClass="comboOscuro" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="439.0" />
-                                                <Label layoutX="28.0" layoutY="142.0" text="PROVEEDOR:" AnchorPane.leftAnchor="28.0" AnchorPane.topAnchor="142.0" />
-                                                <Label layoutX="30.0" layoutY="208.0" text="PRODUCTO:" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="208.0" />
-                                                <Label layoutX="33.0" layoutY="275.0" prefHeight="21.0" prefWidth="96.0" text="CANTIDAD:" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="159.0" AnchorPane.topAnchor="275.0" />
-                                                <Label layoutX="34.0" layoutY="344.0" text="ESTADO:" AnchorPane.leftAnchor="34.0" AnchorPane.topAnchor="344.0" />
-                                                <GridPane layoutX="41.0" layoutY="657.0" prefHeight="27.0" prefWidth="303.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="657.0">
+                                                <ComboBox fx:id="cmbCodigoProductoInventario" editable="true" layoutX="24.0" layoutY="62.0" onKeyTyped="#validarCodigoInventario" prefHeight="27.0" prefWidth="220.0" styleClass="comboOscuro" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="62.0" />
+                                                <ComboBox fx:id="txtProveedorInventario" editable="true" layoutX="30.0" layoutY="127.0" onKeyTyped="#validarCodigoInventario" prefHeight="27.0" prefWidth="220.0" styleClass="comboOscuro" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="25.0" />
+                                                <JFXTextField fx:id="txtProductoInventario" layoutX="32.0" layoutY="195.0" prefHeight="27.0" prefWidth="210.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="195.0" />
+                                                <JFXTextField fx:id="txtCantidadInventario" layoutX="35.0" layoutY="261.0" onKeyTyped="#validarCantidadProducto" prefHeight="31.0" prefWidth="213.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="261.0" />
+                                                <Label layoutX="25.0" layoutY="41.0" prefHeight="18.0" prefWidth="55.0" text="CÓDIGO:" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="159.0" AnchorPane.topAnchor="41.0" />
+                                                <ComboBox fx:id="cmbNombreEstado" editable="true" layoutX="36.0" layoutY="333.0" prefHeight="31.0" prefWidth="219.0" styleClass="comboOscuro" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="333.0" />
+                                                <ComboBox fx:id="cmbNombreCategoria" editable="true" layoutX="38.0" layoutY="405.0" prefHeight="31.0" prefWidth="288.0" styleClass="comboOscuro" AnchorPane.leftAnchor="38.0" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="405.0" />
+                                                <Label layoutX="31.0" layoutY="108.0" text="PROVEEDOR:" AnchorPane.leftAnchor="31.0" AnchorPane.topAnchor="108.0" />
+                                                <Label layoutX="33.0" layoutY="174.0" text="PRODUCTO:" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="174.0" />
+                                                <Label layoutX="36.0" layoutY="241.0" prefHeight="21.0" prefWidth="96.0" text="CANTIDAD:" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="161.0" AnchorPane.topAnchor="241.0" />
+                                                <Label layoutX="37.0" layoutY="310.0" text="ESTADO:" AnchorPane.leftAnchor="37.0" AnchorPane.topAnchor="310.0" />
+                                                <GridPane layoutX="42.0" layoutY="678.0" prefHeight="27.0" prefWidth="303.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="678.0">
                                                    <columnConstraints>
                                                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="93.20001220703125" minWidth="10.0" prefWidth="70.99998779296875" />
                                                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="118.0" minWidth="10.0" prefWidth="86.4" />
@@ -110,7 +110,7 @@
                                                       </JFXButton>
                                                    </children>
                                                 </GridPane>
-                                                <GridPane layoutX="55.0" layoutY="692.0" prefHeight="36.0" prefWidth="200.0" AnchorPane.leftAnchor="55.0" AnchorPane.rightAnchor="90.0" AnchorPane.topAnchor="692.0">
+                                                <GridPane layoutX="54.0" layoutY="711.0" prefHeight="36.0" prefWidth="200.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="96.0" AnchorPane.topAnchor="711.0">
                                                   <columnConstraints>
                                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -131,8 +131,8 @@
                                                       </JFXButton>
                                                    </children>
                                                 </GridPane>
-                                                <Label layoutX="39.0" layoutY="411.0" text="CATEGORIA:" />
-                                                <GridPane layoutX="30.0" layoutY="498.0" prefHeight="128.0" prefWidth="298.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="498.0">
+                                                <Label layoutX="39.0" layoutY="384.0" text="CATEGORIA:" />
+                                                <GridPane layoutX="39.0" layoutY="447.0" prefHeight="128.0" prefWidth="298.0" AnchorPane.leftAnchor="39.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="447.0">
                                                   <columnConstraints>
                                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -152,6 +152,14 @@
                                                             <Insets right="50.0" />
                                                          </padding>
                                                       </JFXTextField>
+                                                      <JFXTextField fx:id="txtCostoNuevo4" prefHeight="27.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                         <padding>
+                                                            <Insets right="50.0" />
+                                                         </padding>
+                                                         <GridPane.margin>
+                                                            <Insets bottom="10.0" />
+                                                         </GridPane.margin>
+                                                      </JFXTextField>
                                                       <Label prefHeight="20.0" prefWidth="40.0" text="P1:" />
                                                       <JFXTextField fx:id="txtCostoNuevo2" prefHeight="27.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                          <padding>
@@ -170,27 +178,51 @@
                                                             <Insets bottom="10.0" />
                                                          </GridPane.margin>
                                                       </JFXTextField>
-                                                      <Label prefHeight="20.0" prefWidth="40.0" text="P1:" GridPane.rowIndex="2">
+                                                      <Label prefHeight="20.0" prefWidth="40.0" text="P3:" GridPane.rowIndex="2">
                                                          <GridPane.margin>
                                                             <Insets top="10.0" />
                                                          </GridPane.margin>
                                                       </Label>
-                                                      <Label prefHeight="20.0" prefWidth="40.0" text="P1:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                      <JFXTextField fx:id="txtCostoNuevo4" prefHeight="27.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                      <Label prefHeight="20.0" prefWidth="40.0" text="P4:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                   </children>
+                                                </GridPane>
+                                                <GridPane layoutX="36.0" layoutY="591.0" prefHeight="44.0" prefWidth="315.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="591.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <JFXTextField fx:id="txtProdAlto" prefHeight="27.0" prefWidth="210.0" GridPane.rowIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
                                                          <padding>
-                                                            <Insets right="50.0" />
+                                                            <Insets right="30.0" />
+                                                         </padding>
+                                                      </JFXTextField>
+                                                      <Label prefHeight="20.0" prefWidth="40.0" text="ALTO:" />
+                                                      <JFXTextField fx:id="txtProdAncho" prefHeight="45.0" prefWidth="99.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                         <padding>
+                                                            <Insets right="30.0" />
                                                          </padding>
                                                          <GridPane.margin>
-                                                            <Insets bottom="10.0" />
+                                                            <Insets />
                                                          </GridPane.margin>
+                                                      </JFXTextField>
+                                                      <Label text="ANCHO:" GridPane.columnIndex="1" />
+                                                      <Label text="LARGO:" GridPane.columnIndex="2" />
+                                                      <JFXTextField fx:id="txtProdLargo" prefHeight="14.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <padding>
+                                                            <Insets right="30.0" />
+                                                         </padding>
                                                       </JFXTextField>
                                                    </children>
                                                 </GridPane>
-                                                <Label layoutX="37.0" layoutY="626.0" opacity="0.59" prefHeight="21.0" prefWidth="244.0" text="*El significado de P es precios. * " AnchorPane.bottomAnchor="95.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="626.0">
-                                                   <font>
-                                                      <Font name="System Italic" size="15.0" />
-                                                   </font>
-                                                </Label>
                                              </children>
                                              <padding>
                                                 <Insets left="5.0" />
@@ -217,6 +249,9 @@
                                           <TableColumn fx:id="colPrecioInventario2" prefWidth="75.0" text="P2" />
                                           <TableColumn fx:id="colPrecioInventario3" prefWidth="75.0" text="P3" />
                                           <TableColumn fx:id="colPrecioInventario4" prefWidth="75.0" text="P4" />
+                                          <TableColumn fx:id="colProdAlto" prefWidth="75.0" text="ALTO" />
+                                          <TableColumn fx:id="colProdAncho" prefWidth="75.0" text="ANCHO" />
+                                          <TableColumn fx:id="colProdLargo" prefWidth="75.0" text="LARGO" />
                                        </columns>
                                     </TableView>
                                     <JFXButton fx:id="btnBuscarInventario" buttonType="RAISED" layoutX="479.0" layoutY="16.0" onMouseClicked="#btnBuscar" prefHeight="64.0" prefWidth="77.0" styleClass="boton" text="BUSCAR" textFill="WHITE" AnchorPane.rightAnchor="17.0" AnchorPane.topAnchor="16.0" />

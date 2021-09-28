@@ -162,6 +162,12 @@ public class InventarioViewController implements Initializable {
     @FXML
     private JFXTextField txtCostoNuevo4;
     @FXML
+    private JFXTextField txtProdAlto;
+    @FXML
+    private JFXTextField txtProdAncho;
+    @FXML
+    private JFXTextField txtProdLargo;
+    @FXML
     private ComboBox<String> cmbCodigoProductoInventario;
     @FXML
     private TableView<InventarioProductos> tblInventario;
@@ -183,6 +189,12 @@ public class InventarioViewController implements Initializable {
     private TableColumn<InventarioProductos, Double> colPrecioInventario3;
     @FXML
     private TableColumn<InventarioProductos, Double> colPrecioInventario4;
+    @FXML
+    private TableColumn<InventarioProductos, Double> colProdAlto;
+    @FXML
+    private TableColumn<InventarioProductos, Double> colProdAncho;
+    @FXML
+    private TableColumn<InventarioProductos, Double> colProdLargo;
     @FXML
     private JFXButton btnRestarInventario;
     @FXML
@@ -246,6 +258,9 @@ public class InventarioViewController implements Initializable {
         txtCostoNuevo3.setText("");
         txtCostoNuevo4.setText("");
         txtCantidadInventario.setText("");
+        txtProdAlto.setText("");
+        txtProdAncho.setText("");
+        txtProdLargo.setText("");
     }
     
     public void iniciarPrecios(){
@@ -256,8 +271,8 @@ public class InventarioViewController implements Initializable {
     }
     
     public void limpiarTextFunciones(){
-    txtCostoNuevo.setText("");
-    txtCantidadInventario.setText("");
+        txtCostoNuevo.setText("");
+        txtCantidadInventario.setText("");
     }
     
     public void desactivarControlesInventario(){    
@@ -277,6 +292,13 @@ public class InventarioViewController implements Initializable {
         cmbNombreEstado.setDisable(true);
         btnEditarInventario.setDisable(false);
         btnEliminarInventario.setDisable(false);
+        txtProdAlto.setEditable(false);
+        txtProdAncho.setEditable(false);
+        txtProdLargo.setEditable(false);
+        txtCostoNuevo.setEditable(false);
+        txtCostoNuevo2.setEditable(false);
+        txtCostoNuevo3.setEditable(false);
+        txtCostoNuevo4.setEditable(false);
 
     }
     
@@ -287,7 +309,14 @@ public class InventarioViewController implements Initializable {
         txtCostoNuevo.setEditable(true);
         txtCantidadInventario.setEditable(true);
         cmbNombreEstado.setDisable(false);
-        cmbNombreCategoria.setDisable(false);        
+        cmbNombreCategoria.setDisable(false);    
+        txtProdAlto.setEditable(true);
+        txtProdAncho.setEditable(true);
+        txtProdLargo.setEditable(true);
+        txtCostoNuevo.setEditable(true);
+        txtCostoNuevo2.setEditable(true);
+        txtCostoNuevo3.setEditable(true);
+        txtCostoNuevo4.setEditable(true);       
     }
     
     
@@ -320,7 +349,10 @@ public class InventarioViewController implements Initializable {
                             rs.getDouble("productoPrecio2"),
                             rs.getDouble("productoPrecio3"),
                             rs.getDouble("productoPrecio4"),
-                            rs.getString("categoriaNombre")                        
+                            rs.getString("categoriaNombre"),                        
+                            rs.getDouble("prodLargo"),
+                            rs.getDouble("prodAlto"),
+                            rs.getDouble("prodAncho")
                 ));
                 prodProducto = rs.getString("productoId");
                 comboCodigoFiltro.add(x, rs.getString("productoId"));
@@ -350,6 +382,9 @@ public class InventarioViewController implements Initializable {
         colProveedorInventario.setCellValueFactory(new PropertyValueFactory("proveedorNombre"));
         colEstadoInventario.setCellValueFactory(new PropertyValueFactory("estadoProductoDesc"));
         
+        colProdLargo.setCellValueFactory(new PropertyValueFactory("prodLargo"));
+        colProdAlto.setCellValueFactory(new PropertyValueFactory("prodAlto"));
+        colProdAncho.setCellValueFactory(new PropertyValueFactory("prodAncho"));               
         limpiarText();
        
         llenarComboEstado();
@@ -395,7 +430,10 @@ public class InventarioViewController implements Initializable {
                             rs.getDouble("productoPrecio2"),
                             rs.getDouble("productoPrecio3"),
                             rs.getDouble("productoPrecio4"),                        
-                            rs.getString("categoriaNombre")  
+                            rs.getString("categoriaNombre"),
+                            rs.getDouble("prodLargo"),
+                            rs.getDouble("prodAlto"),
+                            rs.getDouble("prodAncho")
                 ));
                 x++;
             }
@@ -421,6 +459,9 @@ public class InventarioViewController implements Initializable {
         colPrecioInventario4.setCellValueFactory(new PropertyValueFactory("productoPrecio4"));       
         colProveedorInventario.setCellValueFactory(new PropertyValueFactory("proveedorNombre"));
         colEstadoInventario.setCellValueFactory(new PropertyValueFactory("estadoProductoDesc"));
+        colProdLargo.setCellValueFactory(new PropertyValueFactory("prodLargo"));
+        colProdAlto.setCellValueFactory(new PropertyValueFactory("prodAlto"));
+        colProdAncho.setCellValueFactory(new PropertyValueFactory("prodAncho"));         
         limpiarText();       
         llenarComboEstado();
         llenarComboProveedor();
@@ -443,12 +484,15 @@ public class InventarioViewController implements Initializable {
             txtProductoInventario.setText(colProductoInventario.getCellData(index));            
             cmbNombreCategoria.setValue(colCategoriaInventario.getCellData(index));            
             txtCostoNuevo.setText(colPrecioInventario.getCellData(index).toString());            
-            txtCostoNuevo2.setText(colPrecioInventario2.getCellData(index).toString()); 
+            txtCostoNuevo2.setText(colPrecioInventario2.getCellData(index).toString());
             txtCostoNuevo3.setText(colPrecioInventario3.getCellData(index).toString()); 
             txtCostoNuevo4.setText(colPrecioInventario4.getCellData(index).toString()); 
             txtProveedorInventario.setValue(colProveedorInventario.getCellData(index));            
             cmbNombreEstado.setValue(colEstadoInventario.getCellData(index));                        
             
+            txtProdLargo.setText(colProdLargo.getCellData(index).toString());
+            txtProdAlto.setText(colProdAlto.getCellData(index).toString());
+            txtProdAncho .setText(colProdAncho.getCellData(index).toString());
             
             codigoProducto = colCodigoProductoInventario.getCellData(index);
             cmbNombreEstado.setDisable(false);
@@ -769,7 +813,11 @@ public class InventarioViewController implements Initializable {
                         txtCostoNuevo.setText(rs.getString("productoPrecio"));                        
                         txtCostoNuevo2.setText(rs.getString("productoPrecio2"));
                         txtCostoNuevo3.setText(rs.getString("productoPrecio3"));
-                        txtCostoNuevo4.setText(rs.getString("productoPrecio4"));
+                        txtCostoNuevo4.setText(rs.getString("productoPrecio4"));                        
+                        txtProdLargo.setText(rs.getString("prodLargo"));
+                        txtProdAncho.setText(rs.getString("prodAncho"));
+                        txtProdAlto.setText(rs.getString("prodAlto"));
+                        
                         txtProveedorInventario.setValue(rs.getString("proveedorNombre"));
                         cmbNombreEstado.setValue(rs.getString("estadoProductoDesc"));
 
@@ -994,11 +1042,14 @@ public class InventarioViewController implements Initializable {
                 nuevoInventario.setProductoPrecio4(Double.parseDouble(txtCostoNuevo4.getText()));                                 
                 nuevoInventario.setInventarioProductoCant(Integer.parseInt(txtCantidadInventario.getText()));                
                 nuevoInventario.setEstadoProductoDesc(cmbNombreEstado.getValue());
-
+                nuevoInventario.setProdAlto(Double.parseDouble(txtProdAlto.getText()));
+                nuevoInventario.setProdAncho(Double.parseDouble(txtProdAncho.getText()));
+                nuevoInventario.setProdLargo(Double.parseDouble(txtProdLargo.getText()));
+                
                 proveedorName = txtProveedorInventario.getValue();
                    
-                String sql = "{call Sp_AddInventario('"+nuevoInventario.getProductoId()+"','"+nuevoInventario.getProductoDesc()+"','"+buscarCodigoProveedor(nuevoInventario.getProveedorNombre())+"','"+buscarCodigoCategoria(nuevoInventario.getCategoriaNombre())+"','"+nuevoInventario.getProductoPrecio()+"','"+nuevoInventario.getInventarioProductoCant()+"','"+buscarCodigoEstado(nuevoInventario.getEstadoProductoDesc())+"','"+nuevoInventario.getProductoPrecio2()+"','"+nuevoInventario.getProductoPrecio3()+"','"+nuevoInventario.getProductoPrecio4()+"')}";
-                   System.out.println(sql);
+                String sql = "{call Sp_AddInventario('"+nuevoInventario.getProductoId()+"','"+nuevoInventario.getProductoDesc()+"','"+buscarCodigoProveedor(nuevoInventario.getProveedorNombre())+"','"+buscarCodigoCategoria(nuevoInventario.getCategoriaNombre())+"','"+nuevoInventario.getProductoPrecio()+"','"+nuevoInventario.getInventarioProductoCant()+"','"+buscarCodigoEstado(nuevoInventario.getEstadoProductoDesc())+"','"+nuevoInventario.getProductoPrecio2()+"','"+nuevoInventario.getProductoPrecio3()+"','"+nuevoInventario.getProductoPrecio4()+"','"+nuevoInventario.getProdLargo()+"','"+nuevoInventario.getProdAlto()+"','"+nuevoInventario.getProdAncho()+"')}";
+                System.out.println(sql);
                 tipoOperacionInventario = Operacion.GUARDAR;
                 accion(sql);     
                    
@@ -1084,8 +1135,11 @@ public class InventarioViewController implements Initializable {
        nuevoInventario.setProductoPrecio3(Double.parseDouble(txtCostoNuevo3.getText()));
        nuevoInventario.setProductoPrecio4(Double.parseDouble(txtCostoNuevo4.getText()));
        nuevoInventario.setEstadoProductoDesc(cmbNombreEstado.getValue());
-
-       String sql = "{call Sp_UpdateInventarioProducto('"+codigoProducto+"','"+nuevoInventario.getProductoDesc()+"','"+nuevoInventario.getProductoPrecio()+"','"+buscarCodigoEstado(nuevoInventario.getEstadoProductoDesc())+"','"+nuevoInventario.getProductoPrecio2()+"','"+nuevoInventario.getProductoPrecio3()+"','"+nuevoInventario.getProductoPrecio4()+"')}";
+       nuevoInventario.setProdAlto(Double.parseDouble(txtProdAlto.getText()));
+       nuevoInventario.setProdAncho(Double.parseDouble(txtProdAncho.getText()));
+       nuevoInventario.setProdLargo(Double.parseDouble(txtProdLargo.getText()));
+       
+       String sql = "{call Sp_UpdateInventarioProducto('"+codigoProducto+"','"+nuevoInventario.getProductoDesc()+"','"+nuevoInventario.getProductoPrecio()+"','"+buscarCodigoEstado(nuevoInventario.getEstadoProductoDesc())+"','"+nuevoInventario.getProductoPrecio2()+"','"+nuevoInventario.getProductoPrecio3()+"','"+nuevoInventario.getProductoPrecio4()+"','"+nuevoInventario.getProdLargo()+"','"+nuevoInventario.getProdAlto()+"','"+nuevoInventario.getProdAncho()+"')}";
        
        tipoOperacionInventario = Operacion.ACTUALIZAR;
        accion(sql);                   
