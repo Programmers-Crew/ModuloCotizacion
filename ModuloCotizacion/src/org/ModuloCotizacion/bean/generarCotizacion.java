@@ -48,7 +48,7 @@ public class generarCotizacion {
         
         
         
-        String rutaImagen = "C:/Program Files (x86)/ModuloCotizacion/img/grupoAlcon.jpeg";
+        String rutaImagen = "C:/Program Files (x86)/ModuloCotizacion/ModuloCotizacion/img/grupoAlcon.jpeg";
         
         String encabezado = "COTIZACIÓN "+cotizacionId;
         
@@ -104,7 +104,7 @@ public class generarCotizacion {
             run = doc.createRun();
             doc.setAlignment(ParagraphAlignment.CENTER);
             try {
-                FileInputStream  is = new FileInputStream ("C:/Program Files (x86)/ModuloCotizacion/img/"+img);
+                FileInputStream  is = new FileInputStream ("C:/Program Files (x86)/ModuloCotizacion/ModuloCotizacion/img/"+img);
                 run.addPicture(is, XWPFDocument.PICTURE_TYPE_JPEG,img,Units.toEMU(100), Units.toEMU(100));
                 is.close();
             } catch (FileNotFoundException ex) {
@@ -321,7 +321,9 @@ public class generarCotizacion {
             FileChooser fileChooser = new FileChooser();   
             
             fileChooser.setTitle("Guardar Cotización");
+            fileChooser.setInitialFileName("COT "+nombreCliente+" "+cotizacionId);
             File option = fileChooser.showSaveDialog(null);
+            
            
             if(!option.exists()){
                 FileOutputStream word = new FileOutputStream(option.getAbsolutePath()+".docx");
