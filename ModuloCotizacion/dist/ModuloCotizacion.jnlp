@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="ModuloCotizacion.jar" size="7531829" download="eager" />
+    <jar href="ModuloCotizacion.jar" size="7532578" download="eager" />
     <jar href="lib\apache-commons-net.jar" size="460010" download="eager" />
     <jar href="lib\apache-logging-log4j.jar" size="481534" download="eager" />
     <jar href="lib\commons-collections-3.2.1.jar" size="575389" download="eager" />
@@ -34,6 +34,6 @@
     <jar href="lib\slf4j.jar" size="29881" download="eager" />
     <jar href="lib\xmlbeans-3.1.0.jar" size="2579738" download="eager" />
   </resources>
-  <jfx:javafx-desc  width="800" height="600" main-class="Initializing view, please wait ..."  name="ModuloCotizacion" />
+  <jfx:javafx-desc  width="800" height="600" main-class="org.ModuloCotizacion.system.MainApp"  name="ModuloCotizacion" />
   <update check="always"/>
 </jnlp>

@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import java.awt.print.PrinterJob;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
@@ -17,8 +16,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -39,7 +36,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -58,7 +54,6 @@ import org.controlsfx.control.Notifications;
 import org.ModuloCotizacion.bean.Animations;
 import org.ModuloCotizacion.bean.AutoCompleteComboBoxListener;
 import org.ModuloCotizacion.bean.CambioScene;
-
 import org.ModuloCotizacion.bean.FacturacionDetalleBackup;
 import org.ModuloCotizacion.bean.FacturasBuscadas;
 import org.ModuloCotizacion.bean.Imprimir;
@@ -69,9 +64,7 @@ import org.ModuloCotizacion.bean.ImprimirRespaldo;
 import org.ModuloCotizacion.bean.ImprimirRespaldoA;
 import org.ModuloCotizacion.bean.Letras;
 import org.ModuloCotizacion.bean.ProductoBuscado;
-
 import org.ModuloCotizacion.bean.ValidarStyle;
-
 import org.ModuloCotizacion.db.Conexion;
 import org.ModuloCotizacion.report.GenerarReporte;
 
@@ -84,17 +77,17 @@ public class FacturacionViewController implements Initializable {
     Image imgCorrecto= new Image("org/ModuloCotizacion/img/correcto.png");
     Image imgWarning = new Image("org/ModuloCotizacion/img/warning.png");
     @FXML
-     JFXTextField txtFacturaId;
+    JFXTextField txtFacturaId;
     @FXML
-     JFXTextField txtTotalFactura;
+    JFXTextField txtTotalFactura;
     @FXML
-     JFXButton btnEditar;
+    JFXButton btnEditar;
     @FXML
-     JFXTextField txtEfectivo;
+    JFXTextField txtEfectivo;
     @FXML
-     JFXTextField txtCambio;
+    JFXTextField txtCambio;
     @FXML
-     JFXButton btnVender;
+    JFXButton btnVender;
     @FXML
      TableColumn<FacturacionDetalleBackup, Integer> colCodigoFactura;
     @FXML
@@ -1300,7 +1293,7 @@ public class FacturacionViewController implements Initializable {
        int tipoFactura=1;
 
        String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+tipoFactura+"')}";
-       actualizarCliente();
+      //actualizarCliente();
         System.out.println(sqlFactura);
        try{
            

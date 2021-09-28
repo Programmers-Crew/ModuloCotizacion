@@ -11,11 +11,14 @@ public class InventarioProductos {
     private double productoPrecio3;
     private double productoPrecio4;
     private String categoriaNombre;
+    private double prodLargo;
+    private double prodAlto;
+    private double prodAncho;
     
     public InventarioProductos() {
     }
 
-    public InventarioProductos(String productoId, double inventarioProductoCant, String proveedorNombre, String productoDesc, String estadoProductoDesc, double productoPrecio, double productoPrecio2, double productoPrecio3, double productoPrecio4, String categoriaNombre) {
+    public InventarioProductos(String productoId, double inventarioProductoCant, String proveedorNombre, String productoDesc, String estadoProductoDesc, double productoPrecio, double productoPrecio2, double productoPrecio3, double productoPrecio4, String categoriaNombre, double prodLargo, double prodAlto, double prodAncho) {
         this.productoId = productoId;
         this.inventarioProductoCant = inventarioProductoCant;
         this.proveedorNombre = proveedorNombre;
@@ -26,6 +29,9 @@ public class InventarioProductos {
         this.productoPrecio3 = productoPrecio3;
         this.productoPrecio4 = productoPrecio4;
         this.categoriaNombre = categoriaNombre;
+        this.prodLargo = prodLargo;
+        this.prodAlto = prodAlto;
+        this.prodAncho = prodAncho;
     }
 
     
@@ -108,4 +114,30 @@ public class InventarioProductos {
     public void setProductoPrecio4(double productoPrecio4) {
         this.productoPrecio4 = productoPrecio4;
     }        
+
+    public double getProdLargo() {
+        return prodLargo;
+    }
+
+    public void setProdLargo(double prodLargo) {
+        this.prodLargo = prodLargo;
+    }
+
+    public double getProdAlto() {
+        return prodAlto;
+    }
+
+    public void setProdAlto(double prodAlto) {
+        this.prodAlto = prodAlto;
+    }
+
+    public double getProdAncho() {
+        return prodAncho;
+    }
+
+    public void setProdAncho(double prodAncho) {
+        this.prodAncho = prodAncho;
+    }
+    
+    
 }
