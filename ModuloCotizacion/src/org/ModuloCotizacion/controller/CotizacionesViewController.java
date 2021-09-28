@@ -76,6 +76,10 @@ public class CotizacionesViewController implements Initializable {
     public double factorVenta = 0;
     @FXML
     private JFXTextField txtCodigo;
+    @FXML
+    private ComboBox<String> txtInventario;
+
+    
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, SUMAR, RESTAR};
     public Operacion cancelar = Operacion.NINGUNO;
     public Operacion tipoOperacion = Operacion.NINGUNO;
@@ -94,7 +98,9 @@ public class CotizacionesViewController implements Initializable {
     ObservableList<Cotizaciones> listaCotizaciones;
     ObservableList<cotizacionBackup> listaCotizacionesBack;
     ObservableList<String> listaNit;
-    ObservableList<String> listaTipoCliente;
+    ObservableList<String> listaTipoCliente;    
+    ObservableList<String> listaInventario;
+
     ObservableList<String> listaVendedor;
     ObservableList<String> listaEmpleado;
     ObservableList<String> listaFactorVenta;
@@ -301,7 +307,7 @@ public class CotizacionesViewController implements Initializable {
             while(rs.next()){
                 lista.add(new Cotizaciones(
                     rs.getInt("cotizacionId"),
-                    rs.getString("clienteNombre"),
+                    rs.getString("clienteId")+"| "+rs.getString("clienteNit")+" - "+rs.getString("clienteNombre"),
                     rs.getString("tipoClienteDesc"),
                     rs.getString("cotizacionImg"),
                     rs.getString("usuarioNombre"),
@@ -343,6 +349,29 @@ public class CotizacionesViewController implements Initializable {
         desactivarControles();
     }
     
+    
+     public void getInventario(){
+        ArrayList<String> lista = new ArrayList();
+        ArrayList<String> comboCodigoFiltro = new ArrayList();
+        String sql = "{call Sp_ListInventarioProducto()}";
+        int x=0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(x,rs.getString("productoId")+ "| "+ rs.getString("productoDesc"));
+                x++;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        listaInventario = FXCollections.observableList(lista);
+        txtInventario.setItems(listaInventario);
+        new AutoCompleteComboBoxListener(txtInventario);
+
+     } 
+    
     public ObservableList<Cotizaciones> getCotizacionName(int codigo){
         ArrayList<Cotizaciones> lista = new ArrayList();
         ArrayList<String> listaCodigo = new ArrayList();
@@ -354,7 +383,7 @@ public class CotizacionesViewController implements Initializable {
             while(rs.next()){
                 lista.add(new Cotizaciones(
                     rs.getInt("cotizacionId"),
-                    rs.getString("clienteNombre"),
+                     rs.getString("clienteId")+"| "+rs.getString("clienteNit")+" - "+rs.getString("clienteNombre"),
                     rs.getString("tipoClienteDesc"),
                     rs.getString("cotizacionImg"),
                     rs.getString("usuarioNombre"),
@@ -394,6 +423,41 @@ public class CotizacionesViewController implements Initializable {
         colNetoCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionDescuentoNeto"));
         colTotalCotizacion.setCellValueFactory(new PropertyValueFactory("cotizacionTotal"));
         desactivarControles();
+    }
+    
+    @FXML
+    private void changeInventario(ActionEvent event) {
+        
+            
+        int busqueda = txtInventario.getValue().indexOf("|");
+        
+        String valor = txtInventario.getValue().substring(0,busqueda);
+        String sql = "{ call Sp_FindInventarioProducto('"+valor+"')}";
+        System.out.println(valor);
+         try{
+             
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+              txtAncho.setText(rs.getString("prodLargo"));              
+              txtLargo.setText(rs.getString("prodAncho"));
+              txtAlto.setText(rs.getString("prodAlto"));
+              txtDescripcion.setText(txtInventario.getValue());
+            }  
+            calcularprecio();
+        }catch(SQLException ex){
+            Notifications noti = Notifications.create();
+            ex.printStackTrace();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL BUSCAR");
+            noti.text("HA OCURRIDO UN ERROR EN LA BASE DE DATOS");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+
     }
     
     
@@ -499,7 +563,7 @@ public class CotizacionesViewController implements Initializable {
                         double total = Double.parseDouble(txtTotalCotizacion.getText());
                         
                         
-                        total = total+ (Double.parseDouble(txtCantidad.getText())*Double.parseDouble(txtTotalParcial.getText()));
+                        total = total+ (Double.parseDouble(txtTotalParcial.getText()));
                         
                        
                         cargar.setDisable(true);
@@ -736,7 +800,7 @@ public class CotizacionesViewController implements Initializable {
             while(rs.next()){
                 factorVenta = rs.getDouble("tipoClienteDescuento");
             }
-            System.out.println(factorVenta);
+            calcularprecio();
         } catch (SQLException ex) {
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgError));
@@ -835,7 +899,7 @@ public class CotizacionesViewController implements Initializable {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                lista.add(x, rs.getString("clienteNit"));
+                lista.add(x, rs.getString("clienteId")+ "| " + rs.getString("clienteNit")+ " - "+rs.getString("clienteNombre"));
                 x++;
             }
             
@@ -876,7 +940,7 @@ public class CotizacionesViewController implements Initializable {
         limpiarText();
         disableButtonsSeleccion();
         cargarDatosCotizaciones();
-        
+        getInventario();
         llenarMolduras();
         cargarDatosCotizacionesBack();
         txtAncho.setText("0.00");
@@ -933,43 +997,47 @@ public class CotizacionesViewController implements Initializable {
     
     @FXML
     private void cambiarNit(ActionEvent event) {
-        
-        String sql = "{call Sp_FindClientesNIt('"+txtNIT.getValue()+"')}";
-        
-        try {
-            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                   System.out.println("datos");
-                   txtNombre.setText(rs.getString("clienteNombre"));
-                   txtDireccion.setText(rs.getString("clienteDireccion"));
-            }
-            if(rs.first()){
-               
-            }else{
+       
+       if(!txtNIT.getValue().equals("") || txtNIT.getValue()!=null){
+            int busqueda = txtNIT.getValue().indexOf("|");
+
+            String valor = txtNIT.getValue().substring(0,busqueda);
+            String sql = "{call SpBuscarClientes('"+valor+"')}";
+
+            try {
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                ResultSet rs = ps.executeQuery();
+                while(rs.next()){
+                       System.out.println("datos");
+                       txtNombre.setText(rs.getString("clienteNombre"));
+                       txtDireccion.setText(rs.getString("clienteDireccion"));
+                }
+                if(rs.first()){
+
+                }else{
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgWarning));
+                    noti.title("ALERTA CLIENTE");
+                    noti.text("Deberá ingresar el campo de nombre y dirección");
+                    txtNombre.setEditable(true);
+                    txtDireccion.setEditable(true);
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();
+                    noti.show();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
                 Notifications noti = Notifications.create();
-                noti.graphic(new ImageView(imgWarning));
-                noti.title("ALERTA CLIENTE");
-                noti.text("Deberá ingresar el campo de nombre y dirección");
-                txtNombre.setEditable(true);
-                txtDireccion.setEditable(true);
+                noti.graphic(new ImageView(imgError));
+                noti.title("ERROR AL CARGAR DATOS DE CLIENTE");
+                noti.text("Error al cargar la base de datos"+ex);
                 noti.position(Pos.BOTTOM_RIGHT);
                 noti.hideAfter(Duration.seconds(4));
                 noti.darkStyle();
                 noti.show();
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            Notifications noti = Notifications.create();
-            noti.graphic(new ImageView(imgError));
-            noti.title("ERROR AL CARGAR DATOS DE CLIENTE");
-            noti.text("Error al cargar la base de datos"+ex);
-            noti.position(Pos.BOTTOM_RIGHT);
-            noti.hideAfter(Duration.seconds(4));
-            noti.darkStyle();
-            noti.show();
-        }
-        
+       } 
     }
     
  
@@ -1239,11 +1307,15 @@ public class CotizacionesViewController implements Initializable {
     
     public void cargarMore(){
           String sql="{call Sp_SearchCotizaciones('"+codigoCotizacion+"')}";
-        
         try {
             PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
             ResultSet rs = ps.executeQuery();
+                   FileTransfer fileTransfer = new FileTransfer();
+            
+            
+            
             while(rs.next()){
+                fileTransfer.getResource(rs.getString("cotizacionImg"));
                 txtImagen.setText(rs.getString("cotizacionImg"));
                 txtVendedor.setValue(rs.getString("usuarioNombre")+ " |"+rs.getString("usuarioId"));
             }
@@ -1533,8 +1605,12 @@ public class CotizacionesViewController implements Initializable {
                     cotizacion.setCotizacionFecha(java.sql.Date.valueOf(txtFecha.getValue()));
                     Double TotalC =  Double.parseDouble(txtTotalCotizacion.getText());            
                     cotizacion.setCotizacionTotal(TotalC);
+                      int busqueda = txtNIT.getValue().indexOf("|");
+
+                    String valor = txtNIT.getValue().substring(0,busqueda);
                     String sql = "insert into Cotizacion(cotizacionCliente, cotizacionTipoClienteId, cotizacionMensajero, cotizacionImg, cotizacionFecha,   cotizacionDescuento, cotizacionDescuentoNeto, cotizacionTotal )\n" +
-"				values('"+cotizacion.getNit()+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+0+"','"+0+"','"+cotizacion.getCotizacionTotal()+"');";
+"				values('"+valor+"','"+codigoTipo+"','"+codigoUsuario+"','"+cotizacion.getCotizacionImg()+"','"+cotizacion.getCotizacionFecha()+"','"+0+"','"+0+"','"+cotizacion.getCotizacionTotal()+"');";
+                    System.out.println(sql);
                     try{
 
                         Statement ps = Conexion.getIntance().getConexion().createStatement();
