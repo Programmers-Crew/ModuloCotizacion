@@ -760,8 +760,8 @@ public class ProduccionesViewController implements Initializable {
         btnEliminar.setDisable(false);
     }
     
-    
         
+    
     public int buscarCodigoEstado(){    
         int codigoTC=0;
         if(!cmbEstadoProduccion.getValue().isEmpty()){
@@ -1531,11 +1531,34 @@ public class ProduccionesViewController implements Initializable {
     
     
     @FXML
-    private void btnAgregarFacturacion(MouseEvent event) {
-        String sql = "{call SpAgregarBackupCotizacion('"+codigoCotizacion+"','1','"+txtTotalCotizacion.getText()+"')}";
-        try{
-            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
-            ps.execute();
+    private void btnAgregarFacturacion(MouseEvent event) {                
+        
+       boolean bandera = false;
+        for(int x=0; x<listaDetalle.size(); x++){            
+            try{
+                Double cantidad = listaDetalle.get(x).getCotizacionCantida();
+                String codigo =  listaDetalle.get(x).getCotizacionDesc();
+                String sql = "";
+             
+                if(codigo.contains("|") == true){                    
+                    int busqueda = codigo.indexOf("|");        
+                    String valor = codigo.substring(0, busqueda);
+                    
+                    sql = "{call SpAgregarBackupCotizacion('"+cantidad+"','"+listaDetalle.get(x).getCotizacionTotalParcial()+"','"+valor+"','"+listaDetalle.get(x).getCotizacionPrecioU()+"')}";
+                }else{
+                    sql = "{call SpAgregarBackupCotizacion2('"+cantidad+"','"+listaDetalle.get(x).getCotizacionTotalParcial()+"','"+listaDetalle.get(x).getBackupId()+"','"+listaDetalle.get(x).getCotizacionPrecioU()+"')}";
+                }        
+
+                System.out.println(sql);
+                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+                ps.execute();    
+                bandera = true;
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }                        
+        }
+        
+        if(bandera == true){
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgCorrecto));
             noti.title("OPERACIÓN EXITOSA");
@@ -1544,17 +1567,15 @@ public class ProduccionesViewController implements Initializable {
             noti.hideAfter(Duration.seconds(4));
             noti.darkStyle();   
             noti.show();
-        }catch(SQLException ex){
+        }else{
             Notifications noti = Notifications.create();
             noti.graphic(new ImageView(imgError));
             noti.title("ERROR EN LA DB");
-            noti.text("ERROR AL MANDAR FACTURACIÓN"+ex);
+            noti.text("ERROR AL MANDAR FACTURACIÓN");
             noti.position(Pos.BOTTOM_RIGHT);
             noti.hideAfter(Duration.seconds(4));
             noti.darkStyle();   
             noti.show();
-        }
-    }
-
-    
+        }                       
+    }   
 }

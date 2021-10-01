@@ -324,6 +324,8 @@ public class FacturacionViewController implements Initializable {
     private TextField logintudNombre;
     @FXML
     private JFXButton btnActualizar;
+    @FXML
+    private ComboBox<String> txtTipoFac;
 
     
     
@@ -350,8 +352,6 @@ public class FacturacionViewController implements Initializable {
     }
 
    
-
-
     public enum Operacion{AGREGAR,GUARDAR,ELIMINAR,BUSCAR,ACTUALIZAR,CANCELAR,NINGUNO, VENDER,FILTRAR,CARGAR, DEVOLUCION};
 
 
@@ -380,6 +380,7 @@ public class FacturacionViewController implements Initializable {
     ObservableList<String> listaComboTipo;
     ObservableList<FacturacionDetalleBackup> listaBackUp;
     ObservableList<String> listaPrecios;
+    ObservableList<String> listaTipoFactura;
 
     boolean comprobarCliente = false;
     Notifications noti = Notifications.create();
@@ -512,6 +513,7 @@ public class FacturacionViewController implements Initializable {
          validar.validarView(menu.prefs.get("dark", "root"), anchor);
         llenarComboNit();
         llenarComboProdcutos();
+        llenarComboTipoFactura();
         cargarDatos();
         btnEditar.setDisable(true);
         btneliminar.setDisable(true);
@@ -738,8 +740,7 @@ public class FacturacionViewController implements Initializable {
     }
     
          @FXML
-    private void buscarPrecio(ActionEvent event) {
-        
+    private void buscarPrecio(ActionEvent event) {        
         buscarPrecioMetodo();
     }
 
@@ -922,11 +923,11 @@ public class FacturacionViewController implements Initializable {
             while(rs.next()){
                 lista.add(new FacturacionDetalleBackup(
                     rs.getInt("facturaDetalleIdBackup"),
-                    "COTIZACIÓN NO. "+rs.getString("cotizacionId"),
+                    "DETALLE NO. "+rs.getString("detalleId"),
                     rs.getDouble("cantidadBackup"),
-                    rs.getDouble("cotizacionTotal"),
+                    rs.getDouble("cotizacionTotalParcial"),
                     rs.getDouble("totalParcialBackup"),
-                    rs.getString("cotizacionId")
+                    rs.getString("detalleId")
                 )); 
                 totalParcial = rs.getDouble("totalParcialBackup");
             }
@@ -1100,7 +1101,6 @@ public class FacturacionViewController implements Initializable {
     return valor;
   }
   
-  @FXML
   public void validarNumeroFactura(KeyEvent event){
     ArrayList<String> lista = new ArrayList();
     
@@ -1282,6 +1282,48 @@ public class FacturacionViewController implements Initializable {
     }
     
 
+        public void llenarComboTipoFactura(){
+        ArrayList<String> lista = new ArrayList();
+        String sql= "{call Sp_ListarTipoFactura()}";
+            int x =0;
+        
+        try{
+            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(x, rs.getString("tipoFacturaDesc")+" |"+rs.getString("tipoFactura"));
+                x++;
+            }           
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("ERROR AL CARGAR DATOS CMB");
+            noti.text("Error al cargar la base de datos");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();
+            noti.show();
+        }
+        
+        String sql1 =  "";
+        
+        listaTipoFactura = FXCollections.observableList(lista);
+        txtTipoFac.setItems(listaTipoFactura);
+        new AutoCompleteComboBoxListener(txtTipoFac);
+    }
+        
+    public String buscarCodigoTipoFactura(String tipoFactura){    
+        
+        int busqueda = txtTipoFac.getValue().indexOf("|");        
+        String valor = txtTipoFac.getValue().substring(busqueda+1, txtTipoFac.getValue().length());
+                
+        codigoProducto = valor;
+        
+        return codigoProducto;
+    }
+    
     public boolean guardarFactura(){
         double totalNeto = Double.parseDouble(txtTotalFactura.getText())/1.12;
        double totalIva = totalNeto*0.12;
@@ -1292,7 +1334,7 @@ public class FacturacionViewController implements Initializable {
        String sqlEliminar = "{call SpEliminarBackup()}";
        int tipoFactura=1;
 
-       String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+tipoFactura+"')}";
+       String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+buscarCodigoTipoFactura(txtTipoFac.getValue())+"')}";
       //actualizarCliente();
         System.out.println(sqlFactura);
        try{
@@ -1351,7 +1393,7 @@ public class FacturacionViewController implements Initializable {
             imprimir.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
             imprimir.imprima(listaBackUp, txtNitCliente.getValue(), txtNombreCliente.getText(), txtDireccionCliente.getText(), date2,txtLetrasPrecio.getText(), st);
         }
-    }
+    }       
     
     
     @FXML
@@ -1384,16 +1426,14 @@ public class FacturacionViewController implements Initializable {
                    limpiarTextCliente();
                    limpiarTextEfectivo();
                    totalFactura = 0;
-                }
-                
+                }                
                  try{
                     PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);            
                     ps.execute();                   
                  
                  }catch(Exception e){
                      e.printStackTrace();
-                 }
-                
+                 }                
            }
             
        }
@@ -1639,12 +1679,6 @@ public class FacturacionViewController implements Initializable {
       
   }
   
-
-    
-
-    
-
-    
     @FXML
     private void actualizarDatos(MouseEvent event) throws IOException {
        
@@ -1872,21 +1906,21 @@ public class FacturacionViewController implements Initializable {
             ResultSet rs1 = ps1.executeQuery();
             while(rs1.next()){
                 listaProducto.add(new ProductoBuscado(
-                           "COTIZACIÓN NO: "+ rs1.getString("cotizacionId"),
+                           "DETALLE NO: "+ rs1.getString("detalleId"),
                             rs1.getDouble("cantidad"),
-                            rs1.getDouble("cotizacionTotal")
+                            rs1.getDouble("cotizacionTotalParcial")
                 ));
             }
         }catch(SQLException ex){
             ex.printStackTrace();
         }
-        return listaProductoBuscado = FXCollections.observableList(listaProducto);
+        
+        return listaProductoBuscado = FXCollections.observableList(listaProducto);        
     }
  
     
-    public void cargarProductosBuscados(){
-        tblResultadoProducto.setItems(getProductoBuscado());
-        
+    public void cargarProductosBuscados(){         
+        tblResultadoProducto.setItems(getProductoBuscado());        
         colProductoBuscado.setCellValueFactory(new PropertyValueFactory("productoDesc"));
         colCantidadBuscada.setCellValueFactory(new PropertyValueFactory("cantidad"));  
         colPrecioUnitBuscado.setCellValueFactory(new PropertyValueFactory("precioProducto"));
