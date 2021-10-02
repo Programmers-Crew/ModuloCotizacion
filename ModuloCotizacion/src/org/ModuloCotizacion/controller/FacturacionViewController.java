@@ -1337,8 +1337,7 @@ public class FacturacionViewController implements Initializable {
        String sqlFactura = "{call SpAgregarFactura('"+txtSerieId.getText()+"','"+txtFacturaId.getText()+"','"+getClienteId()+"','"+date2+"','"+getUsuarioId()+"','"+totalNeto+"','"+totalIva+"','"+txtTotalFactura.getText()+"','"+buscarCodigoTipoFactura(txtTipoFac.getValue())+"')}";
       //actualizarCliente();
         System.out.println(sqlFactura);
-       try{
-           
+       try{           
            PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
            ps.execute();
            

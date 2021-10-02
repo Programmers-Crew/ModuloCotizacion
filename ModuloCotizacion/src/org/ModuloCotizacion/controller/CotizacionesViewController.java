@@ -1017,6 +1017,11 @@ public class CotizacionesViewController implements Initializable {
         cambioScene.Cambio(menu,(Stage) anchor.getScene().getWindow());
     }
 
+    
+        @FXML
+    private void addCliente(MouseEvent event) throws IOException {
+        btnAgregarCliente();
+    }
 
     @FXML
     private void seleccionarElementos(MouseEvent event) {
@@ -2037,6 +2042,105 @@ public class CotizacionesViewController implements Initializable {
             accion();
         }
     }
+    
+    
+    //Agregar cliente
+    @FXML
+    public void btnAgregarCliente(){
+    Dialog dialog = new Dialog();
+        dialog.setTitle("Agregar Cliente");
+        dialog.setHeaderText("Ingrese los campos necesarios.");
+        dialog.setResizable(true);
+        
+        Label label1 = new Label("NIT: ");        
+        JFXTextField nit = new JFXTextField();
+        GridPane grid = new GridPane();
+        
+        
+        Label label2 = new Label("Nombre:");
+        JFXTextField nombre = new JFXTextField();
+        
+        Label label3 = new Label("Direccion:");
+        JFXTextField direccion = new JFXTextField();
+        
+        Label label4 = new Label("Telefono:");
+        JFXTextField telefono = new JFXTextField();
+        
+        Label label5 = new Label("Correo:");
+        JFXTextField correo = new JFXTextField();
+        
+        
+        
+        
+        grid.add(label1, 1, 1);
+        grid.add(nit, 2, 1);
+        
+        grid.add(label2, 1, 4);
+        grid.add(nombre, 2, 4);
+        
+        grid.add(label3, 1, 8);
+        grid.add(direccion, 2, 8);
+        
+        grid.add(label4, 1, 12);
+        grid.add(telefono, 2, 12);
+        
+        grid.add(label5, 1, 16);
+        grid.add(correo, 2, 16);
+        
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("Guardar", ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+        
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        
+        if(result.get() == buttonTypeOk){
+            if(!nit.getText().isEmpty() || !nombre.getText().isEmpty() || !direccion.getText().isEmpty() || !telefono.getText().isEmpty() || !correo.getText().isEmpty()){
+                
+                                
+                String sql = "{call SpAgregarClientes('"+nit.getText()+"','"+nombre.getText()+"','"+direccion.getText()+"','"+telefono.getText()+"','"+correo.getText()+"')}";
+                try {
+                    PreparedStatement psProdccion = Conexion.getIntance().getConexion().prepareCall(sql);
+
+                    psProdccion.execute();
+
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgCorrecto));
+                    noti.title("CLIENTE GUARDADO");
+                    noti.text("Se ha guardado exitosamente");
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(4));
+                    noti.darkStyle();   
+                    noti.show();                    
+                    llenarComboNit();
+                } catch (SQLException ex) {
+                    Notifications noti = Notifications.create();
+                    noti.graphic(new ImageView(imgError));
+                    noti.title("ERROR");
+                    noti.text("hubo un error en la base de datos"+ex);
+                    ex.printStackTrace();
+                    noti.position(Pos.BOTTOM_RIGHT);
+                    noti.hideAfter(Duration.seconds(10));
+                    noti.darkStyle();   
+                    noti.show();
+                }        
+            }
+        }else{
+            Notifications noti = Notifications.create();
+            noti.graphic(new ImageView(imgError));
+            noti.title("OPCION CANCELADA");
+            noti.text("Se ha cancelado el proceso");
+            noti.position(Pos.BOTTOM_RIGHT);
+            noti.hideAfter(Duration.seconds(4));
+            noti.darkStyle();   
+            noti.show();
+        }                    
+    }
+    
     
     @FXML
     private void cargar(MouseEvent event) {

@@ -8,6 +8,12 @@
     -fx-background-size: stretch;
 }
 
+.paneAddCliente{
+    -fx-background-image: url(../img/proveedores.png);
+    -fx-background-size: stretch;
+}
+
+
 .bar{
     -fx-background-color: #33b5e5;
 }
