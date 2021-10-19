@@ -238,7 +238,7 @@ public class CotizacionesViewController implements Initializable {
         txtPrecioUCotizacion.setText("0.00");
         txtTotalCotizacion.setText("0.00");
         txtDescripcion.setText("");
-        txtCantidad.setText("1"); 
+        txtCantidad.setText("1");         
     }
     
     public void limpiarTextBack(){
@@ -1335,6 +1335,8 @@ public class CotizacionesViewController implements Initializable {
      @FXML
     private void seleccionarElementosDetalle(MouseEvent event) {
 
+            txtTotalParcial.setText("0");
+            
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             ButtonType buttonTypeSi = new ButtonType("Si");
             ButtonType buttonTypeNo = new ButtonType("No");
@@ -1349,7 +1351,7 @@ public class CotizacionesViewController implements Initializable {
             if(result.get() == buttonTypeSi){
                 try{     
                     btnAgregar.setDisable(true);
-                     int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
+                    int index = tblCotizacionDetalle.getSelectionModel().getSelectedIndex();
                     txtAncho.setText(colAnchoDetalle.getCellData(index).toString());
                     txtLargo.setText(colLargoDetalle.getCellData(index).toString());
                     txtAlto.setText(colAltoDetalle.getCellData(index).toString());
@@ -1937,7 +1939,7 @@ public class CotizacionesViewController implements Initializable {
             }else{
                 sql = "{call Sp_UpdateBackUpCotizacion('"+nuevoDetalle.getBackupId()+"','"+nuevoDetalle.getCotizacionCantida()+"','"+nuevoDetalle.getCotizacionDesc()+"','"+nuevoDetalle.getCotizacionAlto()+"','"+nuevoDetalle.getCotizacionLargo()+"','"+nuevoDetalle.getCotizacionAncho()+"','"+nuevoDetalle.getCotizacionPrecioU()+"','"+nuevoDetalle.getCotizacionTotalParcial()+"')}";
             }   
-           
+            System.out.println(sql);
            try{
                PreparedStatement ps = Conexion.getIntance().getConexion().prepareCall(sql);
                ps.execute();
@@ -1950,6 +1952,7 @@ public class CotizacionesViewController implements Initializable {
                 noti.darkStyle();
                 noti.show();
                 tipoOperacion = Operacion.NINGUNO;
+                txtTotalParcial.setText("0");
                 cargarDatosCotizaciones();
                 cargarDatosCotizacionesBack();
                 btnEditar.setDisable(true);
